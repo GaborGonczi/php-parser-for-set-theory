@@ -1,0 +1,141 @@
+
+*,*::before,*::after{
+    font-family:"DejaVu Sans", sans-serif;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-weight: 400;
+}
+
+.wrapper{
+    display: grid;
+    grid-template-columns:4fr 1fr;
+    width: 100%;
+    height: 100vh;
+}
+.button-grid-container{
+    --grid-row:1;
+    --grid-column:1;
+    display: grid;
+    grid-template-columns: repeat(var(--grid-column), 50px);
+    grid-template-rows: repeat(var(--grid-row),50px);
+    gap: 0;
+    
+}
+button{
+    width: 50px;
+    height: 50px;
+    margin: 0;
+    pointer-events: all;
+}
+#back{
+  width: 70px;
+}
+#load{
+  pointer-events: all;
+}
+input[type='checkbox']{
+    width: 50px;
+    height: 50px;
+    margin: 0;
+
+}
+.column{
+    background-color: rgba(255, 255, 255, 0.8);
+}
+#left-toolbar-container{
+    pointer-events: none;
+}
+
+#right-toolbar-container{
+    pointer-events: none;
+}
+
+
+#input{
+    height: 50vh;
+    width: 100%;
+    overflow: hidden;
+
+}
+#input textarea#text{
+    height: 50vh;
+    width: 100%;
+    overflow: scroll;
+}
+.toolbar{
+    background-color: #EEEEEE;
+}
+
+#output{
+    height: 50vh;
+    width: 100%;
+    overflow: scroll;
+}
+.result{
+    color: blue;
+    font-style: italic;
+}
+
+/*From w3schools.com https://www.w3schools.com/howto/howto_css_switch.asp*/
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    pointer-events: all;
+  }
+  
+  .switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
