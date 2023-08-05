@@ -52,7 +52,6 @@ function save(e){
     let noparse=mode.checked
     let data={statement:inputField.value.substr(start,end),start:start, end:end,noparse:noparse,beforelogs:logs};
     postData(data,CONSTANTS.parseUrl).then(data=>{
-        console.log(data);
         fillTemplate(data)
         inputField.value=data.json.map(r=>r.statement.trim()).join("\n");
         if(end===inputField.value.length) inputField.value+="\n";
@@ -134,6 +133,7 @@ function load(e){
     loadUi()
     getData(CONSTANTS.parseUrl).then(data=>{
         inputField.value=data.json.map(r=>r.statement).join("\n");
+        if(inputField.value[inputField.value.length-1]!=='\n') inputField.value+="\n";
         fillTemplate(data)
     })
     

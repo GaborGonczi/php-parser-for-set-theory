@@ -5,7 +5,7 @@ $data=['json'=>[]];
 
 if($_SERVER['REQUEST_METHOD']==='POST'){
     if(isset($_SESSION['file'])){
-        $data=json_decode($_SESSION['file']);
+        $data=(array)json_decode($_SESSION['file']);
     }
     $stmtdata=json_decode(file_get_contents("php://input"));
     $data['json'][]=$stmtdata;
@@ -17,8 +17,8 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     
 }
 else if ($_SERVER['REQUEST_METHOD']==='GET') {
-    if(isset($_SESSION['file'])){;
-        $data=json_decode($_SESSION['file']);
+    if(isset($_SESSION['file'])){
+        $data=(array)json_decode($_SESSION['file']);
         echo json_encode($data);
     }
     
