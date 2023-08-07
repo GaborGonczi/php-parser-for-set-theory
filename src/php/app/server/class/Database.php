@@ -1,5 +1,5 @@
 <?php
-
+require_once dirname(__FILE__).'/Config.php';
 class Database {
 
     private $dbh;
@@ -13,7 +13,6 @@ class Database {
                 $this->dbh = new PDO("mysql:host=" . $this->config->getHost() . ";dbname=" . $this->config->getDb(),
                 $this->config->getUser(),$this->config->getPassword());
                 $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                echo "Connected successfully to the database.\n";
             } catch (PDOException $e) {
                 echo "Connection failed: " . $e->getMessage() . "\n";
             }
@@ -84,16 +83,47 @@ class Database {
             return false;
         }
     }
-    public function isExist($table, $data) {
-        if ($table && is_array($data) && !empty($data)) {
+    public function get($table, $where) {
+        if ($table && is_array($where) && !empty($where)) {
+        
+            $where_conditions = implode(" = ? AND ", array_keys($where)) . " = ?";
+            
+            $sql = "SELECT * FROM " . $table . " WHERE " . $where_conditions;
+            
+            $stmt = $this->dbh->prepare($sql);
+        
+            if ($stmt->execute(array_values($where))) {
+        
+                if ($stmt->rowCount() > 0) {
+                    if($stmt->rowCount() > 1){
+                        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    }
+                    else {
+                        return $stmt->fetch(PDO::FETCH_ASSOC);
+                    }
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    public function isExist($table, $where) {
+        if ($table && is_array($where) && !empty($where)) {
 
-            $data_conditions = implode(" = ? AND ", array_keys($data)) . " = ?";
+            $where_conditions = implode(" = ? AND ", array_keys($where)) . " = ?";
 
-            $sql = "SELECT * FROM " . $table . " WHERE " . $data_conditions;
+            $sql = "SELECT * FROM " . $table . " WHERE " . $where_conditions;
 
             $stmt = $this->dbh->prepare($sql);
 
-            if ($stmt->execute(array_values($data))) {
+            if ($stmt->execute(array_values($where))) {
 
                 if ($stmt->rowCount() > 0) {
                     return true;

@@ -1,4 +1,4 @@
-import { CONSTANTS } from "./constants.js"
+import { CONSTANTS } from "../constants.js"
 const backbtn=document.getElementById("back");
 const downloadbtn=document.getElementById("download");
 const inputField=document.querySelector('#input textarea#text');

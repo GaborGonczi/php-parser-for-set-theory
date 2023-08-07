@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__).'/rootfolder.php';
+require_once dirname(dirname(dirname(dirname(__FILE__)))).'/rootfolder.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -7,9 +7,9 @@ require_once dirname(__FILE__).'/rootfolder.php';
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?php echo rootfolder().'/src/css/app/client/styles.css'; ?>" type="text/css">
+    <link rel="stylesheet" href="<?php echo rootfolder().'/src/css/app/client/page/styles.css'; ?>" type="text/css">
     <script src="<?php echo rootfolder().'/src/js/external/mustache.js'; ?>"></script>
-    <script type="module" src="<?php echo rootfolder().'/src/js/app/client/program.js'; ?>" defer></script>
+    <script type="module" src="<?php echo rootfolder().'/src/js/app/client/page/program.js'; ?>" defer></script>
     <title>Document</title>
 </head>
 <body>
