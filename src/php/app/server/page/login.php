@@ -15,7 +15,7 @@
         <input type="text" id="username" name="username" />
         <label for="password">Jelszó: </label>
         <input type="password" id="password" name="password" />
-        <input type="submit" id="loginHandle" name="loginHanlde" value="Bejelentkezés">
+        <input type="submit" id="loginHandle" name="loginHandle" value="Bejelentkezés">
         <input type="submit" id="register" name="register" value="Regisztráció">
     </form>
     <?php if(isset($_SESSION)&&isset($_SESSION['messages'])&&isset($_SESSION['messages']['loginerror'])) { ?>

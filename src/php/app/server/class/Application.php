@@ -12,4 +12,10 @@ class Application
     public function client()  {
         require_once dirname(dirname(dirname(__FILE__))).'/client/page/'.__FUNCTION__.'.php';
     }
+    public function program()  {
+        require_once dirname(dirname(dirname(__FILE__))).'/client/page/'.__FUNCTION__.'.php';
+    }
+    public function help()  {
+        require_once dirname(dirname(dirname(__FILE__))).'/client/page/'.__FUNCTION__.'.php';
+    }
 }

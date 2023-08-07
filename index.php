@@ -10,16 +10,16 @@ session_start();
 (new Env(__DIR__.'/.env'))->load();
 $db=new Database(new Config(getenv('HOST'),getenv('DB'),getenv('USER'),getenv('PASSWORD')));
 if(isset($_SESSION['authedUser'])){
-    $appPages=array();
     $app=new Application($_SESSION['authedUser'],$db);
-    if(isset($_POST['page'])){
-        $page=$_POST['page'];
-        if(in_array($page,$appPages)){
-            $app->$page();
+    $appPages=array('client','help','program');
+    for ($i=0; $i <count($appPages); $i++) {
+        if(isset($_POST[$appPages[$i]])){
+            $page=$appPages[$i];
+            break;
         }
-        else{
-            $app->client();
-        }
+    }
+    if($page){
+        $app->$page();
     }
     else{
         $app->client();
@@ -34,11 +34,11 @@ else{
             break;
         }
     }
-    if($page===''){
-        $page='login';
+    if($page){
+        $auth->$page();
     }
-    $auth->$page();
-    
-
+    else{
+        $auth->login();
+    }
    
 }
