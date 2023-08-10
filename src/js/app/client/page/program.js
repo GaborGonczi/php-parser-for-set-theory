@@ -52,9 +52,10 @@ function save(e){
     let noparse=mode.checked
     let data={statement:inputField.value.substr(start,end),start:start, end:end,noparse:noparse,beforelogs:logs};
     postData(data,CONSTANTS.parseUrl).then(data=>{
+        console.log(data);
         fillTemplate(data)
         inputField.value=data.json.map(r=>r.statement.trim()).join("\n");
-        if(end===inputField.value.length) inputField.value+="\n";
+        if(end===inputField.value.length&&end>0) inputField.value+="\n";
 
     })
 
@@ -69,7 +70,7 @@ function saveToFile(){
         const url=URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download="saved.jpfm";
+        link.download="worksheet.json";
         link.click()
 
     })
@@ -94,14 +95,15 @@ function log(e){
     let sec=now.getSeconds();
     let milisec=now.getMilliseconds();
     let eventData={
-      type:e.type,
-      button:e.button,
-      ctrlKey:e.ctrlKey,
-      key:e.key,
-      sourceElementValue:e.target.value,
-      sourceElementTagname:e.target.tagName,
-      sourceElementTitle:e.target.title,
-      time:`${year}/${month}/${day}-${hour}:${min}:${sec}:${milisec}`  
+      type:e.type || null,
+      button:e.button || null,
+      ctrlKey:e.ctrlKey || null,
+      key:e.key || null,
+      sourceElementId:e.target.id || null,
+      sourceElementValue:e.target.value || null,
+      sourceElementTagname:e.target.tagName || null,
+      sourceElementTitle:e.target.title || null,
+      time:`${year}/${month}/${day}-${hour}:${min}:${sec}:${milisec}` || null  
     }
     logs.push(eventData);
 }
@@ -132,8 +134,10 @@ function load(e){
     setUpLog()
     loadUi()
     getData(CONSTANTS.parseUrl).then(data=>{
+        console.log(data);
         inputField.value=data.json.map(r=>r.statement).join("\n");
-        if(inputField.value[inputField.value.length-1]!=='\n') inputField.value+="\n";
+        console.log(inputField.value.length)
+        if(inputField.value.length>0&&inputField.value[inputField.value.length-1]!=='\n') inputField.value+="\n";
         fillTemplate(data)
     })
     

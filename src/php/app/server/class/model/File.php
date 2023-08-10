@@ -1,6 +1,6 @@
 <?php
-
-class File {
+require_once dirname(__FILE__).'/Model.php';
+class File extends Model{
 
     private $id;
     private $user_id;

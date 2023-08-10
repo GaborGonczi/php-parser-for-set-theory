@@ -16,17 +16,36 @@ class Auth
         require_once dirname(dirname(__FILE__)).'/page/'.__FUNCTION__.'.php';
     }
     public function loginHandle() {
-
-        $userExist=$this->db->isExist('users',['username'=>$_POST['username'],'password'=>$_POST['password']]);
+        $username=htmlspecialchars($_POST['username']);
+        $password=htmlspecialchars($_POST['password']);
+        $userExist=$this->db->isExist('users',['username'=>$username]);
         if($userExist){
-            $user=$this->db->get('users',['username'=>$_POST['username'],'password'=>$_POST['password']]);
+            $users=$this->db->get('users',['username'=>$username]);
+            if(count($users)===1){
+                foreach ($users as $user) {
+                    $user=new User(...array_values($user));
+                }
+            }
+            else{
+                $_SESSION['messages']['loginerror']='A felhasználónév vagy a jelszó hibás';
+            }
+
             if($user){
-                if($user['first_login']===null) $user['first_login']=date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp());
-                $user['last_login']=date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp());
-                $user['modified_at']=date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp());
-                $user['modified_by']=1;
-                $this->db->update('users',$user,['id'=>$user['id']]);
-                $_SESSION['authedUser']=new User(...array_values($user));
+                if(password_verify($password,$user->getPassword())){
+                    if($user->getFirstLogin()===null) $user->setFirstLogin(date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()));
+                    $user->setLastLogin(date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()));
+                    $user->setModifiedAt(date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()));
+                    $user->setModifiedBy(1);
+                    $this->db->update('users',$user->getAsAssociativeArray(),['id'=>$user->getId()]);
+                    $_SESSION[$_COOKIE['PHPSESSID']]['authedUser']=serialize($user);
+                }
+                else{
+                    $_SESSION['messages']['loginerror']='A felhasználónév vagy a jelszó hibás';
+                }
+                
+            }
+            else{
+                $_SESSION['messages']['loginerror']='A felhasználónév vagy a jelszó hibás';
             }
            
         }
@@ -39,27 +58,22 @@ class Auth
         
     }
     public function registerHandle()  {
-       
-        $userExist=$this->db->isExist('users',['username'=>$_POST['username'],'password'=>$_POST['password']]);
+        $username=htmlspecialchars($_POST['username']);
+        $password=htmlspecialchars($_POST['password']);
+        $passwordagain=htmlspecialchars($_POST['passwordagain']);
+        $userExist=$this->db->isExist('users',['username'=>$username]);
         if($userExist){
             $_SESSION['messages']['registererror']='A felhasználónév foglalt';
         }
+        if($password!==$passwordagain){
+            $_SESSION['messages']['registererror']='A két jelszó nem egyezik';
+        }
         else{
-            $newid=$this->db->insert('users',[
-                'username'=>$_POST['username'],
-                'password'=>$_POST['password'],
-                'first_login'=>null,
-                'last_login'=>null,
-                'created_at'=>date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()),
-                'created_by'=>1,
-                'modified_at'=>null,
-                'modified_by'=>null,
-                'deleted_at'=>null,
-                'deleted_by'=>null,
-
-            ]);
+            $newUser=new User(null,$_POST['username'],password_hash($_POST['password'],PASSWORD_BCRYPT),null,null,date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()),
+            1,null,null,null,null);
+           $newid=$this->db->insert('users',$newUser->getAsAssociativeArray());
             if(!$newid){
-                $_SESSION['messages']['registererror']='Sikertelen regisztráció';
+                $_SESSION['messages']['registererror']='Sikertelen regisztráció ismeretlen okból';
             }
             $location=rootfolder().'/index.php';
             header("Location:$location");
