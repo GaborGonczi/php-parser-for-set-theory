@@ -1,16 +1,15 @@
 <?php
 
-require_once 'src/php/app/server/class/Env.php';
-require_once 'src/php/app/server/class/Config.php';
-require_once 'src/php/app/server/class/Database.php';
+
 require_once 'src/php/app/server/class/Auth.php';
 require_once 'src/php/app/server/class/Application.php';
+require_once 'src/php/app/server/db.php';
 $page='';
 session_start();
-(new Env(__DIR__.'/.env'))->load();
-$db=new Database(new Config(getenv('HOST'),getenv('DB'),getenv('USER'),getenv('PASSWORD')));
-if(isset($_SESSION['authedUser'])){
-    $app=new Application($_SESSION['authedUser'],$db);
+global $db;
+if(isset($_COOKIE['PHPSESSID'])&&isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
+    $user=unserialize($_SESSION[$_COOKIE['PHPSESSID']]['authedUser']);
+    $app=new Application($user,$db);
     $appPages=array('client','help','program');
     for ($i=0; $i <count($appPages); $i++) {
         if(isset($_POST[$appPages[$i]])){

@@ -1,5 +1,11 @@
 <?php
 require_once dirname(dirname(dirname(dirname(__FILE__)))).'/rootfolder.php';
+session_start();
+if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
+    $location=rootfolder().'/index.php';
+    header("Location:$location");
+    exit(1);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -1,6 +1,6 @@
 <?php
-
-class Expression {
+require_once dirname(__FILE__).'/Model.php';
+class Expression extends Model{
 
     private $id;
     private $file_id;
@@ -12,8 +12,9 @@ class Expression {
     private $length; 
     private $created_at;
     private $modified_at;
+    private $deleted_at;
     
-    public function __construct($id, $file_id, $statement, $result, $start, $end, $noparse, $created_at, $modified_at) {
+    public function __construct($id, $file_id, $statement, $result, $start, $end, $noparse, $created_at, $modified_at,$deleted_at) {
    
         $this->id = $id; 
         $this->file_id = $file_id; 
@@ -21,10 +22,12 @@ class Expression {
         $this->result = $result; 
         $this->start = $start; 
         $this->end = $end; 
+        $this->length=$this->end-$this->start;
         $this->noparse = $noparse; 
         $this->created_at = $created_at; 
         $this->modified_at = $modified_at; 
-    
+        $this->deleted_at = $deleted_at; 
+
     }
     
     // Getters and setters
@@ -89,8 +92,20 @@ class Expression {
         return $this->created_at; 
     }
     
-    public function getModifiedAt() { 
-        return $this->modified_at; 
+    public function getModifiedAt() {
+        return $this->modified_at;
+    }
+
+    public function setModifiedAt($modified_at) {
+        $this->modified_at = $modified_at;
+    }
+
+    public function getDeletedAt() {
+        return $this->deleted_at;
+    }
+
+    public function setDeletedAt($deleted_at) {
+        $this->deleted_at = $deleted_at;
     }
 
 }

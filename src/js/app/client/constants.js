@@ -1,7 +1,7 @@
 export const CONSTANTS={
     serverUrl:"http://localhost/php-parser-for-set-theory/",
-    loadUrl:"",
-    saveUrl:"",
+    loadUrl:"http://localhost/php-parser-for-set-theory/src/php/app/server/page/load.php",
+    saveUrl:"http://localhost/php-parser-for-set-theory/src/php/app/server/page/save.php",
     logoutUrl:"http://localhost/php-parser-for-set-theory/src/php/app/server/page/logout.php",
     programUrl:"http://localhost/php-parser-for-set-theory/src/php/app/client/page/program.php",
     helpUrl:"http://localhost/php-parser-for-set-theory/src/php/app/client/page/help.php",

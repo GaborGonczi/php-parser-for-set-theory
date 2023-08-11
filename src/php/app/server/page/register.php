@@ -14,11 +14,14 @@
         <label for="username">Felhasználónév: </label>
         <input type="text" id="username" name="username" />
         <label for="password">Jelszó: </label>
-        <input type="password" id="password" name="password" />
+        <input type="password" id="password" name="password" minlength="8" />
         <label for="passwordagain">Jelszó újra:</label>
-        <input type="password" id="passwordagain" name="passwordagain" />
+        <input type="password" id="passwordagain" name="passwordagain" minlength="8" />
         <input type="submit" id="registerHandle" name="registerHandle" value="Regisztráció">
         <input type="submit" id="login" name="login" value="Vissza">
     </form>
+    <?php if(isset($_SESSION)&&isset($_SESSION['messages'])&&isset($_SESSION['messages']['registererror'])) { ?>
+        <div><?php echo $_SESSION['messages']['registererror']; ?> </div>
+    <?php } ?>
 </body>
 </html>

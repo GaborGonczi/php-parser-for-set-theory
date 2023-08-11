@@ -367,3 +367,7 @@ vendor/
 
 #.env
 .env
+
+#sql
+sql.sql
+seed.sql

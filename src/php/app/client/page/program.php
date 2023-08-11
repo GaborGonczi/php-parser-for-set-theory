@@ -1,5 +1,11 @@
 <?php
 require_once dirname(dirname(dirname(dirname(__FILE__)))).'/rootfolder.php';
+session_start();
+if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
+    $location=rootfolder().'/index.php';
+    header("Location:$location");
+    exit(1);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +56,8 @@ require_once dirname(dirname(dirname(dirname(__FILE__)))).'/rootfolder.php';
               </label>
               <span>Szöveges mód</span>
               <button id="download">Letöltés</button>
-              <input type="file" id="load">
+              <button id="print">Nyomtatás</button>
+              <input type="file" id="load" name="load">
             
 
               <button id="back">Vissza a főoldalra</button>

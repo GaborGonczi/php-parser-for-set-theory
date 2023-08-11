@@ -23,7 +23,7 @@ class Database {
         if ($table && is_array($data) && !empty($data)) {
             $keys=array_keys($data);
 
-            $sql = "INSERT INTO " . $table . " (" . implode(", ",$keys ) . ") VALUES (" .implode(',', array_fill(0, count($keys), '?')).  ")";
+            $sql = "INSERT INTO " . $table . " (" . implode(", ",$this->backtickColumns($keys)) . ") VALUES (" .implode(',', array_fill(0, count($keys), '?')).  ")";
 
             $stmt = $this->dbh->prepare($sql);
 
@@ -42,9 +42,9 @@ class Database {
 
         if ($table && is_array($data) && !empty($data) && is_array($where) && !empty($where)) {
 
-            $data_assignments = implode(" = ?, ", array_keys($data)) . " = ?";
+            $data_assignments = implode(" = ?, ", $this->backtickColumns(array_keys($data))) . " = ?";
 
-            $where_conditions = implode(" = ? AND ", array_keys($where)) . " = ?";
+            $where_conditions = implode(" = ? AND ", $this->backtickColumns(array_keys($where))) . " = ?";
 
             $sql = "UPDATE " . $table . " SET " . $data_assignments . " WHERE " . $where_conditions;
 
@@ -66,7 +66,7 @@ class Database {
     public function delete($table, $where) {
         if ($table && is_array($where) && !empty($where)) {
 
-            $where_conditions = implode(" = ? AND ", array_keys($where)) . " = ?";
+            $where_conditions = implode(" = ? AND ", $this->backtickColumns(array_keys($where))) . " = ?";
 
             $sql = "DELETE FROM " . $table . " WHERE " .$where_conditions;
 
@@ -86,7 +86,7 @@ class Database {
     public function get($table, $where) {
         if ($table && is_array($where) && !empty($where)) {
         
-            $where_conditions = implode(" = ? AND ", array_keys($where)) . " = ?";
+            $where_conditions = implode(" = ? AND ", $this->backtickColumns(array_keys($where))) . " = ?";
             
             $sql = "SELECT * FROM " . $table . " WHERE " . $where_conditions;
             
@@ -95,12 +95,7 @@ class Database {
             if ($stmt->execute(array_values($where))) {
         
                 if ($stmt->rowCount() > 0) {
-                    if($stmt->rowCount() > 1){
-                        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    }
-                    else {
-                        return $stmt->fetch(PDO::FETCH_ASSOC);
-                    }
+                    return $stmt->fetchAll(PDO::FETCH_ASSOC);
                 }
                 else {
                     return false;
@@ -117,7 +112,7 @@ class Database {
     public function isExist($table, $where) {
         if ($table && is_array($where) && !empty($where)) {
 
-            $where_conditions = implode(" = ? AND ", array_keys($where)) . " = ?";
+            $where_conditions = implode(" = ? AND ", $this->backtickColumns(array_keys($where))) . " = ?";
 
             $sql = "SELECT * FROM " . $table . " WHERE " . $where_conditions;
 
@@ -141,4 +136,9 @@ class Database {
         }
     }
 
+    private function backtickColumns($columns){
+        return array_map(function($column){
+            return "`$column`";
+        },$columns);
+    }
 }

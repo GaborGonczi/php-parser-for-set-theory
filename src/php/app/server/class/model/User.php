@@ -1,6 +1,6 @@
 <?php
-
-class User {
+require_once dirname(__FILE__).'/Model.php';
+class User extends Model {
 
     private $id;
     private $username;
@@ -70,7 +70,7 @@ class User {
     }
 
     public function getCreatedBy() {
-        return $this->created_by; // Return a User object based on the created_by id
+        return $this->created_by;
     }
 
     public function getModifiedAt() {
