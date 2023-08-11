@@ -13,4 +13,8 @@ abstract class Model {
         return $result;
 
     }
+
+    public function __serialize(): array {
+        return $this->getAsAssociativeArray();
+    }
 }

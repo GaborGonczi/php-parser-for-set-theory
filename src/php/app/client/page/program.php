@@ -56,7 +56,8 @@ if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
               </label>
               <span>Szöveges mód</span>
               <button id="download">Letöltés</button>
-              <input type="file" id="load">
+              <button id="print">Nyomtatás</button>
+              <input type="file" id="load" name="load">
             
 
               <button id="back">Vissza a főoldalra</button>

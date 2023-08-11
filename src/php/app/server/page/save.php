@@ -24,18 +24,19 @@ if(isset($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'])){
     if($files){
         foreach ($files as $file) {
             $filemodel=new File(...array_values($file));
-            if($filemodel->getId()===$fileid){
+            if($filemodel->getId()==$fileid){
                 $filefound=true;
                 break;
             }
+            
         }
         if($filefound){
             $isNotEmpty=$db->isExist('expressions',['file_id'=>$fileid]);
-            $content[]=['id'=>$fileid];
+            $content['id']=$fileid;
             if($isNotEmpty){
                 $expressions=$db->get('expressions',['file_id'=>$fileid]);
                 foreach ($expressions as $expression) {
-                    $content[]=new Expression(...array_values($expression));
+                    $content['expressions'][]=serialize(new Expression(...array_values($expression)));
                 }
                 echo json_encode($content);
             }
@@ -47,4 +48,10 @@ if(isset($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'])){
             $_SESSION['messages']['fileerror']='A fájl nem található';
         }
     }
+    else{
+        $_SESSION['messages']['fileerror']='A felhasználónak nincsenek fájljai.';
+    }
+}
+else{
+    $_SESSION['messages']['fileerror']='A fájlazonosító hiányzik.';
 }

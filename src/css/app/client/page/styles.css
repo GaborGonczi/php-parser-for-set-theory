@@ -139,3 +139,19 @@ input[type='checkbox']{
   .slider.round:before {
     border-radius: 50%;
   }
+
+  @media print{
+    /*#button-grid-container > * {
+      display: none;
+    }*/
+    #right-toolbar-container > * {
+      display: none;
+    }
+    #input > * {
+      display: none;
+    }
+    #output{
+      width: 100%;
+      height: 100%;
+    }
+  }
