@@ -371,3 +371,6 @@ vendor/
 #sql
 sql.sql
 seed.sql
+
+#phpunit cache
+.phpunit.cache/

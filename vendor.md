@@ -9,7 +9,7 @@
     * doc (doxygen configuration file)
     * doxygen.cmd
     * phpunit.cmd
-    * phpunit.phar (version 9.6.10)
+    * phpunit.phar (version 10.3.2)
 
 doxygen.cmd
 

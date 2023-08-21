@@ -72,7 +72,6 @@ function saveToFile(){
 }
 function loadFromFile(){
     const load=loadfile.files[0];
-    console.log(load);
     const formData = new FormData();
     formData.append("load", load);
     postEncodedData(formData,CONSTANTS.loadUrl).then(data=>{
@@ -133,7 +132,6 @@ function load(e){
     setUpLog()
     loadUi()
     getData(CONSTANTS.parseUrl).then(data=>{
-        console.log(data);
         inputField.value=data.json.map(r=>r.statement).join("\n");
         if(inputField.value.length>0&&inputField.value[inputField.value.length-1]!=='\n') inputField.value+="\n";
         fillTemplate(data)

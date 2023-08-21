@@ -74,7 +74,16 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     foreach ($file_content as $expression) {
         unset($expression['length']);
         $expressionModel=new Expression(...holdsNull((array)$expression));
-        $data['json'][]=$expressionModel->getAsAssociativeArray();
+        if(strpos($expressionModel->getResult(),'data:image/png;base64,')!==false){
+            $image=$expressionModel->getResult();
+            $expressionModel->setResult("");
+            $data['json']=array_merge($expressionModel->getAsAssociativeArray(),["diagram"=>$image]);
+        }
+        else{
+            $data['json'][]=$expressionModel->getAsAssociativeArray();
+        }
+        
+
     }
     echo json_encode($data);
     
@@ -94,7 +103,14 @@ else if ($_SERVER['REQUEST_METHOD']==='GET') {
         foreach ($file_content as $expression) {
             unset($expression['length']);
             $expressionModel=new Expression(...holdsNull((array)$expression));
-            $data['json'][]=$expressionModel->getAsAssociativeArray();
+            if(strpos($expressionModel->getResult(),'data:image/png;base64,')!==false){
+                $image=$expressionModel->getResult();
+                $expressionModel->setResult("");
+                $data['json']=array_merge($expressionModel->getAsAssociativeArray(),["diagram"=>$image]);
+            }
+            else{
+                $data['json'][]=$expressionModel->getAsAssociativeArray();
+            }
         }
         echo json_encode($data);
     }
