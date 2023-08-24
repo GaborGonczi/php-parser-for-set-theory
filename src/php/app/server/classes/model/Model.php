@@ -1,4 +1,8 @@
 <?php
+namespace app\server\classes\model;
+
+use \ReflectionClass;
+
 abstract class Model {
     public function getAsAssociativeArray():array {
         $ref = new ReflectionClass($this);

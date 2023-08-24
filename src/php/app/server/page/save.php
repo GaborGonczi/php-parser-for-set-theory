@@ -1,9 +1,12 @@
 <?php
+require_once dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))).'/autoloader.php';
+
 require_once dirname(dirname(__FILE__)).'/db.php';
-require_once dirname(dirname(__FILE__)).'/class/model/Expression.php';
-require_once dirname(dirname(__FILE__)).'/class/model/File.php';
-require_once dirname(dirname(__FILE__)).'/class/model/Log.php';
-require_once dirname(dirname(__FILE__)).'/class/model/User.php';
+
+use \app\server\classes\model\File;
+use \app\server\classes\model\Expression;
+use \app\server\classes\model\Log;
+use \app\server\classes\model\User;
 
 header('Content-Type: application/json');
 session_start();

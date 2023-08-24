@@ -1,9 +1,11 @@
 <?php
+require_once 'autoloader.php';
 
-
-require_once 'src/php/app/server/class/Auth.php';
-require_once 'src/php/app/server/class/Application.php';
 require_once 'src/php/app/server/db.php';
+
+use \app\server\classes\Application;
+use \app\server\classes\Auth;
+
 $page='';
 session_start();
 global $db;

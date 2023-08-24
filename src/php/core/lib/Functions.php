@@ -2,6 +2,7 @@
 // TODO: fix venn rendered result
 // todo: Implement inclusion-exclusion priciple to calculate the cardinality of remaining sets in case 2 or 3 sets
 namespace core\lib;
+
 use \InvalidArgumentException;
 use \core\Regexp;
 class Functions
@@ -29,7 +30,7 @@ class Functions
     }
 
     public static function isWholeNumber($element){
-        $regexp=new Regexp('/^(0|[1-9][0-9]*)$/');
+        $regexp=new Regexp('^(0|[1-9][0-9]*)$');
         return Functions::isNumber($element)&&$regexp->test($element);
     }
 

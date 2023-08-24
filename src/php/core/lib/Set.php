@@ -1,8 +1,10 @@
 <?php
 namespace core\lib;
+
 use \IteratorAggregate;
 use \Traversable;
 use \ArrayIterator;
+
 class Set implements IteratorAggregate{
 
     private $elements;

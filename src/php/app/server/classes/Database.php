@@ -1,10 +1,13 @@
 <?php
-require_once dirname(__FILE__).'/Config.php';
+namespace app\server\classes;
+
+use \PDO;
+use \PDOException;
+
 class Database {
 
     private $dbh;
     private $config;
-
 
     public function __construct(Config $config) {
         $this->config = $config;

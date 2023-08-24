@@ -1,4 +1,5 @@
 <?php
+
 require_once dirname(dirname(dirname(dirname(__FILE__)))).'/rootfolder.php';
 session_start();
 session_unset();

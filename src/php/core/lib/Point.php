@@ -1,5 +1,6 @@
 <?php
 namespace core\lib;
+
 class Point{
     private $x;
     private $y;

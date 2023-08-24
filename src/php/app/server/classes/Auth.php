@@ -1,7 +1,11 @@
 <?php
+namespace app\server\classes;
+
 require_once dirname(dirname(dirname(dirname(__FILE__)))).'/rootfolder.php';
-require_once dirname(__FILE__).'/Database.php';
-require_once dirname(__FILE__).'/model/User.php';
+
+use \app\server\classes\model\User;
+use \DateTime;
+
 class Auth 
 {
     private Database $db;

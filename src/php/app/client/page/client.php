@@ -1,5 +1,8 @@
 <?php
+
+
 require_once dirname(dirname(dirname(dirname(__FILE__)))).'/rootfolder.php';
+
 if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
     $location=rootfolder().'/index.php';
     header("Location:$location");
@@ -13,10 +16,10 @@ if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="module" src="<?php echo rootfolder().'/src/js/app/client/page/client.js';   ?>" defer></script>
-    <title>Document</title>
+    <title>Főoldal</title>
 </head>
 <body>
-    <button id="help">Útmutató</button>
+    <button id="help">Használati útmutató</button>
     <button id="program">Program</button>
     <button id="logout">Kilépés</button>
     <br/>

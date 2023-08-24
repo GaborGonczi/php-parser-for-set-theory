@@ -1,4 +1,6 @@
 <?php
+namespace app\server\classes;
+
 class Config {
     private $host;
     private $db;

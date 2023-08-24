@@ -1,5 +1,6 @@
 <?php
 namespace core\lib;
+
 class PointSetDiagramFunctions{
     private static $colorpalette;
     public static function isPoint($point) {

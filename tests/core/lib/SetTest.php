@@ -2,6 +2,7 @@
 
 use \PHPUnit\Framework\TestCase;
 use \core\lib\Set;
+
 class SetTest extends TestCase
 {
 

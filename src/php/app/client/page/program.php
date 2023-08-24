@@ -1,5 +1,8 @@
 <?php
+
+
 require_once dirname(dirname(dirname(dirname(__FILE__)))).'/rootfolder.php';
+
 session_start();
 if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
     $location=rootfolder().'/index.php';
@@ -16,7 +19,13 @@ if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
     <link rel="stylesheet" href="<?php echo rootfolder().'/src/css/app/client/page/styles.css'; ?>" type="text/css">
     <script src="<?php echo rootfolder().'/src/js/external/mustache.js'; ?>"></script>
     <script type="module" src="<?php echo rootfolder().'/src/js/app/client/page/program.js'; ?>" defer></script>
-    <title>Document</title>
+    <?php if(isset($_SESSION)&&isset($_SESSION['messages'])&&isset($_SESSION['messages']['fileerror'])) { ?>
+        <script>
+            let message = <?php echo json_encode($_SESSION['messages']['fileerror']); ?>
+            alert(message)
+        </script>
+    <?php } ?> 
+    <title>Program</title>
 </head>
 <body>
     <div class="wrapper">
@@ -42,7 +51,7 @@ if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
                 <button title="komplementer" class="operator" value="∁">∁</button>
                 <button title="unió" class="operator" value="∪">∪</button>
                 <button title="metszet" class="operator" value="∩">∩</button>
-                <button title="és" class="operator" value="ʌ">ʌ</button>
+                <button title="és" class="operator" value="∧">∧</button>
                 <button title="vagy" class="operator" value="∨">∨</button>
                 <button title="különbség" class="operator" value="∖"> ∖</button>
                 <button title="osztja" class="operator" value="∣"> ∣</button>

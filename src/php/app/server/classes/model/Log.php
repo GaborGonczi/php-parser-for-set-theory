@@ -1,5 +1,6 @@
 <?php
-require_once dirname(__FILE__).'/Model.php';
+namespace app\server\classes\model;
+
 class Log extends Model{
 
      private $id;

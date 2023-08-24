@@ -1,10 +1,12 @@
 <?php
+require_once dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))).'/autoloader.php';
+
 require_once dirname(dirname(__FILE__)).'/db.php';
-require_once dirname(dirname(dirname(__FILE__))).'/client/constants.php';
-require_once dirname(dirname(__FILE__)).'/class/model/Expression.php';
-require_once dirname(dirname(__FILE__)).'/class/model/File.php';
-require_once dirname(dirname(__FILE__)).'/class/model/Log.php';
-require_once dirname(dirname(__FILE__)).'/class/model/User.php';
+
+use \app\server\classes\model\File;
+use \app\server\classes\model\Expression;
+use \app\server\classes\model\Log;
+use \app\server\classes\model\User;
 
 header('Content-Type: application/json');
 session_start();
@@ -18,8 +20,9 @@ else{
 }
 global $db;
 
-
+$errormessage="";
 if(isset($_FILES['load'])){
+    $filefound=false;
     $file=$_FILES['load'];
     $file_name = $file['name'];
     $file_tmp = $file['tmp_name'];
@@ -27,6 +30,7 @@ if(isset($_FILES['load'])){
     $finfo=new finfo(FILEINFO_MIME_TYPE);
     $pathinfo=pathinfo($file_tmp);
     $file_mime_type=$finfo->file($file_tmp);
+    
     if($file_mime_type==="application/json"){
         $data=json_decode(file_get_contents($file_tmp),true);       
         if($data!==null){
@@ -48,34 +52,36 @@ if(isset($_FILES['load'])){
                             $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']=$fileid;
                         }
                         else {
-                            $_SESSION['messages']['fileerror']='A fájl üres';
+                            $errormessage='A fájl üres';
                         }
                     }
                     else{
-                        $_SESSION['messages']['fileerror']='A fájl nem található.';
+                        $errormessage='A fájl nem található.';
                     }
 
                 }
                 else{
-                    $_SESSION['messages']['fileerror']='A felhasználónak nincsenek fájljai.';
+                    $errormessage='A felhasználónak nincsenek fájljai.';
                 }
 
             }
             else{
-                $_SESSION['messages']['fileerror']='A fájlazonosító hiányzik.';
+                $errormessage='A fájlazonosító hiányzik.';
             }
     
         }
         else{
-            $_SESSION['messages']['fileerror']='A fájl hibás.';
+            $errormessage='A fájl hibás.';
         }
     }
     else{
-        $_SESSION['messages']['fileerror']='A fájl nem megfelelő típusú';
+        $errormessage='A fájl nem megfelelő típusú';
     }
 
 }
 else{
-    $_SESSION['messages']['fileerror']='Nem várt hiba történt a feltöltés közben';
+    $errormessage='Nem várt hiba történt a feltöltés közben';
 }
-           
+if($errormessage!==""){
+    echo json_encode(["error"=>$errormessage]);
+}

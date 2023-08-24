@@ -1,6 +1,8 @@
 <?php
-require_once dirname(__FILE__).'/Database.php';
-require_once dirname(__FILE__).'/model/User.php';
+namespace app\server\classes;
+
+use \app\server\classes\model\User;
+
 class Application
 {
     private Database $db;

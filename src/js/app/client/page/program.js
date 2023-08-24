@@ -1,4 +1,5 @@
 import { CONSTANTS } from "../constants.js"
+import { htmlEntityMap } from "../htmlentitytable.js";
 const backbtn=document.getElementById('back');
 const downloadbtn=document.getElementById('download');
 const printbtn=document.getElementById('print');
@@ -46,7 +47,11 @@ function save(e){
     let start=inputField.value.lastIndexOf("\n",cursorPos)+1;
     let end=inputField.value.indexOf("\n",start)!==-1?inputField.value.indexOf("\n",start):inputField.value.length;
     let noparse=mode.checked
-    let data={statement:inputField.value.substr(start,end),start:start, end:end,noparse:noparse,beforelogs:logs};
+    let statement=String(inputField.value.substr(start,end));
+    Object.keys(htmlEntityMap).forEach((entity)=>{
+        statement.replaceAll(entity,htmlEntityMap[entity]);
+    })
+    let data={statement:statement,start:start, end:end,noparse:noparse,beforelogs:logs};
     postData(data,CONSTANTS.parseUrl).then(data=>{
         fillTemplate(data)
         inputField.value=data.json.map(r=>r.statement.trim()).join("\n");
@@ -75,6 +80,11 @@ function loadFromFile(){
     const formData = new FormData();
     formData.append("load", load);
     postEncodedData(formData,CONSTANTS.loadUrl).then(data=>{
+        if(data){
+            data=JSON.parse(data)
+            alert(data["error"])
+            return;
+        }
         getData(CONSTANTS.parseUrl).then(data=>{
             inputField.value=data.json.map(r=>r.statement).join("\n");
             if(inputField.value.length>0&&inputField.value[inputField.value.length-1]!=='\n') inputField.value+="\n";

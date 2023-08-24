@@ -4,6 +4,7 @@ use \PHPUnit\Framework\TestCase;
 use \core\lib\Functions;
 use \core\lib\Set;
 use core\Regexp;
+
 class FunctionsTest extends TestCase
 {
 

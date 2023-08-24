@@ -5,6 +5,7 @@ use \core\lib\Point;
 use \core\lib\PointSetDiagramFunctions;
 use \core\lib\PointSetDiagramOptions;
 use \core\lib\Set;
+
 class PointSetDiagramFunctionsTest extends TestCase
 {
 

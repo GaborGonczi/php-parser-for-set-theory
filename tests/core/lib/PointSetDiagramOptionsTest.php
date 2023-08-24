@@ -2,6 +2,7 @@
 
 use \PHPUnit\Framework\TestCase;
 use \core\lib\PointSetDiagramOptions;
+
 class PointSetDiagramOptionsTest extends TestCase
 {
     private $options;

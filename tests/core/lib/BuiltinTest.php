@@ -1,22 +1,19 @@
 <?php
 
 use \PHPUnit\Framework\TestCase;
-use \core\lib\Builtin;
+
 class BuiltinTest extends TestCase
 {
-    private $builtin;
     private $reflectionObject;
 
 
     protected function setUp(): void
     {
-        $this->builtin=new Builtin;
-        $this->reflectionObject= new ReflectionClass($this->builtin);
+        $this->reflectionObject= new ReflectionClass("\core\lib\Builtin");
     }
     protected function tearDown(): void
     {
         unset($this->reflectionObject);
-        unset($this->builtin);
     }
     /**
     * @uses \core\lib\Builtin
