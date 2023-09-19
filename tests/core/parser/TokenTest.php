@@ -53,7 +53,12 @@ class TokenTest extends TestCase {
             [Token::LESSTHANOREQUAL, 'lessthanorequal', '<='],
             [Token::GREATERTHANOREQUAL, 'greaterthanorequal', '>='],
             [Token::IDENTIFIER, 'identifier', '^([_a-zA-Z][_a-zA-Z0-9]*)$'],
-            [Token::NUMBER, 'number', '^(0|[1-9][0-9]*)$']
+            [Token::NUMBER, 'number', '^(0|[1-9][0-9]*)$'],
+
+            [Token::VENN, 'venn', 'Venn'],
+            [Token::POINTSETDIAGRAM, 'pointsetdiagram', 'PointSetDiagram'],
+            [Token::ADD, 'add', 'add'],
+            [Token::DELETE, 'delete', 'delete']
         ];
     }
 }

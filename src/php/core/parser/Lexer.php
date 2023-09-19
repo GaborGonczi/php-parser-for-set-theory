@@ -3,6 +3,7 @@ namespace core\parser;
 
 use \core\Regexp;
 use \core\lib\Builtin;
+use \core\parser\exception\LexerException;
 
 class Lexer
 {
@@ -12,6 +13,8 @@ class Lexer
     "&sub;",	"&comp;",	"&cup;",	
     "&cap;",	"&and;",	"&or;",	
     "&setminus;",	"&mid;",	"&nmid;","&lt;","&gt;"];
+
+    private const TOKENCLASSNAMESPACE ='\core\parser\TOKEN::';
     public function __construct($input = "")
     {
         $this->input = $input . "$";
@@ -56,7 +59,8 @@ class Lexer
                 }
                 $id = substr($id, 0, -1);
                 if (in_array($id, Builtin::NAMES)) {
-                    $tokens[] = ['type' => Builtin::TYPE, 'value' => $id];
+                    $id=strtoupper($id);
+                    $tokens[] = ['type' => constant(self::TOKENCLASSNAMESPACE.strtoupper($id))['name'], 'value' => constant(self::TOKENCLASSNAMESPACE.strtoupper($id))['value']];
                 } else {
                     $tokens[] = ['type' => Token::IDENTIFIER["name"], 'value' => $id];
                 }
@@ -75,28 +79,28 @@ class Lexer
             } else {
                 switch ($c) {
                     case (TOKEN::PLUS['value']):
-                        $tokens[] = ['type' => token::PLUS['name'], 'value' => TOKEN::PLUS['value']];
+                        $tokens[] = ['type' => TOKEN::PLUS['name'], 'value' => TOKEN::PLUS['value']];
                         break;
                     case (TOKEN::MINUS['value']):
-                        $tokens[] = ['type' => token::MINUS['name'], 'value' => TOKEN::MINUS['value']];
+                        $tokens[] = ['type' => TOKEN::MINUS['name'], 'value' => TOKEN::MINUS['value']];
                         break;
                     case (TOKEN::MULTIPLY['value']):
-                        $tokens[] = ['type' => token::MULTIPLY['name'], 'value' => TOKEN::MULTIPLY['value']];
+                        $tokens[] = ['type' => TOKEN::MULTIPLY['name'], 'value' => TOKEN::MULTIPLY['value']];
                         break;
                     case (TOKEN::DIVIDE['value']):
-                        $tokens[] = ['type' => token::DIVIDE['name'], 'value' => TOKEN::DIVIDE['value']];
+                        $tokens[] = ['type' => TOKEN::DIVIDE['name'], 'value' => TOKEN::DIVIDE['value']];
                         break;
                     case (TOKEN::DOT['value']):
-                        $tokens[] = ['type' => token::DOT['name'], 'value' => TOKEN::DOT['value']];
+                        $tokens[] = ['type' => TOKEN::DOT['name'], 'value' => TOKEN::DOT['value']];
                         break;
                     case (TOKEN::COMPLEMENT['value']):
-                        $tokens[] = ['type' => token::COMPLEMENT['name'], 'value' => TOKEN::COMPLEMENT['value']];
+                        $tokens[] = ['type' => TOKEN::COMPLEMENT['name'], 'value' => TOKEN::COMPLEMENT['value']];
                         break;
                     case (TOKEN::ELEMENTOF['value']):
-                        $tokens[] = ['type' => token::ELEMENTOF['name'], 'value' => TOKEN::ELEMENTOF['value']];
+                        $tokens[] = ['type' => TOKEN::ELEMENTOF['name'], 'value' => TOKEN::ELEMENTOF['value']];
                         break;
                     case (TOKEN::NOTELEMENTOF['value']):
-                        $tokens[] = ['type' => token::NOTELEMENTOF['name'], 'value' => TOKEN::NOTELEMENTOF['value']];
+                        $tokens[] = ['type' => TOKEN::NOTELEMENTOF['name'], 'value' => TOKEN::NOTELEMENTOF['value']];
                         break;
                     case (TOKEN::EQUAL['value']):
                         $tokens[] = ['type' => TOKEN::EQUAL['name'], 'value' => TOKEN::EQUAL['value']];
@@ -163,8 +167,7 @@ class Lexer
                         break;   
                     default:
                         $lastGood = $tokens[count($tokens) - 1];
-                        $tokens[] = ['type' => 'undefined', 'value' => 'Last good: ' . print_r($lastGood,true), 'rowPos' => $i + 1];
-                        return $tokens;
+                        throw new LexerException('Last good: ' . json_encode($lastGood). 'RowPos: '. $i+1);
                 }
             }
         }

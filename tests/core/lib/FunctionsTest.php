@@ -3,6 +3,7 @@
 use \PHPUnit\Framework\TestCase;
 use \core\lib\Functions;
 use \core\lib\Set;
+use \core\parser\Token;
 use core\Regexp;
 
 class FunctionsTest extends TestCase
@@ -74,6 +75,26 @@ class FunctionsTest extends TestCase
         $this->assertFalse(Functions::isFunction(42));
         $this->assertFalse(Functions::isFunction(new Set([])));
     }
+    /**  
+     *  @covers \core\lib\Functions::isNull  
+     * @uses \core\lib\Set  
+     */
+    public function testIsNull()
+    {
+
+        $this->assertTrue(Functions::isNull(null));
+
+        $this->assertFalse(Functions::isNull(function () { }));
+        $this->assertFalse(Functions::isNull('strlen'));
+        $this->assertFalse(Functions::isNull('abc'));
+        $this->assertFalse(Functions::isNull(42));
+        $this->assertFalse(Functions::isNull(42.6));
+        $this->assertFalse(Functions::isNull(new Set([])));
+        $this->assertFalse(Functions::isNull(true));
+        $this->assertFalse(Functions::isNull(false));
+        $this->assertFalse(Functions::isNull([]));
+        $this->assertFalse(Functions::isNull("null"));
+    }
 
     /**
      * @covers \core\lib\Functions::isWholeNumber
@@ -107,6 +128,39 @@ class FunctionsTest extends TestCase
         $this->assertFalse(Functions::isSet('abc'));
         $this->assertFalse(Functions::isSet(42));
     }
+    
+    /**
+     * @covers \core\lib\Functions::IsGoodOperation
+     * @uses \core\lib\Set
+     */
+    public function testIsGoodOperation() {
+        $goodoperations = array("+", "-");
+        
+        $this->assertTrue(Functions::IsGoodOperation('+', $goodoperations));
+        $this->assertTrue(Functions::IsGoodOperation('-', $goodoperations));
+        $this->assertFalse(Functions::IsGoodOperation('*', $goodoperations));
+        $this->assertFalse(Functions::IsGoodOperation('/', $goodoperations));
+        
+        
+        $this->expectException(InvalidArgumentException::class);
+        Functions::IsGoodOperation(1, "not an array");
+    }
+    /**
+     * @covers \core\lib\Functions::removeNullFromArray
+     */
+    public function testRemoveNullFromArray()
+    {
+
+        $this->assertIsArray(Functions::removeNullFromArray([]));
+
+
+        $this->expectException(InvalidArgumentException::class);
+        Functions::removeNullFromArray("not an array");
+
+
+        $this->assertEquals([1, 2, 3], Functions::removeNullFromArray([1, null, 2, null, 3]));
+    }
+
 
     /**
      * @covers \core\lib\Functions::createSetFromArray
@@ -136,13 +190,16 @@ class FunctionsTest extends TestCase
 
         $start = 1;
         $end = 5;
-        $formula = function ($x) {
-            return $x * 2;
+        $boundformula = function ($x) {
+            return $x>1&&$x<=3||$x==5;
         };
-        $set = Functions::createSetFromFormula($start, $end, $formula);
+        $set = Functions::createSetFromFormula($start, $end, $boundformula);
         $this->assertInstanceOf(Set::class, $set);
         for ($i = $start; $i <= $end; $i++) {
-            $this->assertTrue($set->has($formula($i)));
+            if($boundformula($i)){
+                $this->assertTrue($set->has($i));
+            }
+            
         }
 
 
@@ -408,25 +465,55 @@ class FunctionsTest extends TestCase
     }
 
     /**
-     * @covers \core\lib\Functions::delElement
+     * @covers \core\lib\Functions::deleteElement
      * @uses \core\lib\Set
      */
-    public function testDelElement()
+    public function testDeleteElement()
     {
 
         $set = new Set([1, 2]);
-        $this->assertTrue(Functions::delElement(2, $set));
+        $this->assertTrue(Functions::deleteElement(2, $set));
         $this->assertFalse($set->has(2));
 
 
-        $this->assertTrue(Functions::delElement(3, $set));
+        $this->assertTrue(Functions::deleteElement(3, $set));
         $this->assertEquals(1, $set->size());
 
 
         $this->expectException(InvalidArgumentException::class);
-        Functions::delElement('a', 'b');
+        Functions::deleteElement('a', 'b');
 
     }
+
+    /**
+     * @covers \core\lib\Functions::createDivisibilityCondition
+     * @uses \core\parser\Token
+     */
+    public function testCreateDivisibilityCondition() {
+
+        $divisor = 3;
+        $divide = Token::DIVIDE['value'];
+        $doesnotdivide = Token::DOESNOTDIVIDE['value'];
+        $num1 = 9;
+        $num2 = 10;
+    
+        
+        // create a divisibility condition using the function
+        $divideCond = Functions::createDivisibilityCondition($divisor, $divide);
+        $noDivideCond = Functions::createDivisibilityCondition($divisor, $doesnotdivide);
+        
+        // assert that the condition returns the expected output for different inputs
+        $this->assertTrue($divideCond($num1));
+        $this->assertTrue($noDivideCond($num2));
+        $this->assertFalse($divideCond($num2));
+        $this->assertFalse($noDivideCond($num1));
+        
+        
+        // assert that the function returns an illegal argument exception for invalid inputs
+        $this->expectException(InvalidArgumentException::class);
+        Functions::createDivisibilityCondition('a', 'b');
+    }
+    
     /**
      * @covers \core\lib\Functions::venn
      * @uses \core\lib\Set
@@ -481,7 +568,7 @@ class FunctionsTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
 
-        Functions::venn($setA, $setB, $setC,$setD);
+        Functions::venn($setA, $setB, $setC, $setD);
 
     }
 }

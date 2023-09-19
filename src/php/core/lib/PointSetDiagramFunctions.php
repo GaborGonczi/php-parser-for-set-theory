@@ -31,7 +31,7 @@ class PointSetDiagramFunctions{
         }
         return $result;
     }
-    public static function pointSetDiagram($points,$options=new PointSetDiagramOptions()){
+    public static function PointSetDiagram($points,$options=new PointSetDiagramOptions()){
         if(!PointSetDiagramFunctions::isPointSet($points)) Functions::illegalArguments(__METHOD__);
         $computedParams=[
             "xfrom"=>$options->get_x_from(),

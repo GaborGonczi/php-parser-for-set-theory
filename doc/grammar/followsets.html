@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Follow sets</title>
+    <style>
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      td,
+      th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+
+      tr:nth-child(even) {
+        background-color: #dddddd;
+      }
+      .button {
+        background-color: #4caf50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        -webkit-transition-duration: 0.4s; /* Safari */
+        transition-duration: 0.4s;
+      }
+      .button:hover {
+        box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+          0 17px 50px 0 rgba(0, 0, 0, 0.19);
+      }
+    </style>
+        <script>
+          function navigate(){
+            let backt = document.getElementById("backt");
+            let backb = document.getElementById("backb");
+            backt.addEventListener("click",e => {
+              window.location.href = window.location.href.replace(
+                "followsets",
+                "index"
+              );
+            });
+            backb.addEventListener("click",e => {
+              window.location.href = window.location.href.replace(
+                "followsets",
+                "index"
+              );
+            });
+        }
+        </script>
+  </head>
+  <body onload="navigate()">
+    <button id="backt" class="button">Back</button>
+    <table>
+      <tr>
+        <th>Non-terminal</th>
+        <th>Production</th>
+        <th>Follow set</th>
+      </tr>
+      <tr>
+        <td>S</td>
+        <td>STATEMENT eol</td>
+        <td>{}</td>
+      </tr>
+      <tr>
+        <td>STATEMENT</td>
+        <td>
+          SEXPR | SELEMENTOFNELEMENTOF | SFUNCTIONCALL | SSIMPLEEXPRESSION
+        </td>
+        <td>{eol}</td>
+      </tr>
+      <tr>
+        <td>SEXPR</td>
+        <td>SETOPERATIONSIDE SEXPR' | POINT</td>
+        <td>{eol}</td>
+      </tr>
+      <tr>
+        <td>SEXPR'</td>
+        <td>STESRUISC | SOFUNCTIONCALL | e</td>
+        <td>{eol, verticalline}</td>
+      </tr>
+      <tr>
+        <td>STESRUISC</td>
+        <td>
+          tobeequal CURLIEDSETEXP | equal SETOPERATIONSIDE | subsetof
+          SETOPERATIONSIDE | realsubsetof SETOPERATIONSIDE | union
+          SETOPERATIONSIDE | intersection SETOPERATIONSIDE | setminus
+          SETOPERATIONSIDE | complement
+        </td>
+        <td>{eol, verticalline}</td>
+      </tr>
+      <tr>
+        <td>SETOPERATIONSIDE</td>
+        <td>identifier | CURLIEDSETEXP</td>
+        <td>
+          {eol,verticallinetobeequal,equal,subsetof,realsubsetof,union,intersection,setminus,complement,identifier}
+        </td>
+      </tr>
+      <tr>
+        <td>CURLIEDSETEXP</td>
+        <td>leftcurlybrace SETEXP rightcurlybrace</td>
+        <td>
+          {eol,verticallinetobeequal,equal,subsetof,realsubsetof,union,intersection,setminus,complement,identifier,comma}
+        </td>
+      </tr>
+      <tr>
+        <td>SETEXP</td>
+        <td>SETLITERAL | POINTSETLITERAL | SETFORMULA</td>
+        <td>{rightcurlybrace}</td>
+      </tr>
+      <tr>
+        <td>SETFORMULA</td>
+        <td>identifier verticalline LOGICALEXP</td>
+        <td>{rightcurlybrace}</td>
+      </tr>
+      <tr>
+        <td>LOGICALEXP</td>
+        <td>LOGICALSUBEXP LOGICALEXP'</td>
+        <td>{rightcurlybrace,rightparenthesis}</td>
+      </tr>
+      <tr>
+        <td>LOGICALEXP'</td>
+        <td>LOGICALOPERATOR LOGICALEXP | e</td>
+        <td>{rightcurlybrace,rightparenthesis}</td>
+      </tr>
+      <tr>
+        <td>LOGICALOPERATOR</td>
+        <td>land | lor</td>
+        <td>{minus,number,leftparenthesis,identifier}</td>
+      </tr>
+      <tr>
+        <td>LOGICALSUBEXP</td>
+        <td>
+          leftparenthesis LOGICALEXP rightparenthesis | identifier
+          COMPARSIONOPERATOR LOGICALRHS | WHOLENUMBER DIVISIBILITYOPERATOR
+          identifier
+        </td>
+        <td>{land,lor,rightcurlybrace,rightparenthesis}</td>
+      </tr>
+      <tr>
+        <td>COMPARSIONOPERATOR</td>
+        <td>
+          greaterthanorequal | lessthanorequal | greaterthan | lessthan | equal
+        </td>
+        <td>{minus,number,identifier}</td>
+      </tr>
+      <tr>
+        <td>DIVISIBILITYOPERATOR</td>
+        <td>divides | doesnotdivide</td>
+        <td>{identifier}</td>
+      </tr>
+      <tr>
+        <td>LOGICALRHS</td>
+        <td>identifier LOGICALRHS' | WHOLENUMBER LOGICALRHS'</td>
+        <td>{land,lor,rightcurlybrace,rightparenthesis}</td>
+      </tr>
+      <tr>
+        <td>LOGICALRHS'</td>
+        <td>SIMPLEOPERATOR LOGICALRHS''| e</td>
+        <td>{land,lor,rightcurlybrace,rightparenthesis}</td>
+      </tr>
+      <tr>
+        <td>LOGICALRHS''</td>
+        <td>WHOLENUMBER | identifier</td>
+        <td>{land,lor,rightcurlybrace,rightparenthesis}</td>
+      </tr>
+      <tr>
+        <td>SIMPLEOPERATOR</td>
+        <td>plus | minus | multiply | divide</td>
+        <td>{verticalline,minus,number,identifier}</td>
+      </tr>
+      <tr>
+        <td>SETLITERAL</td>
+        <td>WHOLENUMBER SETLITERAL'</td>
+        <td>{rightcurlybrace}</td>
+      </tr>
+      <tr>
+        <td>SETLITERAL'</td>
+        <td>comma SETLITERAL | e</td>
+        <td>{rightcurlybrace}</td>
+      </tr>
+      <tr>
+        <td>POINTSETLITERAL</td>
+        <td>POINT POINTSETLITERAL'</td>
+        <td>{rightcurlybrace}</td>
+      </tr>
+      <tr>
+        <td>POINTSETLITERAL'</td>
+        <td>comma POINTSETLITERAL | e</td>
+        <td>{rightcurlybrace}</td>
+      </tr>
+      <tr>
+        <td>POINT</td>
+        <td>
+          leftsquarebracket WHOLENUMBER comma WHOLENUMBER rightsquarebracket
+        </td>
+        <td>{comma,eol}</td>
+      </tr>
+      <tr>
+        <td>SELEMENTOFNELEMENTOF</td>
+        <td>WHOLENUMBER SELEMENTOFNELEMENTOF'</td>
+        <td>{eol}</td>
+      </tr>
+      <tr>
+        <td>SELEMENTOFNELEMENTOF'</td>
+        <td>elementof SETOPERATIONSIDE| notelementof SETOPERATIONSIDE</td>
+        <td>{eol}</td>
+      </tr>
+      <tr>
+        <td>WHOLENUMBER</td>
+        <td>minus number | number</td>
+        <td>
+          {elementof,notelementof,comma,rightsquarebracket,land,lor,rightparenthesis,plus,minus,multiply,divide,divides,doesnotdivide}
+        </td>
+      </tr>
+      <tr>
+        <td>SCARDINALITY</td>
+        <td>verticalline SETOPERATIONSIDE SEXPR' verticalline</td>
+        <td>{eol,plus,minus,multiply,divide}</td>
+      </tr>
+      <tr>
+        <td>SOFUNCTIONCALL</td>
+        <td>
+          identifier dot SOFUNCTIONNAME leftparenthesis ARGUMENTS
+          rightparenthesis
+        </td>
+        <td>{eol, verticalline}</td>
+      </tr>
+      <tr>
+        <td>SOFUNCTIONNAME</td>
+        <td>add | delete</td>
+        <td>{leftparenthesis}</td>
+      </tr>
+      <tr>
+        <td>SFUNCTIONCALL</td>
+        <td>SFUNCTIONNAME leftparenthesis ARGUMENTS rightparenthesis</td>
+        <td>{eol}</td>
+      </tr>
+      <tr>
+        <td>SFUNCTIONNAME</td>
+        <td>venn | pointsetdiagram</td>
+        <td>{leftparenthesis}</td>
+      </tr>
+      <tr>
+        <td>ARGUMENTS</td>
+        <td>ARGUMENT ARGUMENTS'</td>
+        <td>{rightparenthesis}</td>
+      </tr>
+      <tr>
+        <td>ARGUMENTS'</td>
+        <td>comma ARGUMENT | e</td>
+        <td>{rightparenthesis}</td>
+      </tr>
+      <tr>
+        <td>ARGUMENT</td>
+        <td>identifier | CURLIEDSETEXP | WHOLENUMBER</td>
+        <td>{rightparenthesis,comma}</td>
+      </tr>
+      <tr>
+        <td>SSIMPLEEXPRESSION</td>
+        <td>SCARDINALITY SSIMPLEEXPRESSION'</td>
+        <td>{eol}</td>
+      </tr>
+      <tr>
+        <td>SSIMPLEEXPRESSION'</td>
+        <td>SIMPLEOPERATOR SCARDINALITY | e</td>
+        <td>{eol}</td>
+      </tr>
+    </table>
+    <button id="backb" class="button">Back</button>
+  </body>
+</html>

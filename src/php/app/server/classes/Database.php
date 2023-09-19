@@ -144,4 +144,8 @@ class Database {
             return "`$column`";
         },$columns);
     }
+
+    public function __destruct(){
+        $this->dbh=null;
+    }
 }

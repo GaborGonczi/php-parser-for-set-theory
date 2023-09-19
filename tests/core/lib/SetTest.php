@@ -145,7 +145,7 @@ class SetTest extends TestCase
 
 
     /**
-    * @coverage \core\lib\Set::__zoString
+    * @coverage \core\lib\Set::__toString
     */
     public function testToString()
     {

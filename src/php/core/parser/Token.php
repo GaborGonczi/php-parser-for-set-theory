@@ -37,4 +37,11 @@ class Token
     const IDENTIFIER = ['name' => 'identifier', 'value' => '^([_a-zA-Z][_a-zA-Z0-9]*)$'];
     const NUMBER = ['name' => 'number', 'value' => '^(0|[1-9][0-9]*)$'];
     const EOL = ['name' => 'eol', 'value' => '$'];
+    
+    /*tokens for reserved  words */
+
+    const VENN =['name'=>'venn', 'value'=>'Venn'];
+    const POINTSETDIAGRAM=['name'=>'pointsetdiagram','value'=>'PointSetDiagram'];
+    const ADD=['name'=>'add','value'=>'add'];
+    const DELETE=['name'=>'delete','value'=>'delete'];
 }

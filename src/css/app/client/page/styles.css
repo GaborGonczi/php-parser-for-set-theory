@@ -13,6 +13,18 @@
     width: 100%;
     height: 100vh;
 }
+
+#right-toolbar-container > #variables{
+  height: 200px;
+}
+
+#variables > textarea{
+  width: 100%;
+  overflow: scroll;
+  background-color: #fff;
+  height: 200px;
+}
+
 .button-grid-container{
     --grid-row:1;
     --grid-column:1;
@@ -23,7 +35,7 @@
     
 }
 button{
-    width: 50px;
+    min-width: 50px;
     height: 50px;
     margin: 0;
     pointer-events: all;

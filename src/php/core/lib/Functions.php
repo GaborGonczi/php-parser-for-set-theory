@@ -3,7 +3,9 @@
 // todo: Implement inclusion-exclusion priciple to calculate the cardinality of remaining sets in case 2 or 3 sets
 namespace core\lib;
 
+use core\parser\Token;
 use \InvalidArgumentException;
+use \Closure;
 use \core\Regexp;
 class Functions
 {
@@ -25,8 +27,27 @@ class Functions
         return is_array($array);
     }
 
+    public static function isEmptyArray($array){
+        return Functions::isArray($array)&& empty($array);
+    }
+
+    public static function isNotEmptyArray($array){
+        return !Functions::isEmptyArray($array);
+    }
+
+    public static function isObject($object){
+        return is_object($object);
+    }
+
     public static function isFunction($userDefinedFunction){
         return is_callable($userDefinedFunction);
+    }
+
+    public static function isNull($element){
+        return is_null($element);
+    }
+    public static function isNotNull($element){
+        return !Functions::isNull($element);
     }
 
     public static function isWholeNumber($element){
@@ -38,21 +59,44 @@ class Functions
         return gettype($set)==="object"&&$set instanceof Set;
     }
 
+    public static function IsGoodOperation($operation, $goodoperations){
+        if(!Functions::isString($operation)||!Functions::isArray($goodoperations)) Functions::illegalArguments(__METHOD__);
+        return in_array($operation,$goodoperations);
+    }
+
+    public static function removeNullFromArray($array){
+        if(!Functions::isArray($array)) return Functions::illegalArguments(__METHOD__);
+        return array_values(array_filter($array,__CLASS__.'::isNotNull'));
+    }
+    
+    public static function removeEmptyArrayFromArray($array){
+        if(!Functions::isArray($array)) return Functions::illegalArguments(__METHOD__);
+        return array_values(array_filter($array,__CLASS__.'::isNotEmptyArray'));
+    }
+
     public static function createSetFromArray($array){
         if(!Functions::isArray($array)) return Functions::illegalArguments(__METHOD__);
         $result= new Set([]);
         foreach ($array as $value) {
-            $result->add(floatval($value));
+            $result->add($value);
         }
         return $result;
 
     }
 
-    public static function createSetFromFormula($start,$end,$formula){
-        if(!Functions::isWholeNumber($start) || !Functions::isWholeNumber($end) || !Functions::isFunction($formula)) return Functions::illegalArguments(__METHOD__);
+    public static function createSetFromFormula($start,$end,$boundformula,$formula=null){
+        if(!Functions::isWholeNumber($start) || !Functions::isWholeNumber($end) || !Functions::isFunction($boundformula)||(!Functions::isFunction($formula)&&!Functions::isNull($formula))) return Functions::illegalArguments(__METHOD__);
         $result=new Set([]);
-        for ($i=$start; $i < $end+1 ; $i++) { 
-            $result->add(floatval($formula($i)));
+        for ($i=$start; $i < $end+1 ; $i++) {
+            if($boundformula($i)){
+                if(Functions::isFunction($formula)){
+                    $result->add(floatval($formula($i)));
+                }
+                else{
+                    $result->add(floatval($i));
+                }
+            }
+            
         }
         return $result;
     }
@@ -144,13 +188,192 @@ class Functions
 
     }
 
-    public static function delElement($element,$set){
+    public static function deleteElement($element,$set){
         if(!Functions::isSet($set) || !Functions::isWholeNumber($element)) return Functions::illegalArguments(__METHOD__);
         $oldSize=$set->size();
         return !$set->has($element) || $set->delete($element)->size()===$oldSize-1;
     }
 
-    public static function venn(...$sets){
+    public static function createDivisibilityCondition($number, $operation){
+        if(!Functions::isWholeNumber($number)||!Functions::IsGoodOperation($operation,array(Token::DIVIDE['value'],Token::DOESNOTDIVIDE['value']))) return Functions::illegalArguments(__METHOD__);
+        return $operation===Token::DIVIDE['value']? function($num) use($number){ return $num%$number===0;}:function($num)use($number){ return $num%$number!==0;};
+    }
+    public static function processLogicalRhs($rhsparts){
+        $rhsfuncs=[];
+        if(!Functions::isArray($rhsparts)) return Functions::illegalArguments(__METHOD__);
+        if(isset($rhsparts['num'])&&isset($rhsparts['op'])&&isset($rhsparts['id'])){
+            if(!Functions::isWholeNumber($rhsparts['num'])||!Functions::IsGoodOperation($rhsparts['op'],
+            array(Token::PLUS['value'],Token::MINUS['value'],Token::MULTIPLY['value'],Token::DIVIDE['value']))) return Functions::illegalArguments(__METHOD__);
+            switch ($rhsparts['op']) {
+                case (Token::PLUS['value']):
+                    $rhsfuncs[$rhsparts['id']][]=function($var) use($rhsparts) {return $var + $rhsparts['num']; };
+                    break;
+                case (Token::MINUS['value']):
+                    $rhsfuncs[$rhsparts['id']][]=function($var) use($rhsparts) {return $var - $rhsparts['num']; };
+                    break;
+                case (Token::MULTIPLY['value']):
+                    $rhsfuncs[$rhsparts['id']][]=function($var) use($rhsparts) {return $var * $rhsparts['num']; };
+                    break;
+                case (Token::DIVIDE['value']):
+                    $rhsfuncs[$rhsparts['id']][]=function($var) use($rhsparts) {return $var / $rhsparts['num']; };
+                    break;
+            }
+            
+        }
+        else if (isset($rhsparts['num'])) {
+            $rhsfuncs['constant']=function () use ($rhsparts) {return $rhsparts['num']; };
+        }
+        return $rhsfuncs;
+    }
+    public static function createComparsionCondition($comparsionop,$logicalrhsfuncs){
+        switch ($comparsionop) {
+            case (Token::LESSTHAN['value']):
+                $compCond=function($var) use($logicalrhsfuncs) {$constantrhs=$logicalrhsfuncs['constant'];return $var <  $constantrhs();};
+                break;
+            case (Token::GREATERTHAN['value']):
+                $compCond=function($var) use($logicalrhsfuncs) {$constantrhs=$logicalrhsfuncs['constant'];return $var > $constantrhs(); };
+                break;
+            case (Token::LESSTHANOREQUAL['value']):
+                $compCond=function($var) use($logicalrhsfuncs) {$constantrhs=$logicalrhsfuncs['constant'];return $var <= $constantrhs(); };
+                break;
+            case (Token::GREATERTHANOREQUAL['value']):
+                $compCond=function($var) use($logicalrhsfuncs) {$constantrhs=$logicalrhsfuncs['constant'];return $var >= $constantrhs(); };
+                break;
+            case (Token::EQUAL['value']):
+                $compCond=function($var) use($logicalrhsfuncs) {$constantrhs=$logicalrhsfuncs['constant'];return $var == $constantrhs(); };
+                break;
+            
+        }
+        return $compCond;
+     
+    }
+    public static function transformConditionsToTree($partsToConcat){
+        if(!Functions::isArray($partsToConcat)) return Functions::illegalArguments(__METHOD__);
+        $varname=array_diff(array_keys($partsToConcat),array('logicalop'));
+        if(isset($partsToConcat['logicalop'])){
+            if(!Functions::IsGoodOperation($partsToConcat['logicalop'],
+            array(Token::LAND['value'],Token::LOR['value']))) return Functions::illegalArguments(__METHOD__);
+            
+            if(isset($partsToConcat['subexp'])) {
+                switch ($partsToConcat['logicalop']) {
+                    case (Token::LAND['value']):
+
+                        $result['&&']=$partsToConcat['subexp'];
+                        break;
+                    case (Token::LOR['value']):
+                        $result['||']=$partsToConcat['subexp'];
+                        break;
+                        
+                        
+                }
+            }
+           
+            
+        }
+        else if(isset($partsToConcat['subexp'])){
+            $restparts=$partsToConcat['subexp'];
+            $varname=array_diff(array_keys($restparts),array('logicalop'))[0];
+            $op= array_keys($restparts[$varname])[0];
+            $result[$varname][$op]=$restparts[$varname][$op];
+            if(isset($restparts[$varname]['bound'])){
+                $result[$varname]['bound']=$restparts[$varname]['bound'];
+            }
+        }
+        else{
+            $varname=array_diff(array_keys($partsToConcat),array('logicalop'));
+            $result=$partsToConcat[$varname][0];
+        }
+        return $result;
+    }
+
+    public static function processConditionTree($tree) {
+        if(!Functions::isArray($tree)) return Functions::illegalArguments(__METHOD__);
+        if(isset($tree['&&'])){
+            $subtree=$tree['&&'];
+            $varname=array_diff(array_keys($subtree),array('&&','||',));
+            $varname=array_shift($varname);
+            $closures=array_filter($subtree[$varname],function ($elem) {
+                return is_object($elem)&&$elem instanceof Closure;
+            });
+            if(count($closures)==1){
+                $ll=$closures[0];
+                unset($subtree[$varname]);
+                $rest=Functions::processConditionTree($subtree);
+                $result=function ($x) use ($ll,$rest) {
+                    return $ll($x)&&$rest($x);
+                };
+            }
+            else if(count($closures)==2){
+                $l=$closures[0];
+                $r=$closures[1];
+                $result=function ($x) use ($l,$r) {
+                    return $l($x)&&$r($x);
+                };
+            }
+        
+
+        }
+        else if(isset($tree['||'])){
+            $subtree=$tree['||'];
+            $varname=array_diff(array_keys($subtree),array('&&','||'));
+            $varname=array_shift($varname);
+            $closures=array_filter($subtree[$varname],function ($elem) {
+                return is_object($elem)&&$elem instanceof Closure;
+            });
+            if(count($closures)==1){
+                $ll=$closures[0];
+                unset($subtree[$varname]);
+                $rest=Functions::processConditionTree($subtree);
+                $result=function ($x) use ($ll,$rest) {
+                    return $ll($x)||$rest($x);
+                };
+            }
+            else if(count($closures)==2){
+                $l=$closures[0];
+                $r=$closures[1];
+                $result=function ($x) use ($l,$r) {
+                    return $l($x)||$r($x);
+                };
+            }
+        }
+        else{
+            $varname=array_diff(array_keys($tree),array('&&','||','bound'));
+            $result=$tree[$varname][0];
+        }
+        return $result;
+    }
+
+    public static function collectBounds($obj, $key="bound") {
+        if(!Functions::isArray($obj)||!Functions::isString($key)) return Functions::illegalArguments(__METHOD__);
+        $bounds = array(); 
+        foreach ($obj as $prop => $value){
+            if (Functions::isArray($value)){ 
+                $bounds = array_merge($bounds, Functions::collectBounds($value, $key));
+            }
+            else if(Functions::isNumber($value)){
+                $bounds[]=$value;
+            }
+            else if ($prop == $key){
+                if (Functions::isArray($value)) {
+                    $bounds = array_merge($bounds, $value);
+                }
+                else {
+                    $bounds[] = $value;
+                }
+            }
+            
+        }
+        return $bounds;
+    }
+
+    public static function getMinMax($array){
+        return [
+            'start'=>min($array),
+            'end'=>max($array)
+        ];
+    }
+
+    public static function Venn(...$sets){
         if(count($sets)!==2&&count($sets)!==3){
             return Functions::illegalArguments(__METHOD__);
         }

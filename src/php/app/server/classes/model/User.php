@@ -47,7 +47,7 @@ class User extends Model {
     }
 
     public function setPassword($password) {
-        $this->password = password_hash($password, PASSWORD_DEFAULT);
+        $this->password = password_hash($password, PASSWORD_BCRYPT);
     }
 
     public function getFirstLogin() {
