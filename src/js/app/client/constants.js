@@ -1,3 +1,6 @@
+
+/// Export an object that contains various constants for the URLs of the server and client.
+
 export const CONSTANTS={
     serverUrl:"http://localhost/php-parser-for-set-theory/",
     loadUrl:"http://localhost/php-parser-for-set-theory/src/php/app/server/page/load.php",

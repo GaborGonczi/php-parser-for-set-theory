@@ -4,8 +4,7 @@ use core\parser\exception\ParserException;
 require_once dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))) . '/autoloader.php';
 
 require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/rootfolder.php';
-//require_once dirname(dirname(dirname(dirname(__FILE__)))).'/core/parser/Lexer.php';
-//require_once dirname(dirname(dirname(dirname(__FILE__)))).'/core/parser/Parser.php';
+
 require_once dirname(dirname(__FILE__)) . '/db.php';
 
 use \app\server\classes\model\File;
@@ -124,6 +123,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $result = $parser->parse();
         } catch (ParserException $pe) {
             echo json_encode($pe);
+        } catch (InvalidArgumentException $ie){
+            echo json_encode($ie);
         }
 
         $stmtdata['result'] = $result;

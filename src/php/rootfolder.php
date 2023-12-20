@@ -1,5 +1,10 @@
 <?php
 
+/**
+* Returns the root folder of the application, based on the server protocol, name, and URI.
+*
+* @return string The root folder of the application, in the format "protocol://server_name/relative_path".
+*/
 function rootfolder(){
  $method=$_SERVER['SERVER_PORT']===443?'https://':'http://';
  $relative_to_src="";

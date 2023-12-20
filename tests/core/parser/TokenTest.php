@@ -52,6 +52,7 @@ class TokenTest extends TestCase {
             [Token::GREATERTHAN, 'greaterthan', '>'],
             [Token::LESSTHANOREQUAL, 'lessthanorequal', '<='],
             [Token::GREATERTHANOREQUAL, 'greaterthanorequal', '>='],
+            [Token::ARROW, 'arrow', '->'],
             [Token::IDENTIFIER, 'identifier', '^([_a-zA-Z][_a-zA-Z0-9]*)$'],
             [Token::NUMBER, 'number', '^(0|[1-9][0-9]*)$'],
 

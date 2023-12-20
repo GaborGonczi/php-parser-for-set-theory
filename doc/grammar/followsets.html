@@ -40,24 +40,24 @@
           0 17px 50px 0 rgba(0, 0, 0, 0.19);
       }
     </style>
-        <script>
-          function navigate(){
-            let backt = document.getElementById("backt");
-            let backb = document.getElementById("backb");
-            backt.addEventListener("click",e => {
-              window.location.href = window.location.href.replace(
-                "followsets",
-                "index"
-              );
-            });
-            backb.addEventListener("click",e => {
-              window.location.href = window.location.href.replace(
-                "followsets",
-                "index"
-              );
-            });
-        }
-        </script>
+    <script>
+      function navigate() {
+        let backt = document.getElementById("backt");
+        let backb = document.getElementById("backb");
+        backt.addEventListener("click", (e) => {
+          window.location.href = window.location.href.replace(
+            "followsets",
+            "index"
+          );
+        });
+        backb.addEventListener("click", (e) => {
+          window.location.href = window.location.href.replace(
+            "followsets",
+            "index"
+          );
+        });
+      }
+    </script>
   </head>
   <body onload="navigate()">
     <button id="backt" class="button">Back</button>
@@ -75,109 +75,232 @@
       <tr>
         <td>STATEMENT</td>
         <td>
-          SEXPR | SELEMENTOFNELEMENTOF | SFUNCTIONCALL | SSIMPLEEXPRESSION
+          SEXPR<br />
+          |SELEMENTOFNELEMENTOF<br />
+          |SFUNCTIONCALL<br />
+          |SSIMPLEEXPRESSION
         </td>
         <td>{eol}</td>
       </tr>
       <tr>
         <td>SEXPR</td>
-        <td>SETOPERATIONSIDE SEXPR' | POINT</td>
+        <td>
+          SETOPERATIONSIDE SEXPR'<br />
+          |POINT<br />
+          |leftparenthesis SETOPERATIONSIDE STESRUISC'' rightparenthesis STESRUISC''
+        </td>
         <td>{eol}</td>
       </tr>
       <tr>
         <td>SEXPR'</td>
-        <td>STESRUISC | SOFUNCTIONCALL | e</td>
+        <td>
+          STESRUISC<br />
+          |SOFUNCTIONCALL
+        </td>
         <td>{eol, verticalline}</td>
       </tr>
       <tr>
         <td>STESRUISC</td>
         <td>
-          tobeequal CURLIEDSETEXP | equal SETOPERATIONSIDE | subsetof
-          SETOPERATIONSIDE | realsubsetof SETOPERATIONSIDE | union
-          SETOPERATIONSIDE | intersection SETOPERATIONSIDE | setminus
-          SETOPERATIONSIDE | complement
+          tobeequal TRHS<br />
+          |equal STESRUISC'<br />
+          |subsetof STESRUISC'<br />
+          |realsubsetof STESRUISC'<br />
+          |UISC
         </td>
         <td>{eol, verticalline}</td>
       </tr>
       <tr>
-        <td>SETOPERATIONSIDE</td>
-        <td>identifier | CURLIEDSETEXP</td>
+        <td>THRS</td>
         <td>
-          {eol,verticallinetobeequal,equal,subsetof,realsubsetof,union,intersection,setminus,complement,identifier}
+          CURLIEDSETEXP<br />
+          |POINT
+          |leftparenthesis SETOPERATIONSIDE STESRUISC'' rightparenthesis STESRUISC''
+        </td>
+        <td>{eol, verticalline}</td>
+      </tr>
+      <tr>
+        <td>STESRUISC'</td>
+        <td>
+          SETOPERATIONSIDE STESRUISC''<br />
+          |leftparenthesis SETOPERATIONSIDE STESRUISC'' rightparenthesis STESRUISC''<br/>
+          |e
+        </td>
+        <td>{eol, verticalline, rightparenthesis}</td>
+      </tr>
+      <tr>
+        <td>STESRUISC''</td>
+        <td>
+          UISC
+        </td>
+        <td>{eol, verticalline, rightparenthesis}</td>
+      </tr>
+      <tr>
+        <td>UISC</td>
+        <td>
+          union STESRUISC'<br />
+          |intersection STESRUISC'<br />
+          |setminus STESRUISC'
+          |complement UISC<br />
+          |e
+        </td>
+        <td>{eol, verticalline, rightparenthesis}</td>
+      </tr>
+      <tr>
+        <td>SETOPERATIONSIDE</td>
+        <td>
+          identifier<br />
+          |CURLIEDSETEXP
+        </td>
+        <td>
+          {eol, verticalline, rightparenthesis, dot, tobeequal, equal, subsetof, realsubsetof, union,
+          intersection, setminus, complement}
         </td>
       </tr>
       <tr>
         <td>CURLIEDSETEXP</td>
         <td>leftcurlybrace SETEXP rightcurlybrace</td>
         <td>
-          {eol,verticallinetobeequal,equal,subsetof,realsubsetof,union,intersection,setminus,complement,identifier,comma}
+          {eol, verticalline, tobeequal, equal, subsetof, realsubsetof, union,
+          intersection, setminus, complement, dot, comma, rightparenthesis}
         </td>
       </tr>
       <tr>
         <td>SETEXP</td>
-        <td>SETLITERAL | POINTSETLITERAL | SETFORMULA</td>
+        <td>
+          SETLITERAL<br />
+          |POINTSETLITERAL<br />
+          |identifier SETEXP'<br />
+          |e
+        </td>
+        <td>{rightcurlybrace}</td>
+      </tr>
+      <tr>
+        <td>SETEXP'</td>
+        <td>
+          IDENTIFIERLITERAL<br />
+          |SETFORMULA
+        </td>
+        <td>{rightcurlybrace}</td>
+      </tr>
+      <tr>
+        <td>IDENTIFIERLITERAL</td>
+        <td>
+          comma identifier IDENTIFIERLITERAL<br />
+          |e
+        </td>
         <td>{rightcurlybrace}</td>
       </tr>
       <tr>
         <td>SETFORMULA</td>
-        <td>identifier verticalline LOGICALEXP</td>
+        <td>verticalline LOGICALEXP</td>
         <td>{rightcurlybrace}</td>
       </tr>
       <tr>
         <td>LOGICALEXP</td>
         <td>LOGICALSUBEXP LOGICALEXP'</td>
-        <td>{rightcurlybrace,rightparenthesis}</td>
+        <td>{rightcurlybrace, rightparenthesis}</td>
       </tr>
       <tr>
         <td>LOGICALEXP'</td>
-        <td>LOGICALOPERATOR LOGICALEXP | e</td>
-        <td>{rightcurlybrace,rightparenthesis}</td>
+        <td>
+          LOGICALOPERATOR LOGICALEXP<br />
+          |e
+        </td>
+        <td>{rightcurlybrace, rightparenthesis}</td>
       </tr>
       <tr>
         <td>LOGICALOPERATOR</td>
-        <td>land | lor</td>
-        <td>{minus,number,leftparenthesis,identifier}</td>
+        <td>
+          land<br />
+          |lor
+        </td>
+        <td>{minus, number, leftparenthesis, identifier}</td>
       </tr>
       <tr>
         <td>LOGICALSUBEXP</td>
         <td>
-          leftparenthesis LOGICALEXP rightparenthesis | identifier
-          COMPARSIONOPERATOR LOGICALRHS | WHOLENUMBER DIVISIBILITYOPERATOR
-          identifier
+          leftparenthesis LOGICALEXP rightparenthesis<br />
+          |identifier LOGICALSUBEXP' <br />
+          |WHOLENUMBER DIVISIBILITYOPERATOR identifier
         </td>
-        <td>{land,lor,rightcurlybrace,rightparenthesis}</td>
+        <td>{land, lor, rightcurlybrace,rightparenthesis}</td>
+      </tr>
+      <tr>
+        <td>LOGICALSUBEXP'-&gt;</td>
+        <td>
+          COMPARSIONOPERATOR LOGICALRHS<br />
+          |FUNCTIONDEFINITION
+        </td>
+        <td>{land,lor, rightcurlybrace,rightparenthesis}</td>
+      </tr>
+      <tr>
+        <td>FUNCTIONDEFINITION-&gt;</td>
+        <td>
+          arrow FUNCTIONDEFINITION'
+        </td>
+        <td>{land,lor, rightcurlybrace,rightparenthesis}</td>
+      </tr>
+      <tr>
+        <td>FUNCTIONDEFINITION'-&gt;</td>
+        <td>
+          identifier SIMPLEOPERATOR WHOLENUMBER
+          |WHOLENUMBER SIMPLEOPERATOR identifier
+        </td>
+        <td>{land,lor, rightcurlybrace,rightparenthesis}</td>
       </tr>
       <tr>
         <td>COMPARSIONOPERATOR</td>
         <td>
-          greaterthanorequal | lessthanorequal | greaterthan | lessthan | equal
+          greaterthanorequal<br />
+          |lessthanorequal<br />
+          |greaterthan<br />
+          |lessthan<br />
+          |equal
         </td>
-        <td>{minus,number,identifier}</td>
+        <td>{minus, number, identifier}</td>
       </tr>
       <tr>
         <td>DIVISIBILITYOPERATOR</td>
-        <td>divides | doesnotdivide</td>
+        <td>
+          divides<br />
+          |doesnotdivide
+        </td>
         <td>{identifier}</td>
       </tr>
       <tr>
         <td>LOGICALRHS</td>
-        <td>identifier LOGICALRHS' | WHOLENUMBER LOGICALRHS'</td>
-        <td>{land,lor,rightcurlybrace,rightparenthesis}</td>
+        <td>
+          identifier LOGICALRHS'<br />
+          |WHOLENUMBER LOGICALRHS'
+        </td>
+        <td>{land, lor, rightcurlybrace, rightparenthesis}</td>
       </tr>
       <tr>
         <td>LOGICALRHS'</td>
-        <td>SIMPLEOPERATOR LOGICALRHS''| e</td>
-        <td>{land,lor,rightcurlybrace,rightparenthesis}</td>
+        <td>
+          SIMPLEOPERATOR LOGICALRHS''<br />
+          |e
+        </td>
+        <td>{land, lor, rightcurlybrace, rightparenthesis}</td>
       </tr>
       <tr>
         <td>LOGICALRHS''</td>
-        <td>WHOLENUMBER | identifier</td>
-        <td>{land,lor,rightcurlybrace,rightparenthesis}</td>
+        <td>
+          WHOLENUMBER<br />
+          |identifier
+        </td>
+        <td>{land, lor, rightcurlybrace, rightparenthesis}</td>
       </tr>
       <tr>
         <td>SIMPLEOPERATOR</td>
-        <td>plus | minus | multiply | divide</td>
-        <td>{verticalline,minus,number,identifier}</td>
+        <td>
+          plus<br />
+          |minus<br />
+          |multiply<br />
+          |divide
+        </td>
+        <td>{verticalline, minus, number, identifier}</td>
       </tr>
       <tr>
         <td>SETLITERAL</td>
@@ -186,7 +309,10 @@
       </tr>
       <tr>
         <td>SETLITERAL'</td>
-        <td>comma SETLITERAL | e</td>
+        <td>
+          comma SETLITERAL<br />
+          |e
+        </td>
         <td>{rightcurlybrace}</td>
       </tr>
       <tr>
@@ -196,7 +322,10 @@
       </tr>
       <tr>
         <td>POINTSETLITERAL'</td>
-        <td>comma POINTSETLITERAL | e</td>
+        <td>
+          comma POINTSETLITERAL<br />
+          |e
+        </td>
         <td>{rightcurlybrace}</td>
       </tr>
       <tr>
@@ -204,7 +333,7 @@
         <td>
           leftsquarebracket WHOLENUMBER comma WHOLENUMBER rightsquarebracket
         </td>
-        <td>{comma,eol}</td>
+        <td>{comma, eol}</td>
       </tr>
       <tr>
         <td>SELEMENTOFNELEMENTOF</td>
@@ -213,32 +342,48 @@
       </tr>
       <tr>
         <td>SELEMENTOFNELEMENTOF'</td>
-        <td>elementof SETOPERATIONSIDE| notelementof SETOPERATIONSIDE</td>
+        <td>
+          elementof SETOPERATIONSIDE<br />
+          |notelementof SETOPERATIONSIDE
+        </td>
         <td>{eol}</td>
       </tr>
       <tr>
         <td>WHOLENUMBER</td>
-        <td>minus number | number</td>
         <td>
-          {elementof,notelementof,comma,rightsquarebracket,land,lor,rightparenthesis,plus,minus,multiply,divide,divides,doesnotdivide}
+          minus number<br />
+          |number
+        </td>
+        <td>
+          {elementof, notelementof, comma, rightsquarebracket, land, lor,
+          rightparenthesis, plus, minus, multiply, divide, divides,
+          doesnotdivide}
         </td>
       </tr>
       <tr>
         <td>SCARDINALITY</td>
-        <td>verticalline SETOPERATIONSIDE SEXPR' verticalline</td>
+        <td>verticalline SCARDINALITY'</td>
+        <td>{eol,plus,minus,multiply,divide}</td>
+      </tr>
+      <tr>
+        <td>SCARDINALITY'</td>
+        <td>
+          SETOPERATIONSIDE SEXPR' verticalline<br />
+          |leftparenthesis SETOPERATIONSIDE SEXPR' rightparenthesis UISC verticalline
+        </td>
         <td>{eol,plus,minus,multiply,divide}</td>
       </tr>
       <tr>
         <td>SOFUNCTIONCALL</td>
-        <td>
-          identifier dot SOFUNCTIONNAME leftparenthesis ARGUMENTS
-          rightparenthesis
-        </td>
+        <td>dot SOFUNCTIONNAME leftparenthesis ARGUMENTS rightparenthesis</td>
         <td>{eol, verticalline}</td>
       </tr>
       <tr>
         <td>SOFUNCTIONNAME</td>
-        <td>add | delete</td>
+        <td>
+          add<br />
+          |delete
+        </td>
         <td>{leftparenthesis}</td>
       </tr>
       <tr>
@@ -248,7 +393,10 @@
       </tr>
       <tr>
         <td>SFUNCTIONNAME</td>
-        <td>venn | pointsetdiagram</td>
+        <td>
+          venn<br />
+          |pointsetdiagram
+        </td>
         <td>{leftparenthesis}</td>
       </tr>
       <tr>
@@ -258,13 +406,20 @@
       </tr>
       <tr>
         <td>ARGUMENTS'</td>
-        <td>comma ARGUMENT | e</td>
+        <td>
+          comma ARGUMENT<br />
+          |e
+        </td>
         <td>{rightparenthesis}</td>
       </tr>
       <tr>
         <td>ARGUMENT</td>
-        <td>identifier | CURLIEDSETEXP | WHOLENUMBER</td>
-        <td>{rightparenthesis,comma}</td>
+        <td>
+          identifier<br />
+          |CURLIEDSETEXP<br />
+          |WHOLENUMBER
+        </td>
+        <td>{rightparenthesis, comma}</td>
       </tr>
       <tr>
         <td>SSIMPLEEXPRESSION</td>
@@ -273,7 +428,10 @@
       </tr>
       <tr>
         <td>SSIMPLEEXPRESSION'</td>
-        <td>SIMPLEOPERATOR SCARDINALITY | e</td>
+        <td>
+          SIMPLEOPERATOR SCARDINALITY SSIMPLEEXPRESSION'<br />
+          |e
+        </td>
         <td>{eol}</td>
       </tr>
     </table>

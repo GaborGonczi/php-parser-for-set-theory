@@ -377,3 +377,6 @@ seed.sql
 
 #phpunit cache
 .phpunit.cache/
+
+#VSCode plugins
+.vscode

@@ -5,20 +5,48 @@ use \core\Regexp;
 use \core\lib\Builtin;
 use \core\parser\exception\LexerException;
 
+/**
+* A class that represents a lexer for the set theory language.
+* A lexer is a component that converts a sequence of characters into a sequence of tokens.
+* A token is a meaningful unit of the language, such as a keyword, an identifier, an operator, etc.
+*
+* @package core\parser
+*/
 class Lexer
 {
 
+    /**
+    * @var string A string that contains the input to be lexed
+    */
     private $input;
+
+    /**
+    * An array that contains the special characters that are used in the language
+    */
     private $specialChars=["&isin;",	"&notin;",	"&sube;",	
     "&sub;",	"&comp;",	"&cup;",	
     "&cap;",	"&and;",	"&or;",	
     "&setminus;",	"&mid;",	"&nmid;","&lt;","&gt;"];
 
+    /**
+    * A constant that defines the namespace of the token class
+    */
     private const TOKENCLASSNAMESPACE ='\core\parser\TOKEN::';
+
+    /**
+    * The constructor of the lexer class.
+    * @param string $input The input to be lexed. Default is an empty string.
+    */
     public function __construct($input = "")
     {
         $this->input = $input . "$";
     }
+
+    /**
+    * A method that tokenizes the input and returns an array of tokens.
+    * @return array An array of tokens, each token is an associative array with two keys: type and value.
+    * @throws LexerException If an unknown character or symbol is encountered in the input.
+    */
     public function tokenize()
     {
 
@@ -30,6 +58,7 @@ class Lexer
         $tobeeqregexp = new RegExp(Token::TOBEEQUAL['value']);
         $lessthanoreqregexp = new RegExp(Token::LESSTHANOREQUAL['value']);
         $greaterthanoreqregexp = new RegExp(Token::GREATERTHANOREQUAL['value']);
+        $arrow = new Regexp(Token::ARROW['value']);
 
 
         for ($i = 0; $i < strlen($this->input); $i++) {
@@ -52,7 +81,7 @@ class Lexer
                 }
                 $tokens[] = ['type' => Token::NUMBER['name'], 'value' => floatval(substr($num, 0, -1))];
                 --$i;
-            } elseif ($idregexp->test($c)) {
+            } else if ($idregexp->test($c)) {
                 $id = $c;
                 while ($idregexp->test($id)) {
                     $id .= $this->input[++$i];
@@ -65,16 +94,19 @@ class Lexer
                     $tokens[] = ['type' => Token::IDENTIFIER["name"], 'value' => $id];
                 }
                 --$i;
-            } elseif (isset($this->input[$i])&&isset($this->input[$i + 1])&&$tobeeqregexp->test($this->input[$i] . $this->input[$i + 1])) {
+            } else if (isset($this->input[$i])&&isset($this->input[$i + 1])&&$tobeeqregexp->test($this->input[$i] . $this->input[$i + 1])) {
                 $tokens[] = ['type' => Token::TOBEEQUAL['name'], 'value' => Token::TOBEEQUAL['value']];
                 ++$i;
-            } elseif (isset($this->input[$i])&&isset($this->input[$i + 1])&&$lessthanoreqregexp->test($this->input[$i] . $this->input[$i + 1])) {
+            } else if (isset($this->input[$i])&&isset($this->input[$i + 1])&&$lessthanoreqregexp->test($this->input[$i] . $this->input[$i + 1])) {
                 $tokens[] = ['type' => Token::LESSTHANOREQUAL['name'], 'value' => Token::LESSTHANOREQUAL['value']];
                 ++$i;
-            } elseif (isset($this->input[$i])&&isset($this->input[$i + 1])&&$greaterthanoreqregexp->test($this->input[$i] . $this->input[$i + 1])) {
+            } else if (isset($this->input[$i])&&isset($this->input[$i + 1])&&$greaterthanoreqregexp->test($this->input[$i] . $this->input[$i + 1])) {
                 $tokens[] = ['type' => Token::GREATERTHANOREQUAL['name'], 'value' => Token::GREATERTHANOREQUAL['value']];
                 ++$i;
-            } elseif ($c === ' ' || $c === '\t') {
+            } else if (isset($this->input[$i])&&isset($this->input[$i + 1])&&$arrow->test($this->input[$i] . $this->input[$i + 1])) {
+                $tokens[] = ['type' => Token::ARROW['name'], 'value' => Token::ARROW['value']];
+                ++$i;
+            } else if ($c === ' ' || $c === '\t') {
                 continue;
             } else {
                 switch ($c) {

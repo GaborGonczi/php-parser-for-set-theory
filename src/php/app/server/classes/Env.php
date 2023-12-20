@@ -1,8 +1,18 @@
 <?php
 namespace app\server\classes;
 /**
- *  https://dev.to/fadymr/php-create-your-own-php-dotenv-3k2i 2023. 08.16
- */
+*  https://dev.to/fadymr/php-create-your-own-php-dotenv-3k2i 2023. 08.16
+*/
+
+/**
+* Env class represents a simple way to load environment variables from a .env file.
+* 
+* This class has a path property that stores the directory where the .env file can be located.
+* It also has a load method that reads the .env file and sets the environment variables using putenv, $_ENV, and $_SERVER arrays.
+* It ignores the lines that start with # or are empty. It also checks if the environment variable is already set before overriding it.
+* 
+* @package app\server\classes
+*/
 class Env
 {
     /**
@@ -12,7 +22,15 @@ class Env
      */
     protected $path;
 
-
+    /**
+    * Constructor for the Env class.
+    * 
+    * This method sets the path property to the directory where the .env file can be located.
+    * It also checks if the file exists and throws an exception if it does not.
+    * 
+    * @param string $path The directory where the .env file can be located.
+    * @throws \InvalidArgumentException If the file does not exist.
+    */
     public function __construct(string $path)
     {
         if(!file_exists($path)) {
@@ -21,6 +39,17 @@ class Env
         $this->path = $path;
     }
 
+    /**
+    * Load the environment variables from the .env file.
+    * 
+    * This method reads the .env file line by line and parses the name and value of each environment variable.
+    * It ignores the lines that start with # or are empty.
+    * It also checks if the environment variable is already set before overriding it.
+    * It sets the environment variables using putenv, $_ENV, and $_SERVER arrays.
+    * It also checks if the file is readable and throws an exception if it is not.
+    * 
+    * @throws \RuntimeException If the file is not readable.
+    */
     public function load() :void
     {
         if (!is_readable($this->path)) {

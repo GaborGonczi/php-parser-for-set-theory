@@ -1,5 +1,7 @@
 <?php
 
+use core\lib\Map;
+use core\lib\Point;
 use \PHPUnit\Framework\TestCase;
 use \core\lib\Functions;
 use \core\lib\Set;
@@ -60,6 +62,35 @@ class FunctionsTest extends TestCase
         $this->assertFalse(Functions::isArray(42.5));
     }
 
+
+    public function testIsEmptyArray(): void
+    {
+        $this->assertTrue(Functions::isEmptyArray([]));
+        $this->assertFalse(Functions::isEmptyArray([1, 2, 3]));
+    }
+
+
+    public function testIsNotEmptyArray(): void
+    {
+        $this->assertTrue(Functions::isNotEmptyArray([1, 2, 3]));
+        $this->assertFalse(Functions::isNotEmptyArray([]));
+    }
+
+
+    public function testIsObject(): void
+    {
+
+        $this->assertTrue(Functions::isObject(new Set([])));
+        $this->assertTrue(Functions::isObject(new Point(1, 2)));
+        $this->assertTrue(Functions::isObject(new Map(["A" => new Set([1, 2])])));
+        $this->assertFalse(Functions::isObject("foo"));
+        $this->assertFalse(Functions::isObject(true));
+        $this->assertFalse(Functions::isObject(null));
+        $this->assertFalse(Functions::isObject(3));
+        $this->assertFalse(Functions::isObject(3.14));
+        $this->assertFalse(Functions::isObject([]));
+    }
+
     /**  
      *  @covers \core\lib\Functions::isFunction  
      * @uses \core\lib\Set  
@@ -106,9 +137,8 @@ class FunctionsTest extends TestCase
         $this->assertTrue(Functions::isWholeNumber(0));
         $this->assertTrue(Functions::isWholeNumber(1));
         $this->assertTrue(Functions::isWholeNumber('42'));
+        $this->assertTrue(Functions::isWholeNumber(-1));
 
-
-        $this->assertFalse(Functions::isWholeNumber(-1));
         $this->assertFalse(Functions::isWholeNumber(3.14));
         $this->assertFalse(Functions::isWholeNumber('abc'));
     }
@@ -128,20 +158,21 @@ class FunctionsTest extends TestCase
         $this->assertFalse(Functions::isSet('abc'));
         $this->assertFalse(Functions::isSet(42));
     }
-    
+
     /**
      * @covers \core\lib\Functions::IsGoodOperation
      * @uses \core\lib\Set
      */
-    public function testIsGoodOperation() {
+    public function testIsGoodOperation()
+    {
         $goodoperations = array("+", "-");
-        
+
         $this->assertTrue(Functions::IsGoodOperation('+', $goodoperations));
         $this->assertTrue(Functions::IsGoodOperation('-', $goodoperations));
         $this->assertFalse(Functions::IsGoodOperation('*', $goodoperations));
         $this->assertFalse(Functions::IsGoodOperation('/', $goodoperations));
-        
-        
+
+
         $this->expectException(InvalidArgumentException::class);
         Functions::IsGoodOperation(1, "not an array");
     }
@@ -160,8 +191,16 @@ class FunctionsTest extends TestCase
 
         $this->assertEquals([1, 2, 3], Functions::removeNullFromArray([1, null, 2, null, 3]));
     }
-
-
+    /**
+     * @covers \core\lib\Functions::removeEmptyArrayFromArray
+     */
+    public function testRemoveEmptyArrayFromArray(): void
+    {
+        $this->assertIsArray(Functions::removeEmptyArrayFromArray([]));
+        $this->expectException(InvalidArgumentException::class);
+        Functions::removeEmptyArrayFromArray("not an array");
+        $this->assertEquals([1, [2, 3], 4], Functions::removeEmptyArrayFromArray([1, [], [2, 3], [], 4]));
+    }
     /**
      * @covers \core\lib\Functions::createSetFromArray
      * @uses \core\lib\Set
@@ -191,15 +230,15 @@ class FunctionsTest extends TestCase
         $start = 1;
         $end = 5;
         $boundformula = function ($x) {
-            return $x>1&&$x<=3||$x==5;
+            return $x > 1 && $x <= 3 || $x == 5;
         };
         $set = Functions::createSetFromFormula($start, $end, $boundformula);
         $this->assertInstanceOf(Set::class, $set);
         for ($i = $start; $i <= $end; $i++) {
-            if($boundformula($i)){
+            if ($boundformula($i)) {
                 $this->assertTrue($set->has($i));
             }
-            
+
         }
 
 
@@ -416,15 +455,15 @@ class FunctionsTest extends TestCase
         $this->assertInstanceOf(Set::class, $intersection);
         foreach ([3] as $value) {
             $this->assertTrue($intersection->has($value));
-            foreach ([1, 2, 4, 5] as $value) {
-                $this->assertFalse($intersection->has($value));
-            }
-
-
-            $this->expectException(InvalidArgumentException::class);
-            Functions::intersection('a', 'b', 'c');
-
         }
+        foreach ([1, 2, 4, 5] as $value) {
+            $this->assertFalse($intersection->has($value));
+        }
+
+
+        $this->expectException(InvalidArgumentException::class);
+        Functions::intersection('a', 'b', 'c');
+
     }
 
     /**
@@ -489,31 +528,128 @@ class FunctionsTest extends TestCase
      * @covers \core\lib\Functions::createDivisibilityCondition
      * @uses \core\parser\Token
      */
-    public function testCreateDivisibilityCondition() {
+    public function testCreateDivisibilityCondition()
+    {
 
         $divisor = 3;
-        $divide = Token::DIVIDE['value'];
+        $divides = Token::DIVIDES['value'];
         $doesnotdivide = Token::DOESNOTDIVIDE['value'];
         $num1 = 9;
         $num2 = 10;
-    
-        
-        // create a divisibility condition using the function
-        $divideCond = Functions::createDivisibilityCondition($divisor, $divide);
+
+
+
+        $divideCond = Functions::createDivisibilityCondition($divisor, $divides);
         $noDivideCond = Functions::createDivisibilityCondition($divisor, $doesnotdivide);
-        
-        // assert that the condition returns the expected output for different inputs
+
+
         $this->assertTrue($divideCond($num1));
         $this->assertTrue($noDivideCond($num2));
         $this->assertFalse($divideCond($num2));
         $this->assertFalse($noDivideCond($num1));
-        
-        
-        // assert that the function returns an illegal argument exception for invalid inputs
+
+
+
         $this->expectException(InvalidArgumentException::class);
         Functions::createDivisibilityCondition('a', 'b');
     }
-    
+
+     /**
+     * @covers \core\lib\Functions::processLogicalRhs
+     * @uses \core\parser\Token
+     */
+    public function testProcessLogicalRhs()
+    {
+        $input1 = ['num' => 2, 'simpleop' => '+', 'id' => 'x'];
+        $output1 =Functions::processLogicalRhs($input1); /*['x' => [function($var) {return $var + 2;}]];*/
+
+        $input2 = ['num' => [3, 0], 'simpleop' => '/'];
+        $output2 =Functions::processLogicalRhs($input2); /*['constant' => function() {return Functions::illegalArguments('Functions::processLogicalRhs');}];*/
+
+        $input3 = 5;
+
+        $this->assertArrayHasKey('x', $output1);
+        $this->assertIsCallable($output1['x'][0]);
+        $output1Fun=$output1['x'][0];
+        $this->assertEquals(5,$output1Fun(3));
+
+        $this->assertArrayHasKey('constant', $output2);
+        $this->assertIsCallable($output2['constant']);
+        $output2Fun=$output2['constant'];
+        $this->expectException(InvalidArgumentException::class);
+        $output2Fun();
+        $this->expectException(InvalidArgumentException::class);
+        Functions::processLogicalRhs($input3);
+    }
+
+
+    /**
+     * @covers \core\lib\Functions::createComparsionCondition
+     * @uses \core\parser\Token
+     */
+    public function testCreateComparsionCondition()
+    {
+        
+        $lessThan = Token::LESSTHAN['value'];
+        $greaterThan = Token::GREATERTHAN['value'];
+        $lessThanOrEqual = Token::LESSTHANOREQUAL['value'];
+        $greaterThanOrEqual = Token::GREATERTHANOREQUAL['value'];
+        $equal = Token::EQUAL['value'];
+        $logicalrhsfuncs = ['constant' => function () { return 5; }];
+
+        $num1 = 3;
+        $num2 = 5;
+        $num3 = 7;
+
+        
+        $lessThanCond = Functions::createComparsionCondition($lessThan, $logicalrhsfuncs);
+        $greaterThanCond = Functions::createComparsionCondition($greaterThan, $logicalrhsfuncs);
+        $lessThanOrEqualCond = Functions::createComparsionCondition($lessThanOrEqual, $logicalrhsfuncs);
+        $greaterThanOrEqualCond = Functions::createComparsionCondition($greaterThanOrEqual, $logicalrhsfuncs);
+        $equalCond = Functions::createComparsionCondition($equal, $logicalrhsfuncs);
+
+        
+        $this->assertTrue($lessThanCond($num1));
+        $this->assertFalse($lessThanCond($num2));
+        $this->assertFalse($lessThanCond($num3));
+
+        $this->assertFalse($greaterThanCond($num1));
+        $this->assertFalse($greaterThanCond($num2));
+        $this->assertTrue($greaterThanCond($num3));
+
+        $this->assertTrue($lessThanOrEqualCond($num1));
+        $this->assertTrue($lessThanOrEqualCond($num2));
+        $this->assertFalse($lessThanOrEqualCond($num3));
+
+        $this->assertFalse($greaterThanOrEqualCond($num1));
+        $this->assertTrue($greaterThanOrEqualCond($num2));
+        $this->assertTrue($greaterThanOrEqualCond($num3));
+
+        $this->assertFalse($equalCond($num1));
+        $this->assertTrue($equalCond($num2));
+        $this->assertFalse($equalCond($num3));
+
+        
+        $this->expectException(InvalidArgumentException::class);
+        Functions::createComparsionCondition('a', 'b');
+    }
+    /**
+     * @covers \core\lib\Functions::getMinMax
+     */
+    public function testGetMinMax()
+    {
+        $bounds1 = [10, 20, 30, 40, 50];
+        $bounds2 = [4, 5];
+        $minmax1 = ['start' => 10, 'end' => 50];
+        $minmax2 = ['start' =>4,'end' =>5];
+        $this->assertSame($minmax1, Functions::getMinMax($bounds1));
+        $this->assertSame($minmax2, Functions::getMinMax($bounds2));
+
+
+        $this->expectException(InvalidArgumentException::class);
+        Functions::getMinMax('a');
+    }
+
     /**
      * @covers \core\lib\Functions::venn
      * @uses \core\lib\Set

@@ -1,8 +1,8 @@
 <?php
 
-use core\parser\exception\LexerException;
 use PHPUnit\Framework\TestCase;
 use \core\parser\Lexer;
+use core\parser\exception\LexerException;
 
 class LexerTest extends TestCase
 {
@@ -136,7 +136,7 @@ class LexerTest extends TestCase
                 ['type' => 'rightcurlybrace', 'value' => '}'],
                 ['type' => 'eol', 'value' => '$']
            ],null],
-            ['D:={y | z>=0 ∧ z<3 ∧ y=2*z}',[
+            ['D:={y | z>=0 ∧ z<3 ∧ y->2*z}',[
                 ['type' => 'identifier', 'value' => 'D'],
                 ['type' => 'tobeequal', 'value' => ':='],
                 ['type' => 'leftcurlybrace', 'value' => '{'],
@@ -151,14 +151,14 @@ class LexerTest extends TestCase
                 ['type' => 'number', 'value' => floatval( 3)],
                 ['type' => 'land', 'value' => '∧'],
                 ['type' => 'identifier', 'value' => 'y'],
-                ['type' => 'equal', 'value' => '='],
+                ['type' => 'arrow', 'value' => '->'],
                 ['type' => 'number', 'value' => floatval( 2)],
                 ['type' => 'multiply', 'value' => '*'],
                 ['type' => 'identifier', 'value' => 'z'],
                 ['type' => 'rightcurlybrace', 'value' => '}'],
                 ['type' => 'eol', 'value' => '$']
            ],null],
-            ['E:={y | z>0 ∧ z<=100 ∧ y=z/10}',[
+            ['E:={y | z>0 ∧ z<=100 ∧ y->z/10}',[
 
                 ['type' => 'identifier', 'value' => 'E'],
                 ['type' => 'tobeequal', 'value' => ':='],
@@ -174,7 +174,7 @@ class LexerTest extends TestCase
                 ['type' => 'number', 'value' => floatval( 100)],
                 ['type' => 'land', 'value' => '∧'],
                 ['type' => 'identifier', 'value' => 'y'],
-                ['type' => 'equal', 'value' => '='],
+                ['type' => 'arrow', 'value' => '->'],
                 ['type' => 'identifier', 'value' => 'z'],
                 ['type' => 'divide', 'value' => '/'],
                 ['type' => 'number', 'value' => floatval( 10)],
@@ -484,14 +484,7 @@ class LexerTest extends TestCase
                 ['type' => 'complement', 'value' => '∁'],
                 ['type' => 'eol', 'value' => '$']
            ],null],
-            ['|H|=|A|+|B|+|C|+|D|-|A∩B|-|A∩C|-|A∩D|-|B∩C|-|B∩D|-|C∩D|+|A∩B∩C|+|A∩B∩D|+|B∩C∩D|+|A∩C∩D|-|A∩ B∩C∩D|+|(A∪B∪C∪D)∁|',[
-
-
-                ['type' => 'verticalline', 'value' => '|'],
-                ['type' => 'identifier', 'value' => 'H'],
-                ['type' => 'verticalline', 'value' => '|'],
-
-                ['type' => 'equal', 'value' => '='],
+            ['|A|+|B|+|C|+|D|-|A∩B|-|A∩C|-|A∩D|-|B∩C|-|B∩D|-|C∩D|+|A∩B∩C|+|A∩B∩D|+|B∩C∩D|+|A∩C∩D|-|A∩ B∩C∩D|+|(A∪B∪C∪D)∁|',[
 
                 ['type' => 'verticalline', 'value' => '|'],
                 ['type' => 'identifier', 'value' => 'A'],
@@ -634,7 +627,6 @@ class LexerTest extends TestCase
            ],null],
             ['A?B',
 
-               // new LexerException('Last good: ' . json_encode(["type"=>"identifier","value"=>"A"]). 'RowPos: '. 2)
            null,LexerException::class],
            ['{1,2,3}',[
             ['type' => 'leftcurlybrace', 'value' => '{'],

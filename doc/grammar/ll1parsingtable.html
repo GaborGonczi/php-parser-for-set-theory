@@ -8,7 +8,7 @@
       table {
         font-family: arial, sans-serif;
         border-collapse: collapse;
-        width: 5000px;
+        width: 18000px;
       }
 
       td,
@@ -25,7 +25,6 @@
         background-color: #4caf50;
         position: sticky;
         left: 0;
-        
       }
       table tr:first-child {
         background-color: #4caf50;
@@ -51,13 +50,13 @@
         box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
           0 17px 50px 0 rgba(0, 0, 0, 0.19);
       }
-      #backt{
+      #backt {
         position: fixed;
         top: 0;
         left: 0;
         z-index: 9999;
       }
-      #backb{
+      #backb {
         position: fixed;
         bottom: 0;
         left: 0;
@@ -130,6 +129,7 @@
         <td>pointsetdiagram</td>
         <td>add</td>
         <td>delete</td>
+        <td>arrow</td>
 
         <td>eol</td>
       </tr>
@@ -146,7 +146,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -157,24 +157,26 @@
         <td></td>
         <td>S-&gt;STATEMENT eol</td>
         <td></td>
-
+        
+        <td></td>
+        <td>S-&gt;STATEMENT eol</td>
+        <td></td>
+        <td>S-&gt;STATEMENT eol</td>
         <td></td>
         <td>S-&gt;STATEMENT eol</td>
         <td></td>
         <td></td>
         <td></td>
-        <td>S-&gt;STATEMENT eol</td>
         <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
+        
         <td></td>
         <td>S-&gt;STATEMENT eol</td>
         <td>S-&gt;STATEMENT eol</td>
-
+        
+        
         <td>S-&gt;STATEMENT eol</td>
         <td>S-&gt;STATEMENT eol</td>
+        <td></td>
         <td></td>
         <td></td>
 
@@ -182,7 +184,7 @@
       </tr>
       <tr>
         <td>STATEMENT</td>
-
+        
         <td></td>
         <td>STATEMENT-&gt;SELEMENTOFNELEMENTOF</td>
         <td></td>
@@ -193,7 +195,8 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
+        
         <td></td>
         <td></td>
         <td></td>
@@ -204,24 +207,26 @@
         <td></td>
         <td>STATEMENT-&gt;SSIMPLEEXPRESSION</td>
         <td></td>
-
+        
+        <td></td>
+        <td>STATEMENT-&gt;SEXPR</td>
+        <td></td>
+        <td>STATEMENT-&gt;SEXPR</td>
         <td></td>
         <td>STATEMENT-&gt;SEXPR</td>
         <td></td>
         <td></td>
         <td></td>
-        <td>STATEMENT-&gt;SEXPR</td>
         <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
+        
         <td></td>
         <td>STATEMENT-&gt;SEXPR</td>
         <td>STATEMENT-&gt;SELEMENTOFNELEMENTOF</td>
-
+        
+        
         <td>STATEMENT-&gt;SFUNCTIONCALL</td>
         <td>STATEMENT-&gt;SFUNCTIONCALL</td>
+        <td></td>
         <td></td>
         <td></td>
 
@@ -229,7 +234,7 @@
       </tr>
       <tr>
         <td>SEXPR</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -240,7 +245,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -251,104 +256,106 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td>SEXPR-&gt;SETOPERATIONSIDE SEXPR'</td>
         <td></td>
-        <td></td>
+        <td>
+          SEXPR-&gt;leftparenthesis SETOPERATIONSIDE STESRUISC''
+          rightparenthesis STESRUISC''
+        </td>
         <td></td>
         <td>SEXPR-&gt;POINT</td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td>SEXPR-&gt;SETOPERATIONSIDE SEXPR'</td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>SEXPR'</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
-        <td>SEXPR'-&gt;STESRUISC</td>
-        <td></td>
-        <td></td>
-        <td>SEXPR'-&gt;STESRUISC</td>
-        <td>SEXPR'-&gt;STESRUISC</td>
-
-        <td>SEXPR'-&gt;STESRUISC</td>
-        <td>SEXPR'-&gt;STESRUISC</td>
-        <td>SEXPR'-&gt;STESRUISC</td>
-        <td>SEXPR'-&gt;STESRUISC</td>
-        <td>SEXPR'-&gt;STESRUISC</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>SEXPR'-&gt;e</td>
-        <td></td>
-
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
         <td></td>
         <td>SEXPR'-&gt;SOFUNCTIONCALL</td>
-        <td></td>
-
-        <td></td>
+        <td>SEXPR'-&gt;STESRUISC</td>
         <td></td>
         <td></td>
+        <td>SEXPR'-&gt;STESRUISC</td>
+        <td>SEXPR'-&gt;STESRUISC</td>
+        
+        <td>SEXPR'-&gt;STESRUISC</td>
+        <td>SEXPR'-&gt;STESRUISC</td>
+        <td>SEXPR'-&gt;STESRUISC</td>
+        <td>SEXPR'-&gt;STESRUISC</td>
+        <td>SEXPR'-&gt;STESRUISC</td>
         <td></td>
-
-        <td>SEXPR'-&gt;e</td>
+        <td></td>
+        <td></td>
+        <td>SEXPR'-&gt;STESRUISC</td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td>SEXPR'-&gt;STESRUISC</td>
       </tr>
       <tr>
         <td>STESRUISC</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-        <td>STESRUISC-&gt;tobeequal CURLIEDSETEXP</td>
+        <td>STESRUISC-&gt;tobeequal TRHS</td>
         <td></td>
         <td></td>
-        <td>STESRUISC-&gt;equal SETOPERATIONSIDE</td>
-        <td>STESRUISC-&gt;subsetof SETOPERATIONSIDE</td>
-
-        <td>STESRUISC-&gt;realsubsetof SETOPERATIONSIDE</td>
-        <td>STESRUISC-&gt;complement SETOPERATIONSIDE</td>
-        <td>STESRUISC-&gt;union SETOPERATIONSIDE</td>
-        <td>STESRUISC-&gt;intersection SETOPERATIONSIDE</td>
-        <td>STESRUISC-&gt;setminus SETOPERATIONSIDE</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
+        <td>STESRUISC-&gt;equal STESRUISC'</td>
+        <td>STESRUISC-&gt;subsetof STESRUISC'</td>
+        
+        <td>STESRUISC-&gt;realsubsetof STESRUISC'</td>
+        <td>STESRUISC-&gt;UISC</td>
+        <td>STESRUISC-&gt;UISC</td>
+        <td>STESRUISC-&gt;UISC</td>
+        <td>STESRUISC-&gt;UISC</td>
         <td></td>
         <td></td>
         <td></td>
+        <td>STESRUISC-&gt;UISC</td>
+        <td></td>
+        
         <td></td>
         <td></td>
         <td></td>
@@ -356,21 +363,223 @@
         <td></td>
         <td></td>
         <td></td>
-
         <td></td>
         <td></td>
         <td></td>
-
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
+        <td>STESRUISC-&gt;UISC</td>
+      </tr>
+      <tr>
+        <td>TRHS</td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td>TRHS-&gt;CURLIEDSETEXP</td>
+        <td></td>
+        <td>
+          TRHS-&gt;leftparenthesis SETOPERATIONSIDE STESRUISC'' rightparenthesis
+          STESRUISC''
+        </td>
+        <td></td>
+        <td>TRHS-&gt;POINT</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
+        <td>STESRUISC'</td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>STESRUISC'-&gt;e</td>
+        <td></td>
+        
+        <td></td>
+        <td>STESRUISC'-&gt;SETOPERATIONSIDE STESRUISC''</td>
+        <td></td>
+        <td>
+          STESRUISC'-&gt;leftparenthesis SETOPERATIONSIDE STESRUISC''
+          rightparenthesis STESRUISC''
+        </td>
+        <td>STESRUISC'-&gt;e</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td>STESRUISC'-&gt;SETOPERATIONSIDE STESRUISC''</td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td>STESRUISC'-&gt;e</td>
+      </tr>
+      <tr>
+        <td>STESRUISC''</td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td>STESRUISC''-&gt;UISC</td>
+        <td>STESRUISC''-&gt;UISC</td>
+        <td>STESRUISC''-&gt;UISC</td>
+        <td>STESRUISC''-&gt;UISC</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>STESRUISC''-&gt;UISC</td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>STESRUISC''-&gt;UISC</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td>STESRUISC''-&gt;UISC</td>
+      </tr>
+      <tr>
+        <td>UISC</td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td>UISC-&gt;complement UISC</td>
+        <td>UISC-&gt;union STESRUISC'</td>
+        <td>UISC-&gt;intersection STESRUISC'</td>
+        <td>UISC-&gt;setminus STESRUISC'</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>UISC-&gt;e</td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>UISC-&gt;e</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td>UISC-&gt;e</td>
+      </tr>
+      <tr>
         <td>SETOPERATIONSIDE</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -381,7 +590,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -392,7 +601,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td>SETOPERATIONSIDE-&gt;CURLIEDSETEXP</td>
         <td></td>
@@ -403,21 +612,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td>SETOPERATIONSIDE-&gt;identifier</td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>CURLIEDSETEXP</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -428,7 +638,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -439,7 +649,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td>CURLIEDSETEXP-&gt;leftcurlybrace SETEXP rightcurlybrace</td>
         <td></td>
@@ -450,21 +660,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>SETEXP</td>
-
+        
         <td></td>
         <td>SETEXP-&gt;SETLITERAL</td>
         <td></td>
@@ -475,7 +686,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -486,10 +697,10 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
-        <td></td>
+        <td>SETEXP-&gt;e</td>
         <td></td>
         <td></td>
         <td>SETEXP-&gt;POINTSETLITERAL</td>
@@ -497,21 +708,118 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
-        <td>SETEXP-&gt;SETFORMULA</td>
+        <td>SETEXP-&gt;identifier SETEXP'</td>
         <td>SETEXP-&gt;SETLITERAL</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
+        <td></td>
+      </tr>
+      <tr>
+        <td>SETEXP'</td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>SETEXP'-&gt;IDENTIFIERLITERAL</td>
+        <td></td>
+        <td></td>
+        <td>SETEXP'-&gt;SETFORMULA</td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+      </tr>
+      <tr>
+        <td>IDENTIFIERLITERAL</td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>IDENTIFIERLITERAL-&gt;comma identifier IDENTIFIERLITERAL</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td>IDENTIFIERLITERAL-&gt;e</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>SETFORMULA</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -522,7 +830,18 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>SETFORMULA-&gt;verticalline LOGICALEXP</td>
+        <td></td>
+        
         <td></td>
         <td></td>
         <td></td>
@@ -533,32 +852,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
-        <td></td>
-        <td>SETFORMULA-&gt;identifier verticalline LOGICALEXP</td>
-        <td></td>
-
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
+        
         <td></td>
       </tr>
       <tr>
         <td>LOGICALEXP</td>
-
+        
         <td></td>
         <td>LOGICALEXP-&gt;LOGICALSUBEXP LOGICALEXP'</td>
         <td></td>
@@ -569,7 +878,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -580,7 +889,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -591,21 +900,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td>LOGICALEXP-&gt;LOGICALSUBEXP LOGICALEXP'</td>
         <td>LOGICALEXP-&gt;LOGICALSUBEXP LOGICALEXP'</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>LOGICALEXP'</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -616,7 +926,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -627,7 +937,7 @@
         <td></td>
         <td></td>
         <td>LOGICALEXP'-&gt;LOGICALOPERATOR LOGICALEXP</td>
-
+        
         <td>LOGICALEXP'-&gt;LOGICALOPERATOR LOGICALEXP</td>
         <td></td>
         <td>LOGICALEXP'-&gt;e</td>
@@ -638,21 +948,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>LOGICALOPERATOR</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -663,7 +974,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -674,7 +985,7 @@
         <td></td>
         <td></td>
         <td>LOGICALOPERATOR-&gt;land</td>
-
+        
         <td>LOGICALOPERATOR-&gt;lor</td>
         <td></td>
         <td></td>
@@ -685,21 +996,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>LOGICALSUBEXP</td>
-
+        
         <td></td>
         <td>LOGICALSUBEXP-&gt;WHOLENUMBER DIVISIBILITYOPERATOR identifier</td>
         <td></td>
@@ -710,7 +1022,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -721,7 +1033,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -732,21 +1044,166 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
-        <td>LOGICALSUBEXP-&gt;identifier COMPARSIONOPERATOR LOGICALRHS</td>
+        <td>LOGICALSUBEXP-&gt;identifier LOGICALSUBEXP'</td>
         <td>LOGICALSUBEXP-&gt;WHOLENUMBER DIVISIBILITYOPERATOR identifier</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
+        <td></td>
+      </tr>
+      <tr>
+        <td>LOGICALSUBEXP'</td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>LOGICALSUBEXP'-&gt;COMPARSIONOPERATOR LOGICALRHS</td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>LOGICALSUBEXP'-&gt;COMPARSIONOPERATOR LOGICALRHS</td>
+        <td>LOGICALSUBEXP'-&gt;COMPARSIONOPERATOR LOGICALRHS</td>
+        <td>LOGICALSUBEXP'-&gt;COMPARSIONOPERATOR LOGICALRHS</td>
+        
+        <td>LOGICALSUBEXP'-&gt;COMPARSIONOPERATOR LOGICALRHS</td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>LOGICALSUBEXP'-&gt;FUNCTIONDEFINITION</td>
+        
+        <td></td>
+      </tr>
+      <tr>
+        <td>FUNCTIONDEFINITION</td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>FUNCTIONDEFINITION-&gt;arrow FUNCTIONDEFINITION'</td>
+        
+        <td></td>
+      </tr>
+      <tr>
+        <td>FUNCTIONDEFINITION'</td>
+        
+        <td></td>
+        <td>FUNCTIONDEFINITION'-&gt;WHOLENUMBER SIMPLEOPERATOR identifier</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td>FUNCTIONDEFINITION'-&gt;identifier SIMPLEOPERATOR WHOLENUMBER</td>
+        <td>FUNCTIONDEFINITION'-&gt;WHOLENUMBER SIMPLEOPERATOR identifier</td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>COMPARSIONOPERATOR</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -757,7 +1214,7 @@
         <td></td>
         <td>COMPARSIONOPERATOR-&gt;equal</td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -768,7 +1225,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -779,21 +1236,22 @@
         <td>COMPARSIONOPERATOR-&gt;lessthan</td>
         <td>COMPARSIONOPERATOR-&gt;greaterthan</td>
         <td>COMPARSIONOPERATOR-&gt;lessthanorequal</td>
-
+        
         <td>COMPARSIONOPERATOR-&gt;greaterthanorequal</td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>DIVISIBILITYOPERATOR</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -804,7 +1262,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -815,7 +1273,7 @@
         <td>DIVISIBILITYOPERATOR-&gt;doesnotdivide</td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -826,21 +1284,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>LOGICALRHS</td>
-
+        
         <td></td>
         <td>LOGICALRHS-&gt;WHOLENUMBER LOGICALRHS'</td>
         <td></td>
@@ -851,7 +1310,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -862,7 +1321,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -873,21 +1332,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td>LOGICALRHS-&gt;identifier LOGICALRHS'</td>
         <td>LOGICALRHS-&gt;WHOLENUMBER LOGICALRHS'</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>LOGICALRHS'</td>
-
+        
         <td>LOGICALRHS'-&gt;SIMPLEOPERATOR LOGICALRHS''</td>
         <td>LOGICALRHS'-&gt;SIMPLEOPERATOR LOGICALRHS''</td>
         <td>LOGICALRHS'-&gt;SIMPLEOPERATOR LOGICALRHS''</td>
@@ -898,7 +1358,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -909,7 +1369,7 @@
         <td></td>
         <td></td>
         <td>LOGICALRHS'-&gt;e</td>
-
+        
         <td>LOGICALRHS'-&gt;e</td>
         <td></td>
         <td>LOGICALRHS'-&gt;e</td>
@@ -920,32 +1380,24 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>LOGICALRHS''</td>
-
+        
         <td></td>
-        <td>LOGICALRHS''-&gt;WHOLENUMBER</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
+        <td>LOGGICALRHS''-&gt;WHOLENUMBER</td>
         <td></td>
         <td></td>
         <td></td>
@@ -954,9 +1406,7 @@
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -967,21 +1417,33 @@
         <td></td>
         <td></td>
         <td></td>
-
-        <td></td>
-        <td>LOGICALRHS''-&gt;identifier</td>
-        <td>LOGICALRHS''-&gt;WHOLENUMBER</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td>LOGGICALRHS''-&gt;identifier</td>
+        <td>LOGGICALRHS''-&gt;WHOLENUMBER</td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>SIMPLEOPERATOR</td>
-
+        
         <td>SIMPLEOPERATOR-&gt;plus</td>
         <td>SIMPLEOPERATOR-&gt;minus</td>
         <td>SIMPLEOPERATOR-&gt;multiply</td>
@@ -992,7 +1454,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1003,7 +1465,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1014,21 +1476,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>SETLITERAL</td>
-
+        
         <td></td>
         <td>SETLITERAL-&gt;WHOLENUMBER SETLITERAL'</td>
         <td></td>
@@ -1039,7 +1502,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1050,7 +1513,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1061,21 +1524,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td>SETLITERAL-&gt;WHOLENUMBER SETLITERAL'</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>SETLITERAL'</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1086,7 +1550,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1097,7 +1561,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td>SETLITERAL'-&gt;e</td>
@@ -1108,21 +1572,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>POINTSETLITERAL</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1133,7 +1598,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1144,7 +1609,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1155,21 +1620,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>POINTSETLITERAL'</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1180,7 +1646,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1191,7 +1657,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td>POINTSETLITERAL'-&gt;e</td>
@@ -1202,21 +1668,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>POINT</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1227,7 +1694,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1238,32 +1705,36 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-        <td>POINT-&gt;leftsquarebracket WHOLENUMBER comma WHOLENUMBER rightsquarebracket</td>
+        <td>
+          POINT-&gt;leftsquarebracket WHOLENUMBER comma WHOLENUMBER
+          rightsquarebracket
+        </td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>SELEMENTOFNELEMENTOF</td>
-
+        
         <td></td>
         <td>SELEMENTOFNELEMENTOF-&gt;WHOLENUMBER SELEMENTOFNELEMENTOF'</td>
         <td></td>
@@ -1274,7 +1745,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1285,7 +1756,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1296,21 +1767,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td>SELEMENTOFNELEMENTOF-&gt;WHOLENUMBER SELEMENTOFNELEMENTOF'</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>SELEMENTOFNELEMENTOF'</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1321,7 +1793,7 @@
         <td>SELEMENTOFNELEMENTOF'-&gt;notelementof SETOPERATIONSIDE</td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1332,7 +1804,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1343,21 +1815,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>WHOLENUMBER</td>
-
+        
         <td></td>
         <td>WHOLENUMBER-&gt;minus number</td>
         <td></td>
@@ -1368,7 +1841,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1379,7 +1852,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1390,21 +1863,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td>WHOLENUMBER-&gt;number</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>SCARDINALITY</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1415,7 +1889,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1424,11 +1898,9 @@
         <td></td>
         <td></td>
         <td></td>
-        <td>SCARDINALITY-&gt;verticalline SETOPERATIONSIDE SEXPR' verticalline</td>
+        <td>SCARDINALITY-&gt;verticalline SCARDINALITY'</td>
         <td></td>
-
-        <td></td>
-        <td></td>
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1437,21 +1909,86 @@
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        <td></td>
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
+        <td></td>
+      </tr>
+      <tr>
+        <td>SCARDINALITY'</td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td>SCARDINALITY'-&gt;SETOPERATIONSIDE SEXPR' verticalline</td>
+        <td></td>
+        <td>SCARDINALITY'-&gt;leftparenthesis SETOPERATIONSIDE SEXPR' rightparenthesis UISC verticalline</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td>SCARDINALITY'-&gt;SETOPERATIONSIDE SEXPR' verticalline</td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>SOFUNCTIONCALL</td>
-
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>
+          SOFUNCTIONCALL-&gt;dot SOFUNCTIONNAME leftparenthesis ARGUMENTS
+          rightparenthesis
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1462,7 +1999,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1473,32 +2010,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
-        <td></td>
-        <td>SOFUNCTIONCALL-&gt;identifier dot SOFUNCTIONNAME leftparenthesis ARGUMENTS rightparenthesis</td>
-        <td></td>
-
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
+        
         <td></td>
       </tr>
       <tr>
         <td>SOFUNCTIONNAME</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1509,7 +2036,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1520,7 +2047,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1531,21 +2058,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td>SOFUNCTIONNAME-&gt;add</td>
         <td>SOFUNCTIONNAME-&gt;delete</td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>SFUNCTIONCALL</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1556,7 +2084,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1567,7 +2095,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1578,21 +2106,28 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
-        <td>SFUNCTIONCALL-&gt;SFUNCTIONNAME leftparenthesis ARGUMENTS rightparenthesis</td>
-        <td>SFUNCTIONCALL-&gt;SFUNCTIONNAME leftparenthesis ARGUMENTS rightparenthesis</td>
+        
+        <td>
+          SFUNCTIONCALL-&gt;SFUNCTIONNAME leftparenthesis ARGUMENTS
+          rightparenthesis
+        </td>
+        <td>
+          SFUNCTIONCALL-&gt;SFUNCTIONNAME leftparenthesis ARGUMENTS
+          rightparenthesis
+        </td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>SFUNCTIONNAME</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1603,7 +2138,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1614,7 +2149,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1625,16 +2160,17 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td>SFUNCTIONNAME-&gt;venn</td>
         <td>SFUNCTIONNAME-&gt;pointsetdiagram</td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
@@ -1672,21 +2208,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td>ARGUMENTS-&gt;ARGUMENT ARGUMENTS'</td>
         <td>ARGUMENTS-&gt;ARGUMENT ARGUMENTS'</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>ARGUMENTS'</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1697,7 +2234,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1708,7 +2245,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1719,21 +2256,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>ARGUMENT</td>
-
+        
         <td></td>
         <td>ARGUMENT-&gt;WHOLENUMBER</td>
         <td></td>
@@ -1744,7 +2282,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1755,7 +2293,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td>ARGUMENT-&gt;CURLIEDSETEXP</td>
         <td></td>
@@ -1766,21 +2304,22 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td>ARGUMENT-&gt;identifier</td>
         <td>ARGUMENT-&gt;WHOLENUMBER</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>SSIMPLEEXPRESSION</td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1791,7 +2330,7 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1802,7 +2341,7 @@
         <td></td>
         <td>SSIMPLEEXPRESSION-&gt;SCARDINALITY SSIMPLEEXPRESSION'</td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1813,43 +2352,33 @@
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        
         <td></td>
       </tr>
       <tr>
         <td>SSIMPLEEXPRESSION'</td>
-
-        <td>SSIMPLEEXPRESSION'-&gt;SIMPLEOPERATOR SCARDINALITY</td>
-        <td>SSIMPLEEXPRESSION'-&gt;SIMPLEOPERATOR SCARDINALITY</td>
-        <td>SSIMPLEEXPRESSION'-&gt;SIMPLEOPERATOR SCARDINALITY</td>
-        <td>SSIMPLEEXPRESSION'-&gt;SIMPLEOPERATOR SCARDINALITY</td>
+        
+        <td>SSIMPLEEXPRESSION'-&gt;SIMPLEOPERATOR SCARDINALITY SSIMPLEEXPRESSION'</td>
+        <td>SSIMPLEEXPRESSION'-&gt;SIMPLEOPERATOR SCARDINALITY SSIMPLEEXPRESSION'</td>
+        <td>SSIMPLEEXPRESSION'-&gt;SIMPLEOPERATOR SCARDINALITY SSIMPLEEXPRESSION'</td>
+        <td>SSIMPLEEXPRESSION'-&gt;SIMPLEOPERATOR SCARDINALITY SSIMPLEEXPRESSION'</td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
@@ -1860,16 +2389,28 @@
         <td></td>
         <td></td>
         <td></td>
-
-        <td></td>
-        <td></td>
-        <td></td>
-
+        
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        
         <td>SSIMPLEEXPRESSION'-&gt;e</td>
       </tr>
     </table>

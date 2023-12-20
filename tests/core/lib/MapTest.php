@@ -34,7 +34,7 @@ class MapTest extends TestCase
             ["five", 5, 4, ["one", "two", "three", "five"]],
             ["two", 4, 3, ["one", "two", "three"]],
             ["six", "six", 4, ["one", "two", "three", "six"]],
-            [null, null, 4, ["one", "two", "three", null]]
+            [null, null, 3, ["one", "two", "three"]]
         ];
     }
 
@@ -155,5 +155,19 @@ class MapTest extends TestCase
     {
         $this->assertIsString((string) $this->map);
         $this->assertEquals("{one:1,two:2,three:3}", (string) $this->map);
+    }
+
+    /**
+     * @coverage \core\lib\Map::JsonSerialize
+     */
+    public function testJsonSerialize(): void
+    {
+        $object = new Map(["a" => 1, "b" => 2, "c" => 3]);
+        $json = $object->jsonSerialize();
+        $this->assertIsArray($json);
+        $this->assertCount(3, $json);
+        $this->assertContains(["a" => 1], $json);
+        $this->assertContains(["b" => 2], $json);
+        $this->assertContains(["c" => 3], $json);
     }
 }
