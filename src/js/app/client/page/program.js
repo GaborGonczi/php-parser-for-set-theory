@@ -1,37 +1,35 @@
-import { CONSTANTS } from "../constants.js"
+import { CONSTANTS } from "../constants.js";
 import { htmlEntityMap } from "../htmlentitytable.js";
-const backbtn=document.getElementById('back');
-const downloadbtn=document.getElementById('download');
-const printbtn=document.getElementById('print');
+import { getData,postData,postEncodedData, getEncodedData } from "../utils.js";
+const backbtn=document.querySelector('#back');
+const downloadbtn=document.querySelector('#download');
+const printbtn=document.querySelector('#print');
 const inputField=document.querySelector('#input textarea#text');
 const opButtons=document.querySelectorAll('.operator');
-const mode=document.querySelector('.switch input')
-const loadfile=document.getElementById('load');
+const mode=document.querySelector('.switch input');
+const loadfile=document.querySelector('#load');
+const variables=document.querySelector('#variables');
+const newbtn=document.querySelector('#new');
 let logs=[]
-function getData(fetchFrom){
-   return fetch(fetchFrom)
-    .then(res=>res.json())
+let oldValue="";
+function bothHaveValidValue(oldLines,newLines,i){
+return (oldLines[i] !== newLines[i])&&oldLines[i]!=""&&oldLines[i]!==undefined&&newLines[i]!=""&&newLines[i]!==undefined;
 }
-function getEncodedData(fetchFrom){
-    return fetch(fetchFrom)
-    .then(res=>res.blob())
-}
-function postData(data,postTo){
-    return fetch(postTo,{
-        method:'POST',
-        headers:{
-
-          'Content-Type': 'application/json'
-        },
-        body:JSON.stringify(data)
-    })
-    .then(res=>res.json())
-}
-function postEncodedData(data,postTo){
-    return fetch(postTo,{
-        method:'POST',
-        body:data
-    }).then(res=>res.text())
+function handleChange() {
+    let newValue = inputField.value;
+    let oldLines = oldValue.split('\n');
+    let newLines = newValue.split('\n');
+    
+    for (let i = 0; i < Math.max(oldLines.length, newLines.length); i++) {
+    
+        if (bothHaveValidValue(oldLines,newLines,i)) {
+           oldValue = newValue;
+           return inputField.value.indexOf(oldLines[i]);
+        }
+    }
+    
+    oldValue = newValue;
+    return -1;
 }
 function fillTemplate(data){
     return fetch(CONSTANTS.templateUrl)
@@ -43,19 +41,33 @@ function fillTemplate(data){
 }
 function save(e){
     if(e.code!=="Enter"&&e.code!="NumpadEnter") return;
-    let cursorPos=inputField.selectionStart;
-    let start=inputField.value.lastIndexOf("\n",cursorPos)+1;
-    let end=inputField.value.indexOf("\n",start)!==-1?inputField.value.indexOf("\n",start):inputField.value.length;
+    let cursorPos,start,end;
+    let changeFromIndex=handleChange();
+    if(changeFromIndex==-1){
+        cursorPos=inputField.selectionStart;
+        start=inputField.value.lastIndexOf("\n",cursorPos)+1;
+        end=inputField.value.indexOf("\n",start)!==-1?inputField.value.indexOf("\n",start):inputField.value.length;
+    }
+    else{
+        start=changeFromIndex;
+        end=inputField.value.indexOf("\n",start)!==-1?inputField.value.indexOf("\n",start):inputField.value.length;
+        inputField.value=inputField.value.replace(new RegExp('\n\n','g'),'\n');
+    }
+    
     let noparse=mode.checked
     let statement=String(inputField.value.substr(start,end));
+    console.log("statement",statement,'start',start,"end",end)
     Object.keys(htmlEntityMap).forEach((entity)=>{
-        statement.replaceAll(entity,htmlEntityMap[entity]);
+       statement=statement.replace(new RegExp(entity,'g'),htmlEntityMap[entity]);
     })
     let data={statement:statement,start:start, end:end,noparse:noparse,beforelogs:logs};
+    console.log("dataonclient",data);
     postData(data,CONSTANTS.parseUrl).then(data=>{
+        console.log(data);
         fillTemplate(data)
         inputField.value=data.json.map(r=>r.statement.trim()).join("\n");
         if(end===inputField.value.length&&end>0) inputField.value+="\n";
+        variables.value=data.variables.join('\n');
 
     })
 
@@ -93,6 +105,16 @@ function loadFromFile(){
    })
    
 }
+function newFile(){
+    saveToFile();
+    postData(null,CONSTANTS.newUrl).then(data=>{
+        getData(CONSTANTS.parseUrl).then(data=>{
+            inputField.value=data.json.map(r=>r.statement).join("\n");
+            if(inputField.value.length>0&&inputField.value[inputField.value.length-1]!=='\n') inputField.value+="\n";
+            fillTemplate(data)
+        })
+    })
+}
 function log(e){
     let now= new Date();
     let year=now.getFullYear();
@@ -124,9 +146,11 @@ function setUpLog(){
         log(e);
     })
     mode.addEventListener("change",log);
-    backbtn.addEventListener("click",log)
-    downloadbtn.addEventListener("click",log)
-    loadfile.addEventListener("change",log)
+    backbtn.addEventListener("click",log);
+    downloadbtn.addEventListener("click",log);
+    loadfile.addEventListener("change",log);
+    printbtn.addEventListener("click",log);
+    newbtn.addEventListener("click",log);
 }
 function loadUi(){
     const container=document.querySelector(".button-grid-container")
@@ -136,6 +160,15 @@ function loadUi(){
         btn.addEventListener("click",insertspecialcharacter)
     })
     inputField.addEventListener("keydown",save)
+    backbtn.addEventListener("click",e=>{
+        window.location.href=CONSTANTS.serverUrl+"index.php";
+    })
+    downloadbtn.addEventListener("click",saveToFile);
+    printbtn.addEventListener('click',e=>{
+        window.print();
+    });
+    newbtn.addEventListener("click",newFile);
+    loadfile.addEventListener("change",loadFromFile);
 }
 function load(e){
     log(e)
@@ -148,12 +181,4 @@ function load(e){
     })
     
 }
-backbtn.addEventListener("click",e=>{
-    window.location.href=CONSTANTS.serverUrl+"index.php";
-})
-downloadbtn.addEventListener("click",saveToFile);
-printbtn.addEventListener('click',e=>{
-    window.print();
-})
-loadfile.addEventListener("change",loadFromFile)
-window.addEventListener("DOMContentLoaded",load)
+window.addEventListener("DOMContentLoaded",load);

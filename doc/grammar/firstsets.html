@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>First sets</title>
+    <style>
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      td,
+      th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+
+      tr:nth-child(even) {
+        background-color: #dddddd;
+      }
+      .button {
+        background-color: #4caf50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        -webkit-transition-duration: 0.4s; /* Safari */
+        transition-duration: 0.4s;
+      }
+      .button:hover {
+        box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+          0 17px 50px 0 rgba(0, 0, 0, 0.19);
+      }
+    </style>
+    <script>
+      function navigate() {
+        let backt = document.getElementById("backt");
+        let backb = document.getElementById("backb");
+        backt.addEventListener("click", (e) => {
+          window.location.href = window.location.href.replace(
+            "firstsets",
+            "index"
+          );
+        });
+        backb.addEventListener("click", (e) => {
+          window.location.href = window.location.href.replace(
+            "firstsets",
+            "index"
+          );
+        });
+      }
+    </script>
+  </head>
+  <body onload="navigate()">
+    <button id="backt" class="button">Back</button>
+    <table>
+      <tr>
+        <th>Non-terminal</th>
+        <th>Production</th>
+        <th>First set</th>
+      </tr>
+      <tr>
+        <td>S</td>
+        <td>STATEMENT eol</td>
+        <td>
+          {identifier, leftcurlybrace, leftsquarebracket, leftparenthesis, minus, number, venn,
+          pointsetdiagram, verticalline}
+        </td>
+      </tr>
+      <tr>
+        <td>STATEMENT</td>
+        <td>
+          SEXPR<br />
+          |SELEMENTOFNELEMENTOF<br />
+          |SFUNCTIONCALL<br />
+          |SSIMPLEEXPRESSION
+        </td>
+        <td>
+          {identifier, leftcurlybrace, leftsquarebracket, leftparenthesis, minus, number, venn,
+          pointsetdiagram, verticalline}
+        </td>
+      </tr>
+      <tr>
+        <td>SEXPR</td>
+        <td>
+          SETOPERATIONSIDE SEXPR'<br />
+          |leftparenthesis SETOPERATIONSIDE STESRUISC'' rightparenthesis STESRUISC''<br/>
+          |POINT
+        </td>
+        <td>{identifier, leftcurlybrace, leftsquarebracket, leftparenthesis}</td>
+      </tr>
+      <tr>
+        <td>SEXPR'</td>
+        <td>
+          STESRUISC<br />
+          |SOFUNCTIONCALL
+        </td>
+        <td>
+          {e, tobeequal, equal, subsetof, realsubsetof, union, intersection,
+          setminus, complement, dot}
+        </td>
+      </tr>
+      <tr>
+        <td>STESRUISC</td>
+        <td>
+          tobeequal TRHS<br />
+          |equal STESRUISC'<br />
+          |subsetof STESRUISC'<br />
+          |realsubsetof STESRUISC'<br />
+          |UISC
+        </td>
+        <td>
+          {tobeequal, equal, subsetof, realsubsetof, complement, e, union,
+          intersection, setminus, complement}
+        </td>
+      </tr>
+      <tr>
+        <td>TRHS</td>
+        <td>
+          CURLIEDSETEXP<br />
+          |POINT<br/>
+          |leftparenthesis SETOPERATIONSIDE STESRUISC'' rightparenthesis STESRUISC''
+        </td>
+        <td>{leftcurlybrace, leftsquarebracket,leftparenthesis}</td>
+      </tr>
+      <tr>
+        <td>STESRUISC'</td>
+        <td>
+          SETOPERATIONSIDE STESRUISC''<br />
+          |leftparenthesis SETOPERATIONSIDE STESRUISC'' rightparenthesis STESRUISC''<br/>
+          |e
+        </td>
+        <td>{leftparenthesis, identifier, leftcurlybrace, e}</td>
+      </tr>
+      <tr>
+        <td>STESRUISC''</td>
+        <td>
+          UISC
+        </td>
+        <td>{e, union, intersection, setminus, complement}</td>
+      </tr>
+      <tr>
+        <td>UISC</td>
+        <td>
+          union STESRUISC'<br />
+          |intersection STESRUISC'<br />
+          |setminus STESRUISC'<br/>
+          |complement UISC<br />
+          |e
+        </td>
+        <td>{union, intersection, setminus, complement,e}</td>
+      </tr>
+      <tr>
+        <td>SETOPERATIONSIDE</td>
+        <td>
+          identifier<br />
+          |CURLIEDSETEXP
+        </td>
+        <td>{identifier, leftcurlybrace}</td>
+      </tr>
+      <tr>
+        <td>CURLIEDSETEXP</td>
+        <td>leftcurlybrace SETEXP rightcurlybrace</td>
+        <td>{leftcurlybrace}</td>
+      </tr>
+      <tr>
+        <td>SETEXP</td>
+        <td>
+          SETLITERAL<br />
+          |POINTSETLITERAL<br />
+          identifier SETEXP'<br />
+          |e
+        </td>
+        <td>{minus, number, leftsquarebracket, identifier, e}</td>
+      </tr>
+      <tr>
+        <td>SETEXP'</td>
+        <td>
+          IDENTIFIERLITERAL<br />
+          |SETFORMULA
+        </td>
+        <td>{comma,verticalline}</td>
+      </tr>
+      <tr>
+        <td>IDENTIFIERLITERAL</td>
+        <td>
+          comma identifier IDENTIFIERLITERAL<br />
+          |e
+        </td>
+        <td>{comma,e}</td>
+      </tr>
+      <tr>
+        <td>SETFORMULA</td>
+        <td>verticalline LOGICALEXP</td>
+        <td>{verticalline}</td>
+      </tr>
+      <tr>
+        <td>LOGICALEXP</td>
+        <td>LOGICALSUBEXP LOGICALEXP'</td>
+        <td>{minus, number, leftparenthesis, identifier}</td>
+      </tr>
+      <tr>
+        <td>LOGICALEXP'</td>
+        <td>
+          LOGICALOPERATOR LOGICALEXP<br />
+          |e
+        </td>
+        <td>{land, lor, e}</td>
+      </tr>
+      <tr>
+        <td>LOGICALOPERATOR</td>
+        <td>
+          land<br />
+          |lor
+        </td>
+        <td>{land, lor}</td>
+      </tr>
+      <tr>
+        <td>LOGICALSUBEXP</td>
+        <td>
+          leftparenthesis LOGICALEXP rightparenthesis<br />
+          |identifier LOGICALSUBEXP'<br />
+          |WHOLENUMBER DIVISIBILITYOPERATOR identifier
+        </td>
+        <td>{minus, number, leftparenthesis, identifier}</td>
+      </tr>
+      <tr>
+        <td>LOGICALSUBEXP'</td>
+        <td>
+          COMPARSIONOPERATOR LOGICALRHS<br />
+          |FUNCTIONDEFINITION
+        </td>
+        <td>{greaterthanorequal,lessthanorequal,greaterthan,lessthan,equal,arrow}</td>
+      </tr>
+      <tr>
+        <td>FUNCTIONDEFINITION</td>
+        <td>
+          arrow FUNCTIONDEFINITION'
+        </td>
+        <td>{arrow}</td>
+      </tr>
+      <tr>
+        <td>FUNCTIONDEFINITION'</td>
+        <td>
+          identifier SIMPLEOPERATOR WHOLENUMBER
+          |WHOLENUMBER SIMPLEOPERATOR identifier
+        </td>
+        <td>{identifier,minus,number}</td>
+      </tr>
+      <tr>
+        <td>COMPARSIONOPERATOR</td>
+        <td>
+          greaterthanorequal<br />
+          |lessthanorequal<br />
+          |greaterthan<br />
+          |lessthan<br />
+          |equal
+        </td>
+        <td>
+          {greaterthanorequal, lessthanorequal, greaterthan, lessthan, equal}
+        </td>
+      </tr>
+      <tr>
+        <td>DIVISIBILITYOPERATOR</td>
+        <td>
+          divides<br />
+          |doesnotdivide
+        </td>
+        <td>{divides, doesnotdivide}</td>
+      </tr>
+      <tr>
+        <td>LOGICALRHS</td>
+        <td>
+          identifier LOGICALRHS'<br />
+          |WHOLENUMBER LOGICALRHS'
+        </td>
+        <td>{identifier, minus, number}</td>
+      </tr>
+      <tr>
+        <td>LOGICALRHS'</td>
+        <td>
+          SIMPLEOPERATOR LOGICALRHS''<br />
+          |e
+        </td>
+        <td>{plus, minus, multiply, divide, e}</td>
+      </tr>
+      <tr>
+        <td>LOGICALRHS''</td>
+        <td>
+          WHOLENUMBER<br />
+          |identifier
+        </td>
+        <td>{minus, number, identifier}</td>
+      </tr>
+      <tr>
+        <td>SIMPLEOPERATOR</td>
+        <td>
+          plus<br />
+          |minus<br />
+          |multiply<br />
+          |divide
+        </td>
+        <td>{plus, minus, multiply, divide}</td>
+      </tr>
+      <tr>
+        <td>SETLITERAL</td>
+        <td>WHOLENUMBER SETLITERAL'</td>
+        <td>{minus, number}</td>
+      </tr>
+      <tr>
+        <td>SETLITERAL'</td>
+        <td>
+          comma SETLITERAL<br />
+          |e
+        </td>
+        <td>{comma, e}</td>
+      </tr>
+      <tr>
+        <td>POINTSETLITERAL</td>
+        <td>POINT POINTSETLITERAL'</td>
+        <td>{leftsquarebracket}</td>
+      </tr>
+      <tr>
+        <td>POINTSETLITERAL'</td>
+        <td>
+          comma POINTSETLITERAL<br />
+          |e
+        </td>
+        <td>{comma, e}</td>
+      </tr>
+      <tr>
+        <td>POINT</td>
+        <td>
+          leftsquarebracket WHOLENUMBER comma WHOLENUMBER rightsquarebracket
+        </td>
+        <td>{leftsquarebracket}</td>
+      </tr>
+      <tr>
+        <td>SELEMENTOFNELEMENTOF</td>
+        <td>WHOLENUMBER SELEMENTOFNELEMENTOF'</td>
+        <td>{minus, number}</td>
+      </tr>
+      <tr>
+        <td>SELEMENTOFNELEMENTOF'</td>
+        <td>
+          elementof SETOPERATIONSIDE<br />
+          |notelementof SETOPERATIONSIDE
+        </td>
+        <td>{elementof, notelementof}</td>
+      </tr>
+      <tr>
+        <td>WHOLENUMBER</td>
+        <td>
+          minus number<br />
+          |number
+        </td>
+        <td>{minus, number}</td>
+      </tr>
+      <tr>
+        <td>SCARDINALITY</td>
+        <td>verticalline SCARDINALITY'</td>
+        <td>{verticalline}</td>
+      </tr>
+      <tr>
+        <td>SCARDINALITY'</td>
+        <td>
+          SETOPERATIONSIDE SEXPR' verticalline<br />
+          |leftparenthesis SETOPERATIONSIDE SEXPR' rightparenthesis UISC verticalline
+        </td>
+        <td>{identifier,leftcurlybrace,leftparenthesis}</td>
+      </tr>
+      <tr>
+        <td>SOFUNCTIONCALL</td>
+        <td>dot SOFUNCTIONNAME leftparenthesis ARGUMENTS rightparenthesis</td>
+        <td>{dot}</td>
+      </tr>
+      <tr>
+        <td>SOFUNCTIONNAME</td>
+        <td>
+          add<br />
+          |delete
+        </td>
+        <td>{add, delete}</td>
+      </tr>
+      <tr>
+        <td>SFUNCTIONCALL</td>
+        <td>SFUNCTIONNAME leftparenthesis ARGUMENTS rightparenthesis</td>
+        <td>{venn, pointsetdiagram}</td>
+      </tr>
+      <tr>
+        <td>SFUNCTIONNAME</td>
+        <td>
+          venn<br />
+          |pointsetdiagram
+        </td>
+        <td>{venn, pointsetdiagram}</td>
+      </tr>
+      <tr>
+        <td>ARGUMENTS</td>
+        <td>ARGUMENT ARGUMENTS'</td>
+        <td>{identifier, leftcurlybrace, minus, number}</td>
+      </tr>
+      <tr>
+        <td>ARGUMENTS'</td>
+        <td>
+          comma ARGUMENT<br />
+          |e
+        </td>
+        <td>{comma, e}</td>
+      </tr>
+      <tr>
+        <td>ARGUMENT</td>
+        <td>
+          identifier<br />
+          |CURLIEDSETEXP<br />
+          |WHOLENUMBER
+        </td>
+        <td>{identifier, leftcurlybrace, minus, number}</td>
+      </tr>
+      <tr>
+        <td>SSIMPLEEXPRESSION</td>
+        <td>SCARDINALITY SSIMPLEEXPRESSION'</td>
+        <td>{verticalline}</td>
+      </tr>
+      <tr>
+        <td>SSIMPLEEXPRESSION'</td>
+        <td>
+          SIMPLEOPERATOR SCARDINALITY SSIMPLEEXPRESSION'<br />
+          |e
+        </td>
+        <td>{e, plus, minus, multiply, divide}</td>
+      </tr>
+    </table>
+    <button id="backb" class="button">Back</button>
+  </body>
+</html>

@@ -372,5 +372,11 @@ vendor/
 sql.sql
 seed.sql
 
+#loc statistics
+.VSCodeCounter/
+
 #phpunit cache
 .phpunit.cache/
+
+#VSCode plugins
+.vscode

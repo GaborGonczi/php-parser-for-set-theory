@@ -21,6 +21,7 @@ if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
 <body>
     <button id="help">Használati útmutató</button>
     <button id="program">Program</button>
+    <button id="questionnaire">Kérdőív</button>
     <button id="logout">Kilépés</button>
     <br/>
 </body>

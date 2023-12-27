@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grammar</title>
+    <style>
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      td,
+      th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+
+      tr:nth-child(even) {
+        background-color: #dddddd;
+      }
+      .button {
+        background-color: #4caf50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        -webkit-transition-duration: 0.4s; /* Safari */
+        transition-duration: 0.4s;
+      }
+      .button:hover {
+        box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+          0 17px 50px 0 rgba(0, 0, 0, 0.19);
+      }
+    </style>
+    <script>
+      function navigate() {
+        let backt = document.getElementById("backt");
+        let backb = document.getElementById("backb");
+        backt.addEventListener("click", (e) => {
+          window.location.href = window.location.href.replace(
+            "grammar.html",
+            "index.html"
+          );
+        });
+        backb.addEventListener("click", (e) => {
+          window.location.href = window.location.href.replace(
+            "grammar.html",
+            "index.html"
+          );
+        });
+      }
+    </script>
+  </head>
+  <body onload="navigate()">
+    <button id="backt" class="button">Back</button>
+    <table>
+      <tr>
+        <th>Non-terminal</th>
+        <th>Production</th>
+      </tr>
+      <tr>
+        <td>S-&gt;</td>
+        <td>STATEMENT eol</td>
+      </tr>
+      <tr>
+        <td>STATEMENT -&gt;</td>
+        <td>
+          SEXPR<br />
+          |SELEMENTOFNELEMENTOF<br />
+          |SFUNCTIONCALL<br />
+          |SSIMPLEEXPRESSION
+        </td>
+      </tr>
+      <tr>
+        <td>SEXPR-&gt;</td>
+        <td>
+          SETOPERATIONSIDE SEXPR'<br />
+          |leftparenthesis SETOPERATIONSIDE STESRUISC'' rightparenthesis STESRUISC''<br />
+          |POINT
+        </td>
+      </tr>
+      <tr>
+        <td>SEXPR'-&gt;</td>
+        <td>
+          STESRUISC<br />
+          |SOFUNCTIONCALL
+        </td>
+      </tr>
+      <tr>
+        <td>STESRUISC-&gt;</td>
+        <td>
+          tobeequal TRHS<br />
+          |equal STESRUISC'<br />
+          |subsetof STESRUISC'<br />
+          |realsubsetof STESRUISC'<br />
+          |UISC
+        </td>
+      </tr>
+      <tr>
+        <td>TRHS-&gt;</td>
+        <td>
+          CURLIEDSETEXP<br />
+          |leftparenthesis SETOPERATIONSIDE STESRUISC'' rightparenthesis STESRUISC''<br/>
+          |POINT
+        </td>
+      </tr>
+      <tr>
+        <td>STESRUISC'-&gt;</td>
+        <td>
+          SETOPERATIONSIDE STESRUISC''<br />
+          |leftparenthesis SETOPERATIONSIDE STESRUISC'' rightparenthesis STESRUISC''<br/>
+          |e
+        </td>
+      </tr>
+      <tr>
+        <td>STESRUISC''-&gt;</td>
+        <td>
+          UISC
+        </td>
+      </tr>
+      <tr>
+        <td>UISC-&gt;</td>
+        <td>
+          union STESRUISC'<br />
+          |intersection STESRUISC'<br />
+          |setminus STESRUISC'
+          |complement UISC
+          |e
+        </td>
+      </tr>
+      <tr>
+        <td>SETOPERATIONSIDE-&gt;</td>
+        <td>
+          identifier<br />
+          |CURLIEDSETEXP
+        </td>
+      </tr>
+      <tr>
+        <td>CURLIEDSETEXP-&gt;</td>
+        <td>leftcurlybrace SETEXP rightcurlybrace</td>
+      </tr>
+      <tr>
+        <td>SETEXP-&gt;</td>
+        <td>
+          SETLITERAL<br />
+          |POINTSETLITERAL<br />
+          identifier SETEXP'<br />
+          |e
+        </td>
+      </tr>
+      <tr>
+        <td>SETEXP'-&gt;</td>
+        <td>
+          IDENTIFIERLITERAL<br />
+          |SETFORMULA
+        </td>
+      </tr>
+      <tr>
+        <td>IDENTIFIERLITERAL-&gt;</td>
+        <td>
+          comma identifier IDENTIFIERLITERAL<br />
+          |e
+        </td>
+      </tr>
+      <tr>
+        <td>SETFORMULA-&gt;</td>
+        <td>verticalline LOGICALEXP</td>
+      </tr>
+      <tr>
+        <td>LOGICALEXP-&gt;</td>
+        <td>LOGICALSUBEXP LOGICALEXP'</td>
+      </tr>
+      <tr>
+        <td>LOGICALEXP'-&gt;</td>
+        <td>
+          LOGICALOPERATOR LOGICALEXP<br />
+          |e
+        </td>
+      </tr>
+      <tr>
+        <td>LOGICALOPERATOR-&gt;</td>
+        <td>
+          land<br />
+          |lor
+        </td>
+      </tr>
+      <tr>
+        <td>LOGICALSUBEXP-&gt;</td>
+        <td>
+          leftparentdesis LOGICALEXP rightparentdesis<br />
+          |identifier LOGICALSUBEXP'<br />
+          |WHOLENUMBER DIVISIBILITYOPERATOR identifier
+        </td>
+      </tr>
+      <tr>
+        <td>LOGICALSUBEXP'-&gt;</td>
+        <td>
+          COMPARSIONOPERATOR LOGICALRHS<br />
+          |FUNCTIONDEFINITION
+        </td>
+      </tr>
+      <tr>
+        <td>FUNCTIONDEFINITION-&gt;</td>
+        <td>
+          arrow FUNCTIONDEFINITION'
+        </td>
+      </tr>
+      <tr>
+        <td>FUNCTIONDEFINITION'-&gt;</td>
+        <td>
+          identifier SIMPLEOPERATOR WHOLENUMBER
+          |WHOLENUMBER SIMPLEOPERATOR identifier
+        </td>
+      </tr>
+      <tr>
+        <td>COMPARSIONOPERATOR-&gt;</td>
+        <td>
+          greatertdanorequal<br />
+          |lesstdanorequal<br />
+          |greatertdan<br />
+          |lesstdan<br />
+          |equal
+        </td>
+      </tr>
+      <tr>
+        <td>DIVISIBILITYOPERATOR-&gt;</td>
+        <td>
+          divides<br />
+          |doesnotdivide
+        </td>
+      </tr>
+      <tr>
+        <td>LOGICALRHS-&gt;</td>
+        <td>
+          identifier LOGICALRHS'<br />
+          |WHOLENUMBER LOGICALRHS'
+        </td>
+      </tr>
+      <tr>
+        <td>LOGICALRHS'-&gt;</td>
+        <td>SIMPLEOPERATOR LOGICALRHS''<br />
+            |e
+        </td>
+      </tr>
+      <tr>
+        <td>LOGICALRHS''-&gt;</td>
+        <td>
+          WHOLENUMBER<br />
+          |identifier
+        </td>
+      </tr>
+      <tr>
+        <td>SIMPLEOPERATOR-&gt;</td>
+        <td>
+          plus<br />
+          |minus<br />
+          |multiply<br />
+          |divide
+        </td>
+      </tr>
+      <tr>
+        <td>SETLITERAL-&gt;</td>
+        <td>WHOLENUMBER SETLITERAL'</td>
+      </tr>
+      <tr>
+        <td>SETLITERAL'-&gt;</td>
+        <td>
+          comma SETLITERAL<br />
+          |e
+        </td>
+      </tr>
+      <tr>
+        <td>POINTSETLITERAL-&gt;</td>
+        <td>POINT POINTSETLITERAL'</td>
+      </tr>
+      <tr>
+        <td>POINTSETLITERAL'-&gt;</td>
+        <td>
+          comma POINTSETLITERAL<br />
+          |e
+        </td>
+      </tr>
+      <tr>
+        <td>POINT-&gt;</td>
+        <td>
+          leftsquarebracket WHOLENUMBER comma WHOLENUMBER rightsquarebracket
+        </td>
+      </tr>
+      <tr>
+        <td>SELEMENTOFNELEMENTOF-&gt;</td>
+        <td>WHOLENUMBER SELEMENTOFNELEMENTOF'</td>
+      </tr>
+      <tr>
+        <td>SELEMENTOFNELEMENTOF'-&gt;</td>
+        <td>
+          elementof SETOPERATIONSIDE<br />
+          |notelementof SETOPERATIONSIDE
+        </td>
+      </tr>
+      <tr>
+        <td>WHOLENUMBER-&gt;</td>
+        <td>
+          minus number<br />
+          |number
+        </td>
+      </tr>
+      <tr>
+        <td>SCARDINALITY-&gt;</td>
+        <td>verticalline SCARDINALITY'</td>
+      </tr>
+      <tr>
+        <td>SCARDINALITY'-&gt;</td>
+        <td>
+          SETOPERATIONSIDE SEXPR' verticalline<br />
+          |leftparenthesis SETOPERATIONSIDE SEXPR' rightparenthesis UISC verticalline
+        </td>
+      </tr>
+      <tr>
+        <td>SOFUNCTIONCALL-&gt;</td>
+        <td>dot SOFUNCTIONNAME leftparentdesis ARGUMENTS rightparentdesis</td>
+      </tr>
+      <tr>
+        <td>SOFUNCTIONNAME-&gt;</td>
+        <td>
+          add<br />
+          |delete
+        </td>
+      </tr>
+      <tr>
+        <td>SFUNCTIONCALL-&gt;</td>
+        <td>SFUNCTIONNAME leftparentdesis ARGUMENTS rightparentdesis</td>
+      </tr>
+      <tr>
+        <td>SFUNCTIONNAME-&gt;</td>
+        <td>
+          venn<br />
+          |pointsetdiagram
+        </td>
+      </tr>
+      <tr>
+        <td>ARGUMENTS-&gt;</td>
+        <td>ARGUMENT ARGUMENTS'</td>
+      </tr>
+      <tr>
+        <td>ARGUMENTS'-&gt;</td>
+        <td>
+          comma ARGUMENT<br />
+          |e
+        </td>
+      </tr>
+      <tr>
+        <td>ARGUMENT-&gt;</td>
+        <td>
+          identifier<br />
+          |CURLIEDSETEXP<br />
+          |WHOLENUMBER
+        </td>
+      </tr>
+      <tr>
+        <td>SSIMPLEEXPRESSION-&gt;</td>
+        <td>SCARDINALITY SSIMPLEEXPRESSION'</td>
+      </tr>
+      <tr>
+        <td>SSIMPLEEXPRESSION'-&gt;</td>
+        <td>
+          SIMPLEOPERATOR SCARDINALITY SSIMPLEEXPRESSION'<br />
+          |e
+        </td>
+      </tr>
+    </table>
+    <button id="backb" class="button">Back</button>
+  </body>
+</html>
