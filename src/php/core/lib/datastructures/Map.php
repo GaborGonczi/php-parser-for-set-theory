@@ -1,5 +1,5 @@
 <?php
-namespace core\lib;
+namespace core\lib\datastructures;
 
 use \IteratorAggregate;
 use \Traversable;

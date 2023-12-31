@@ -1,10 +1,10 @@
 <?php
 
 use \PHPUnit\Framework\TestCase;
-use \core\lib\Point;
+use \core\lib\datastructures\Point;
 use \core\lib\PointSetDiagramFunctions;
 use \core\lib\PointSetDiagramOptions;
-use \core\lib\Set;
+use \core\lib\datastructures\Set;
 
 class PointSetDiagramFunctionsTest extends TestCase
 {
@@ -101,8 +101,8 @@ class PointSetDiagramFunctionsTest extends TestCase
     
     /**
      * @covers \core\lib\PointSetDiagramFunctions::addPointElement
-     * @uses \core\lib\Set
-     * @uses \core\lib\Point
+     * @uses \core\lib\datastructures\Set
+     * @uses \core\lib\datastructures\Point
      */
     public function testAddPointElement()
     {
@@ -124,8 +124,8 @@ class PointSetDiagramFunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\PointSetDiagramFunctions::deletePointElement
-     * @uses \core\lib\Set
-     * @uses \core\lib\Point
+     * @uses \core\lib\datastructures\Set
+     * @uses \core\lib\datastructures\Point
      */
     public function testDeletePointElement()
     {
@@ -210,8 +210,8 @@ class PointSetDiagramFunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\PointSetDiagramFunctions::pointSetDiagram
-     * @uses \core\lib\Set
-     * @uses \core\lib\Point
+     * @uses \core\lib\datastructures\Set
+     * @uses \core\lib\datastructures\Point
      * @uses \core\lib\PointSetDiagramOptions
      */
     public function testPointSetDiagram()

@@ -1,7 +1,7 @@
 <?php
 
 use \PHPUnit\Framework\TestCase;
-use \core\lib\Point;
+use \core\lib\datastructures\Point;
 
 class PointTest extends TestCase
 {

@@ -3,12 +3,14 @@
 use \PHPUnit\Framework\TestCase;
 use \core\parser\Token;
 
-class TokenTest extends TestCase {
+class TokenTest extends TestCase
+{
 
     /**
-    * @dataProvider constantProvider
-    */
-    public function testConstants($constant, $name, $value) {
+     * @dataProvider constantProvider
+     */
+    public function testConstants($constant, $name, $value)
+    {
 
         $this->assertIsArray($constant);
         $this->assertArrayHasKey('name', $constant);
@@ -17,10 +19,13 @@ class TokenTest extends TestCase {
         $this->assertEquals($name, $constant['name']);
         $this->assertEquals($value, $constant['value']);
     }
-    
-    public static function constantProvider() {
-        return [
-        
+
+    public static function constantProvider()
+    {
+
+
+        $tests = [
+
             [Token::PLUS, 'plus', '+'],
             [Token::MINUS, 'minus', '-'],
             [Token::MULTIPLY, 'multiply', '*'],
@@ -54,12 +59,34 @@ class TokenTest extends TestCase {
             [Token::GREATERTHANOREQUAL, 'greaterthanorequal', '>='],
             [Token::ARROW, 'arrow', '->'],
             [Token::IDENTIFIER, 'identifier', '^([_a-zA-Z][_a-zA-Z0-9]*)$'],
-            [Token::NUMBER, 'number', '^(0|[1-9][0-9]*)$'],
-
-            [Token::VENN, 'venn', 'Venn'],
-            [Token::POINTSETDIAGRAM, 'pointsetdiagram', 'PointSetDiagram'],
-            [Token::ADD, 'add', 'add'],
-            [Token::DELETE, 'delete', 'delete']
+            [Token::NUMBER, 'number', '^(0|[1-9][0-9]*)$']
         ];
+
+        $htmlEntityMap = [
+            "∈" => "&isin;",
+            "∉" => "&notin;",
+            "⊆" => "&sube;",
+            "⊂" => "&sub;",
+            "∁" => "&comp;",
+            "∪" => "&cup;",
+            "∩" => "&cap;",
+            "∧" => "&and;",
+            "∨" => "&or;",
+            "∖" => "&setminus;",
+            "∣" => "&mid;",
+            "∤" => "&nmid;",
+
+        ];
+        foreach ($tests as &$test) {
+
+            foreach ($htmlEntityMap as $key => $value) {
+                if ($key === $test[2]) {
+                    $test[2] = $value;
+                }
+            }
+
+        }
+        return $tests;
+
     }
 }

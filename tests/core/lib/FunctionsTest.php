@@ -1,10 +1,10 @@
 <?php
 
-use core\lib\Map;
-use core\lib\Point;
+use core\lib\datastructures\Map;
+use \core\lib\datastructures\Point;
 use \PHPUnit\Framework\TestCase;
 use \core\lib\Functions;
-use \core\lib\Set;
+use \core\lib\datastructures\Set;
 use \core\parser\Token;
 use core\Regexp;
 
@@ -45,7 +45,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::isArray
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testIsArray()
     {
@@ -93,7 +93,7 @@ class FunctionsTest extends TestCase
 
     /**  
      *  @covers \core\lib\Functions::isFunction  
-     * @uses \core\lib\Set  
+     * @uses \core\lib\datastructures\Set  
      */
     public function testIsFunction()
     {
@@ -108,7 +108,7 @@ class FunctionsTest extends TestCase
     }
     /**  
      *  @covers \core\lib\Functions::isNull  
-     * @uses \core\lib\Set  
+     * @uses \core\lib\datastructures\Set  
      */
     public function testIsNull()
     {
@@ -145,7 +145,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::isSet
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testIsSet()
     {
@@ -161,7 +161,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::IsGoodOperation
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testIsGoodOperation()
     {
@@ -203,7 +203,7 @@ class FunctionsTest extends TestCase
     }
     /**
      * @covers \core\lib\Functions::createSetFromArray
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testCreateSetFromArray()
     {
@@ -222,7 +222,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::createSetFromFormula
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testCreateSetFromFormula()
     {
@@ -248,7 +248,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::isEmpty
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testIsEmpty()
     {
@@ -265,7 +265,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::isElementOf
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testIsElementOf()
     {
@@ -288,7 +288,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::isNotElementOf
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testIsNotElementOf()
     {
@@ -311,7 +311,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::difference
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testDifference()
     {
@@ -335,7 +335,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::areEqual
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testAreEqual()
     {
@@ -359,7 +359,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::isSubsetOf
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testIsSubsetOf()
     {
@@ -378,7 +378,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::isRealSubsetOf
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testIsRealSubsetOf()
     {
@@ -398,7 +398,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::complement
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testComplement()
     {
@@ -422,7 +422,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::union
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testUnion()
     {
@@ -443,7 +443,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::intersection
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testIntersection()
     {
@@ -468,7 +468,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::cardinality
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testCardinality()
     {
@@ -484,7 +484,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::addElement
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testAddElement()
     {
@@ -505,7 +505,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::deleteElement
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testDeleteElement()
     {
@@ -652,7 +652,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::venn
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testVennWithTwoSets()
     {
@@ -672,7 +672,7 @@ class FunctionsTest extends TestCase
 
     /**
      * @covers \core\lib\Functions::venn
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testVennWithThreeSets()
     {
@@ -692,7 +692,7 @@ class FunctionsTest extends TestCase
     }
     /**
      * @covers \core\lib\Functions::venn
-     * @uses \core\lib\Set
+     * @uses \core\lib\datastructures\Set
      */
     public function testVennWithMoreThanThreeSets()
     {

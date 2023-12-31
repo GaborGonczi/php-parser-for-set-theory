@@ -1,10 +1,11 @@
 <?php
 
-use core\lib\Map;
-use core\lib\Point;
-use core\lib\Set;
+use core\lib\datastructures\Map;
+use core\lib\datastructures\Point;
+use core\lib\datastructures\Set;
 use PHPUnit\Framework\TestCase;
 use \core\parser\Parser;
+use \core\parser\Token;
 use core\parser\exception\ParserException;
 
 class ParserTest extends TestCase
@@ -35,10 +36,10 @@ class ParserTest extends TestCase
             $internalBaseSet->setAccessible(true);
             $internalBaseSet->setValue($parser,$baseSet);
         }
+        $result = $parser->parse();
         if ($exception !== null) {
             $this->expectException($exception);
         }
-        $result = $parser->parse();
         if ($exception === null) {
             $this->assertSame($expected, $result);
         }
@@ -55,7 +56,7 @@ class ParserTest extends TestCase
             [
                 [
                     ['type' => 'number', 'value' => floatval(3)],
-                    ['type' => 'elementof', 'value' => '∈'],
+                    ['type' => 'elementof', 'value' => '&isin;'],
                     ['type' => 'identifier', 'value' => 'A'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -69,7 +70,7 @@ class ParserTest extends TestCase
                 [
                     ['type' => 'minus', 'value' => '-'],
                     ['type' => 'number', 'value' => floatval(2)],
-                    ['type' => 'notelementof', 'value' => '∉'],
+                    ['type' => 'notelementof', 'value' => '&notin;'],
                     ['type' => 'identifier', 'value' => 'A'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -82,7 +83,7 @@ class ParserTest extends TestCase
             [
                 [
                     ['type' => 'number', 'value' => floatval(1)],
-                    ['type' => 'elementof', 'value' => '∈'],
+                    ['type' => 'elementof', 'value' => '&isin;'],
                     ['type' => 'identifier', 'value' => 'B'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -95,7 +96,7 @@ class ParserTest extends TestCase
             [
                 [
                     ['type' => 'number', 'value' => floatval(3)],
-                    ['type' => 'notelementof', 'value' => '∉'],
+                    ['type' => 'notelementof', 'value' => '&notin;'],
                     ['type' => 'identifier', 'value' => 'B'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -196,7 +197,7 @@ class ParserTest extends TestCase
                     ['type' => 'identifier', 'value' => 'x'],
                     ['type' => 'greaterthan', 'value' => '>'],
                     ['type' => 'number', 'value' => floatval(1)],
-                    ['type' => 'land', 'value' => '∧'],
+                    ['type' => 'land', 'value' => '&and;'],
                     ['type' => 'identifier', 'value' => 'x'],
                     ['type' => 'lessthanorequal', 'value' => '<='],
                     ['type' => 'number', 'value' => floatval(3)],
@@ -219,11 +220,11 @@ class ParserTest extends TestCase
                     ['type' => 'identifier', 'value' => 'z'],
                     ['type' => 'greaterthanorequal', 'value' => '>='],
                     ['type' => 'number', 'value' => floatval(0)],
-                    ['type' => 'land', 'value' => '∧'],
+                    ['type' => 'land', 'value' => '&and;'],
                     ['type' => 'identifier', 'value' => 'z'],
                     ['type' => 'lessthan', 'value' => '<'],
                     ['type' => 'number', 'value' => floatval(3)],
-                    ['type' => 'land', 'value' => '∧'],
+                    ['type' => 'land', 'value' => '&and;'],
                     ['type' => 'identifier', 'value' => 'y'],
                     ['type' => 'arrow', 'value' => '->'],
                     ['type' => 'number', 'value' => floatval(2)],
@@ -249,11 +250,11 @@ class ParserTest extends TestCase
                     ['type' => 'identifier', 'value' => 'z'],
                     ['type' => 'greaterthan', 'value' => '>'],
                     ['type' => 'number', 'value' => floatval(0)],
-                    ['type' => 'land', 'value' => '∧'],
+                    ['type' => 'land', 'value' => '&and;'],
                     ['type' => 'identifier', 'value' => 'z'],
                     ['type' => 'lessthanorequal', 'value' => '<='],
                     ['type' => 'number', 'value' => floatval(100)],
-                    ['type' => 'land', 'value' => '∧'],
+                    ['type' => 'land', 'value' => '&and;'],
                     ['type' => 'identifier', 'value' => 'y'],
                     ['type' => 'arrow', 'value' => '->'],
                     ['type' => 'identifier', 'value' => 'z'],
@@ -280,22 +281,22 @@ class ParserTest extends TestCase
                     ['type' => 'identifier', 'value' => 'i'],
                     ['type' => 'greaterthanorequal', 'value' => '>='],
                     ['type' => 'number', 'value' => floatval(0)],
-                    ['type' => 'land', 'value' => '∧'],
+                    ['type' => 'land', 'value' => '&and;'],
                     ['type' => 'identifier', 'value' => 'i'],
                     ['type' => 'lessthanorequal', 'value' => '<='],
                     ['type' => 'number', 'value' => floatval(20)],
-                    ['type' => 'land', 'value' => '∧'],
+                    ['type' => 'land', 'value' => '&and;'],
                     ['type' => 'leftparenthesis', 'value' => '('],
                     ['type' => 'number', 'value' => floatval(5)],
-                    ['type' => 'divides', 'value' => '∣'],
+                    ['type' => 'divides', 'value' => '&mid;'],
                     ['type' => 'identifier', 'value' => 'i'],
-                    ['type' => 'lor', 'value' => '∨'],
+                    ['type' => 'lor', 'value' => '&or;'],
                     ['type' => 'number', 'value' => floatval(7)],
-                    ['type' => 'divides', 'value' => '∣'],
+                    ['type' => 'divides', 'value' => '&mid;'],
                     ['type' => 'identifier', 'value' => 'i'],
-                    ['type' => 'land', 'value' => '∧'],
+                    ['type' => 'land', 'value' => '&and;'],
                     ['type' => 'number', 'value' => floatval(10)],
-                    ['type' => 'doesnotdivide', 'value' => '∤'],
+                    ['type' => 'doesnotdivide', 'value' => '&nmid;'],
                     ['type' => 'identifier', 'value' => 'i'],
                     ['type' => 'rightparenthesis', 'value' => ')'],
                     ['type' => 'rightcurlybrace', 'value' => '}'],
@@ -337,7 +338,7 @@ class ParserTest extends TestCase
             [
                 [
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'subsetof', 'value' => '⊆'],
+                    ['type' => 'subsetof', 'value' => '&sube;'],
                     ['type' => 'identifier', 'value' => 'B'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -350,7 +351,7 @@ class ParserTest extends TestCase
             [
                 [
                     ['type' => 'identifier', 'value' => 'C'],
-                    ['type' => 'subsetof', 'value' => '⊆'],
+                    ['type' => 'subsetof', 'value' => '&sube;'],
                     ['type' => 'identifier', 'value' => 'D'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -363,7 +364,7 @@ class ParserTest extends TestCase
             [
                 [
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'realsubsetof', 'value' => '⊂'],
+                    ['type' => 'realsubsetof', 'value' => '&sub;'],
                     ['type' => 'identifier', 'value' => 'B'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -376,7 +377,7 @@ class ParserTest extends TestCase
             [
                 [
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'realsubsetof', 'value' => '⊂'],
+                    ['type' => 'realsubsetof', 'value' => '&sub;'],
                     ['type' => 'identifier', 'value' => 'H'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -390,7 +391,7 @@ class ParserTest extends TestCase
                 [
 
                     ['type' => 'identifier', 'value' => 'H'],
-                    ['type' => 'realsubsetof', 'value' => '⊂'],
+                    ['type' => 'realsubsetof', 'value' => '&sub;'],
                     ['type' => 'identifier', 'value' => 'H'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -404,7 +405,7 @@ class ParserTest extends TestCase
                 [
 
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'complement', 'value' => '∁'],
+                    ['type' => 'complement', 'value' => '&comp;'],
                     ['type' => 'eol', 'value' => '$']
                 ],
                 new Map(['A'=>new Set([1,2]),'H'=>new Set([0,1,2,3,4,5])]),
@@ -417,7 +418,7 @@ class ParserTest extends TestCase
                 [
 
                     ['type' => 'identifier', 'value' => 'H'],
-                    ['type' => 'complement', 'value' => '∁'],
+                    ['type' => 'complement', 'value' => '&comp;'],
                     ['type' => 'eol', 'value' => '$']
                 ],
                 new Map(['H'=>new Set([0,1,2,3,4,5])]),
@@ -430,7 +431,7 @@ class ParserTest extends TestCase
                 [
 
                     ['type' => 'identifier', 'value' => 'D'],
-                    ['type' => 'complement', 'value' => '∁'],
+                    ['type' => 'complement', 'value' => '&comp;'],
                     ['type' => 'eol', 'value' => '$']
                 ],
                 new Map(['D'=>new Set([4,5]),'H'=>new Set([0,1,2,3,4,5])]),
@@ -443,7 +444,7 @@ class ParserTest extends TestCase
                 [
 
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'union', 'value' => '∪'],
+                    ['type' => 'union', 'value' => '&cup;'],
                     ['type' => 'identifier', 'value' => 'D'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -457,7 +458,7 @@ class ParserTest extends TestCase
                 [
 
                     ['type' => 'identifier', 'value' => 'B'],
-                    ['type' => 'union', 'value' => '∪'],
+                    ['type' => 'union', 'value' => '&cup;'],
                     ['type' => 'identifier', 'value' => 'C'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -471,7 +472,7 @@ class ParserTest extends TestCase
                 [
 
                     ['type' => 'identifier', 'value' => 'C'],
-                    ['type' => 'union', 'value' => '∪'],
+                    ['type' => 'union', 'value' => '&cup;'],
                     ['type' => 'identifier', 'value' => 'D'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -485,11 +486,11 @@ class ParserTest extends TestCase
                 [
 
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'union', 'value' => '∪'],
+                    ['type' => 'union', 'value' => '&cup;'],
                     ['type' => 'identifier', 'value' => 'B'],
-                    ['type' => 'union', 'value' => '∪'],
+                    ['type' => 'union', 'value' => '&cup;'],
                     ['type' => 'identifier', 'value' => 'C'],
-                    ['type' => 'union', 'value' => '∪'],
+                    ['type' => 'union', 'value' => '&cup;'],
                     ['type' => 'identifier', 'value' => 'D'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -504,7 +505,7 @@ class ParserTest extends TestCase
                 [
 
                     ['type' => 'identifier', 'value' => 'B'],
-                    ['type' => 'intersection', 'value' => '∩'],
+                    ['type' => 'intersection', 'value' => '&cap;'],
                     ['type' => 'identifier', 'value' => 'C'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -518,7 +519,7 @@ class ParserTest extends TestCase
                 [
 
                     ['type' => 'identifier', 'value' => 'D'],
-                    ['type' => 'intersection', 'value' => '∩'],
+                    ['type' => 'intersection', 'value' => '&cap;'],
                     ['type' => 'identifier', 'value' => 'C'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -532,7 +533,7 @@ class ParserTest extends TestCase
                 [
 
                     ['type' => 'identifier', 'value' => 'B'],
-                    ['type' => 'setminus', 'value' => '∖'],
+                    ['type' => 'setminus', 'value' => '&setminus;'],
                     ['type' => 'identifier', 'value' => 'C'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -546,7 +547,7 @@ class ParserTest extends TestCase
                 [
 
                     ['type' => 'identifier', 'value' => 'C'],
-                    ['type' => 'setminus', 'value' => '∖'],
+                    ['type' => 'setminus', 'value' => '&setminus;'],
                     ['type' => 'identifier', 'value' => 'B'],
                     ['type' => 'eol', 'value' => '$']
                 ],
@@ -560,14 +561,14 @@ class ParserTest extends TestCase
                 [
 
                     ['type' => 'identifier', 'value' => 'H'],
-                    ['type' => 'setminus', 'value' => '∖'],
+                    ['type' => 'setminus', 'value' => '&setminus;'],
                     ['type' => 'leftparenthesis', 'value' => '('],
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'union', 'value' => '∪'],
+                    ['type' => 'union', 'value' => '&cup;'],
                     ['type' => 'identifier', 'value' => 'B'],
-                    ['type' => 'union', 'value' => '∪'],
+                    ['type' => 'union', 'value' => '&cup;'],
                     ['type' => 'identifier', 'value' => 'C'],
-                    ['type' => 'union', 'value' => '∪'],
+                    ['type' => 'union', 'value' => '&cup;'],
                     ['type' => 'identifier', 'value' => 'D'],
                     ['type' => 'rightparenthesis', 'value' => ')'],
                     ['type' => 'eol', 'value' => '$']
@@ -695,10 +696,10 @@ class ParserTest extends TestCase
 
                     ['type' => 'leftparenthesis', 'value' => '('],
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'intersection', 'value' => '∩'],
+                    ['type' => 'intersection', 'value' => '&cap;'],
                     ['type' => 'identifier', 'value' => 'C'],
                     ['type' => 'rightparenthesis', 'value' => ')'],
-                    ['type' => 'complement', 'value' => '∁'],
+                    ['type' => 'complement', 'value' => '&comp;'],
                     ['type' => 'eol', 'value' => '$']
                    
                 ],
@@ -711,10 +712,10 @@ class ParserTest extends TestCase
             [
                 [
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'complement', 'value' => '∁'],
-                    ['type' => 'union', 'value' => '∪'],
+                    ['type' => 'complement', 'value' => '&comp;'],
+                    ['type' => 'union', 'value' => '&cup;'],
                     ['type' => 'identifier', 'value' => 'C'],
-                    ['type' => 'complement', 'value' => '∁'],
+                    ['type' => 'complement', 'value' => '&comp;'],
                     ['type' => 'eol', 'value' => '$']
                 ],
                 new Map(['A'=>new Set([1,2]),'C'=>new Set([2,3])]),
@@ -751,7 +752,7 @@ class ParserTest extends TestCase
 
                     ['type' => 'verticalline', 'value' => '|'],
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'intersection', 'value' => '∩'],//2
+                    ['type' => 'intersection', 'value' => '&cap;'],//2
                     ['type' => 'identifier', 'value' => 'B'],
                     ['type' => 'verticalline', 'value' => '|'],
 
@@ -759,7 +760,7 @@ class ParserTest extends TestCase
 
                     ['type' => 'verticalline', 'value' => '|'],
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'intersection', 'value' => '∩'],//1
+                    ['type' => 'intersection', 'value' => '&cap;'],//1
                     ['type' => 'identifier', 'value' => 'C'],
                     ['type' => 'verticalline', 'value' => '|'],
 
@@ -767,7 +768,7 @@ class ParserTest extends TestCase
 
                     ['type' => 'verticalline', 'value' => '|'],
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'intersection', 'value' => '∩'],//0
+                    ['type' => 'intersection', 'value' => '&cap;'],//0
                     ['type' => 'identifier', 'value' => 'D'],
                     ['type' => 'verticalline', 'value' => '|'],
 
@@ -775,7 +776,7 @@ class ParserTest extends TestCase
 
                     ['type' => 'verticalline', 'value' => '|'],
                     ['type' => 'identifier', 'value' => 'B'],
-                    ['type' => 'intersection', 'value' => '∩'],//1
+                    ['type' => 'intersection', 'value' => '&cap;'],//1
                     ['type' => 'identifier', 'value' => 'C'],
                     ['type' => 'verticalline', 'value' => '|'],
 
@@ -783,7 +784,7 @@ class ParserTest extends TestCase
 
                     ['type' => 'verticalline', 'value' => '|'],
                     ['type' => 'identifier', 'value' => 'B'],
-                    ['type' => 'intersection', 'value' => '∩'],//0
+                    ['type' => 'intersection', 'value' => '&cap;'],//0
                     ['type' => 'identifier', 'value' => 'D'],
                     ['type' => 'verticalline', 'value' => '|'],
 
@@ -791,37 +792,7 @@ class ParserTest extends TestCase
 
                     ['type' => 'verticalline', 'value' => '|'],
                     ['type' => 'identifier', 'value' => 'C'],
-                    ['type' => 'intersection', 'value' => '∩'],//0
-                    ['type' => 'identifier', 'value' => 'D'],
-                    ['type' => 'verticalline', 'value' => '|'],
-
-                    ['type' => 'plus', 'value' => '+'],
-
-                    ['type' => 'verticalline', 'value' => '|'],
-                    ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'intersection', 'value' => '∩'],
-                    ['type' => 'identifier', 'value' => 'B'],
-                    ['type' => 'intersection', 'value' => '∩'],//1
-                    ['type' => 'identifier', 'value' => 'C'],
-                    ['type' => 'verticalline', 'value' => '|'],
-
-                    ['type' => 'plus', 'value' => '+'],
-
-                    ['type' => 'verticalline', 'value' => '|'],
-                    ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'intersection', 'value' => '∩'],//0
-                    ['type' => 'identifier', 'value' => 'B'],
-                    ['type' => 'intersection', 'value' => '∩'],
-                    ['type' => 'identifier', 'value' => 'D'],
-                    ['type' => 'verticalline', 'value' => '|'],
-
-                    ['type' => 'plus', 'value' => '+'],
-
-                    ['type' => 'verticalline', 'value' => '|'],
-                    ['type' => 'identifier', 'value' => 'B'],
-                    ['type' => 'intersection', 'value' => '∩'],
-                    ['type' => 'identifier', 'value' => 'C'],
-                    ['type' => 'intersection', 'value' => '∩'],//0
+                    ['type' => 'intersection', 'value' => '&cap;'],//0
                     ['type' => 'identifier', 'value' => 'D'],
                     ['type' => 'verticalline', 'value' => '|'],
 
@@ -829,9 +800,39 @@ class ParserTest extends TestCase
 
                     ['type' => 'verticalline', 'value' => '|'],
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'intersection', 'value' => '∩'],
+                    ['type' => 'intersection', 'value' => '&cap;'],
+                    ['type' => 'identifier', 'value' => 'B'],
+                    ['type' => 'intersection', 'value' => '&cap;'],//1
                     ['type' => 'identifier', 'value' => 'C'],
-                    ['type' => 'intersection', 'value' => '∩'],//0
+                    ['type' => 'verticalline', 'value' => '|'],
+
+                    ['type' => 'plus', 'value' => '+'],
+
+                    ['type' => 'verticalline', 'value' => '|'],
+                    ['type' => 'identifier', 'value' => 'A'],
+                    ['type' => 'intersection', 'value' => '&cap;'],//0
+                    ['type' => 'identifier', 'value' => 'B'],
+                    ['type' => 'intersection', 'value' => '&cap;'],
+                    ['type' => 'identifier', 'value' => 'D'],
+                    ['type' => 'verticalline', 'value' => '|'],
+
+                    ['type' => 'plus', 'value' => '+'],
+
+                    ['type' => 'verticalline', 'value' => '|'],
+                    ['type' => 'identifier', 'value' => 'B'],
+                    ['type' => 'intersection', 'value' => '&cap;'],
+                    ['type' => 'identifier', 'value' => 'C'],
+                    ['type' => 'intersection', 'value' => '&cap;'],//0
+                    ['type' => 'identifier', 'value' => 'D'],
+                    ['type' => 'verticalline', 'value' => '|'],
+
+                    ['type' => 'plus', 'value' => '+'],
+
+                    ['type' => 'verticalline', 'value' => '|'],
+                    ['type' => 'identifier', 'value' => 'A'],
+                    ['type' => 'intersection', 'value' => '&cap;'],
+                    ['type' => 'identifier', 'value' => 'C'],
+                    ['type' => 'intersection', 'value' => '&cap;'],//0
                     ['type' => 'identifier', 'value' => 'D'],
                     ['type' => 'verticalline', 'value' => '|'],
 
@@ -839,11 +840,11 @@ class ParserTest extends TestCase
 
                     ['type' => 'verticalline', 'value' => '|'],
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'intersection', 'value' => '∩'],
+                    ['type' => 'intersection', 'value' => '&cap;'],
                     ['type' => 'identifier', 'value' => 'B'],
-                    ['type' => 'intersection', 'value' => '∩'],
+                    ['type' => 'intersection', 'value' => '&cap;'],
                     ['type' => 'identifier', 'value' => 'C'],//0
-                    ['type' => 'intersection', 'value' => '∩'],
+                    ['type' => 'intersection', 'value' => '&cap;'],
                     ['type' => 'identifier', 'value' => 'D'],
                     ['type' => 'verticalline', 'value' => '|'],
 
@@ -852,14 +853,14 @@ class ParserTest extends TestCase
                     ['type' => 'verticalline', 'value' => '|'],
                     ['type' => 'leftparenthesis', 'value' => '('],
                     ['type' => 'identifier', 'value' => 'A'],
-                    ['type' => 'union', 'value' => '∪'],
+                    ['type' => 'union', 'value' => '&cup;'],
                     ['type' => 'identifier', 'value' => 'B'],
-                    ['type' => 'union', 'value' => '∪'],//1
+                    ['type' => 'union', 'value' => '&cup;'],//1
                     ['type' => 'identifier', 'value' => 'C'],
-                    ['type' => 'union', 'value' => '∪'],
+                    ['type' => 'union', 'value' => '&cup;'],
                     ['type' => 'identifier', 'value' => 'D'],
                     ['type' => 'rightparenthesis', 'value' => ')'],
-                    ['type' => 'complement', 'value' => '∁'],
+                    ['type' => 'complement', 'value' => '&comp;'],
                     ['type' => 'verticalline', 'value' => '|'],
 
                     ['type' => 'eol', 'value' => '$']
@@ -887,6 +888,7 @@ class ParserTest extends TestCase
                 null,
                 new Set([])
             ]
+            //Manually tested
             /*[
                 [
 
@@ -927,7 +929,7 @@ class ParserTest extends TestCase
             ],*/
             
         ];
-        /*$htmlEntityMap=[
+        $htmlEntityMap=[
             "∈"=>"&isin;",
             "∉"=>"&notin;",
             "⊆"=>"&sube;",
@@ -943,13 +945,99 @@ class ParserTest extends TestCase
             
         ];
         foreach ($tests as &$test) {
-           $replaced=$test[0];
+           $tokens=$test[0];
            foreach ($htmlEntityMap as $key => $value) {
-                $replaced=str_replace($key,$value,$replaced);
+              foreach ($tokens as &$token) {
+                if($token['value']==$key) {
+                    $token['value']=$value;
+                }
+              }
             }
     
-            $test[0]=$replaced;
-        }*/
+        }
+        return $tests;
+    }
+
+    /**
+    * @dataProvider matchProvider
+    */
+        
+    public function testGetExpectedForMatch($value, $expected) {
+        $method=$this->reflectionObject->getMethod('getExpectedForMatch');      
+        $method->setAccessible(true);
+        $object=$this->reflectionObject->newInstance();
+        $result = $method->invoke($object, $value);
+        
+        $this->assertSame($expected, $result);
+    }
+    public static function matchProvider() {
+        $tests= [
+            ['12',['name'=>Token::NUMBER['name'],'value'=>'12']],
+            ['.',Token::DOT],
+            ['+',Token::PLUS],
+            ['-',Token::MINUS],
+            ['*',Token::MULTIPLY],
+            ['/',Token::DIVIDE],
+            [':=',Token::TOBEEQUAL],
+            ['∈',Token::ELEMENTOF],
+            ['∉',Token::NOTELEMENTOF],
+            ['=',Token::EQUAL],
+            ['⊆',Token::SUBSETOF],
+            ['⊂',Token::REALSUBSETOF],
+            ['∁',Token::COMPLEMENT],
+            ['∪',Token::UNION],
+            ['∩',Token::INTERSECTION],
+            ['∖',Token::SETMINUS],
+            [',',Token::COMMA],
+            ['∣',Token::DIVIDES],
+            ['∤',Token::DOESNOTDIVIDE],
+            ['|',Token::VERTICALLINE],
+            ['∧',Token::LAND],
+            ['∨',Token::LOR],
+            ['{',Token::LEFTCURLYBRACE],
+            ['}',Token::RIGHTCURLYBRACE],
+            ['(',Token::LEFTPARENTHESIS],
+            [')',Token::RIGHTPARENTHESIS],
+            ['[',Token::LEFTSQUAREBRACKET],
+            [']',Token::RIGHTSQUAREBRACKET],
+            ['<',Token::LESSTHAN],
+            ['>',Token::GREATERTHAN],
+            ['<=',Token::LESSTHANOREQUAL],
+            ['>=',Token::GREATERTHANOREQUAL],
+            ['Universe',['name'=>Token::IDENTIFIER['name'],'value'=>'Universe']],
+            ['$',Token::EOL],
+            ['Venn',Token::VENN],
+            ['PointSetDiagram',Token::POINTSETDIAGRAM],
+            ['add',Token::ADD],
+            ['delete',Token::DELETE],
+            ['?', null]
+        ];
+
+        $htmlEntityMap=[
+            "∈"=>"&isin;",
+            "∉"=>"&notin;",
+            "⊆"=>"&sube;",
+            "⊂"=>"&sub;",
+            "∁"=>"&comp;",
+            "∪"=>"&cup;",
+            "∩"=>"&cap;",
+            "∧"=>"&and;",
+            "∨"=>"&or;",
+            "∖"=>"&setminus;",
+            "∣"=>"&mid;",
+            "∤"=>"&nmid;",
+            
+        ];
+        foreach ($tests as &$test) {
+           $token=$test[0];
+           foreach ($htmlEntityMap as $key => $value) {
+              if($token===$key){
+                $test[0]=$value;   
+              }
+            }
+             
+        }
         return $tests;
     }
 }
+    

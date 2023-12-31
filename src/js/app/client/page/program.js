@@ -1,6 +1,8 @@
 import { CONSTANTS } from "../constants.js";
 import { htmlEntityMap } from "../htmlentitytable.js";
 import { getData,postData,postEncodedData, getEncodedData } from "../utils.js";
+import { ExtendedSet} from "../datastructures/ExtendedSet.js";
+import { Point } from "../datastructures/Point.js";
 const backbtn=document.querySelector('#back');
 const downloadbtn=document.querySelector('#download');
 const printbtn=document.querySelector('#print');
@@ -8,29 +10,9 @@ const inputField=document.querySelector('#input textarea#text');
 const opButtons=document.querySelectorAll('.operator');
 const mode=document.querySelector('.switch input');
 const loadfile=document.querySelector('#load');
-const variables=document.querySelector('#variables');
+const variables=document.querySelector('#variables textarea');
 const newbtn=document.querySelector('#new');
 let logs=[]
-let oldValue="";
-function bothHaveValidValue(oldLines,newLines,i){
-return (oldLines[i] !== newLines[i])&&oldLines[i]!=""&&oldLines[i]!==undefined&&newLines[i]!=""&&newLines[i]!==undefined;
-}
-function handleChange() {
-    let newValue = inputField.value;
-    let oldLines = oldValue.split('\n');
-    let newLines = newValue.split('\n');
-    
-    for (let i = 0; i < Math.max(oldLines.length, newLines.length); i++) {
-    
-        if (bothHaveValidValue(oldLines,newLines,i)) {
-           oldValue = newValue;
-           return inputField.value.indexOf(oldLines[i]);
-        }
-    }
-    
-    oldValue = newValue;
-    return -1;
-}
 function fillTemplate(data){
     return fetch(CONSTANTS.templateUrl)
     .then((response) => response.text())
@@ -41,33 +23,39 @@ function fillTemplate(data){
 }
 function save(e){
     if(e.code!=="Enter"&&e.code!="NumpadEnter") return;
-    let cursorPos,start,end;
-    let changeFromIndex=handleChange();
-    if(changeFromIndex==-1){
-        cursorPos=inputField.selectionStart;
-        start=inputField.value.lastIndexOf("\n",cursorPos)+1;
-        end=inputField.value.indexOf("\n",start)!==-1?inputField.value.indexOf("\n",start):inputField.value.length;
-    }
-    else{
-        start=changeFromIndex;
-        end=inputField.value.indexOf("\n",start)!==-1?inputField.value.indexOf("\n",start):inputField.value.length;
-        inputField.value=inputField.value.replace(new RegExp('\n\n','g'),'\n');
-    }
-    
+    let cursorPos=inputField.selectionStart;
+    let start=inputField.value.lastIndexOf("\n",cursorPos)+1;
+    let end=inputField.value.indexOf("\n",start)!==-1?inputField.value.indexOf("\n",start):inputField.value.length;
     let noparse=mode.checked
     let statement=String(inputField.value.substr(start,end));
-    console.log("statement",statement,'start',start,"end",end)
+ 
     Object.keys(htmlEntityMap).forEach((entity)=>{
-       statement=statement.replace(new RegExp(entity,'g'),htmlEntityMap[entity]);
+        statement=statement.replaceAll(entity,htmlEntityMap[entity]);
     })
     let data={statement:statement,start:start, end:end,noparse:noparse,beforelogs:logs};
-    console.log("dataonclient",data);
+
     postData(data,CONSTANTS.parseUrl).then(data=>{
-        console.log(data);
         fillTemplate(data)
         inputField.value=data.json.map(r=>r.statement.trim()).join("\n");
         if(end===inputField.value.length&&end>0) inputField.value+="\n";
-        variables.value=data.variables.join('\n');
+        let vars=data.variables;
+        let varstr='';
+        for (let index = 0; index < vars.length; index++) {
+            let element = vars[index];
+            for (const key in element) {
+                varstr+=`${key} (${element[key].name}) : `;
+                if(element[key].name==="Set"){
+                    let set=new ExtendedSet([element[key].elements]);
+                    varstr+=set.toString();
+                }
+                else if(element[key].name==="Point"){
+                    let point=new Point(element[key].x,element[key].y);
+                    varstr+=point.toString();
+                }
+            }
+            varstr+='\n';
+        }
+        variables.value=varstr;
 
     })
 

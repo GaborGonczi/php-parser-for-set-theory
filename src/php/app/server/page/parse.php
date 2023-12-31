@@ -1,21 +1,30 @@
 <?php
-use core\parser\exception\ParserException;
 
-require_once dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))) . '/autoloader.php';
+require_once dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))).'/autoloader.php';
 
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/rootfolder.php';
 
-require_once dirname(dirname(__FILE__)) . '/db.php';
+require_once dirname(dirname(dirname(dirname(__FILE__)))).'/rootfolder.php';
+require_once dirname(dirname(dirname(dirname(__FILE__)))).'/core/parser/Lexer.php';
+require_once dirname(dirname(dirname(dirname(__FILE__)))).'/core/parser/Parser.php';
+require_once dirname(dirname(__FILE__)).'/db.php';
 
 use \app\server\classes\model\File;
 use \app\server\classes\model\Expression;
 use \app\server\classes\model\Log;
 use \app\server\classes\model\User;
+use \app\server\classes\model\Variable;
+
+use \core\lib\datastructures\Set;
+use \core\lib\datastructures\Point;
 
 use \core\parser\Lexer;
 use \core\parser\Parser;
 use \core\parser\exception\LexerException;
-use \core\lib\Map;
+use \core\parser\exception\ParserException;
+use \core\parser\exception\SemanticException;
+use \core\parser\exception\UndefinedVariableException;
+use \core\lib\datastructures\Map;
+use \core\HtmlEntityTable;
 
 function merge_maps(Map &$map1, Map &$map2)
 {
@@ -32,22 +41,36 @@ function holdsNull($array)
             return 'null';
         }
         return $value;
-    }, $array);
+    },$array);
+}
+
+function getApropriateObject($array){
+    if($array['name']==="Set"){
+        return new Set([...$array['elements']]);
+    }
+    else if($array['name']==="Point"){
+        return new Point($array['x'],$array['y']);
+    }
+   
 }
 
 header('Content-Type: application/json');
 session_start();
-if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])) {
-    $location = rootfolder() . '/index.php';
+if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
+    $location=rootfolder().'/index.php';
     header("Location:$location");
     exit(1);
-} else {
-    $user = unserialize($_SESSION[$_COOKIE['PHPSESSID']]['authedUser']);
+}
+else{
+    $user=unserialize($_SESSION[$_COOKIE['PHPSESSID']]['authedUser']);
 }
 global $db;
-$data = ['json' => [], 'variables' => new Map([])];
+
+$lexer=new Lexer();
+$parser=new Parser();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $data=['json'=>[],'variables'=>new Map([])];
     if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'])) {
         $file = new File(null, $user->getId(), date('Y-m-d H:i:s', (new \DateTime('now'))->getTimestamp()), date('Y-m-d H:i:s', (new \DateTime('now'))->getTimestamp()), null);
         $id = $db->insert('files', $file->getAsAssociativeArray());
@@ -56,12 +79,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     $stmtdata = (array) json_decode(file_get_contents("php://input"));
-    $file_id=intval($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']);
+    $fileid=intval($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']);
     $start=$stmtdata['start'];
     if ($stmtdata['noparse'] == true) {
-        if ($db->isExist('expressions', ['file_id' =>$file_id , 'start' => $start])) {
+        if ($db->isExist('expressions', ['file_id' =>$fileid , 'start' => $start])) {
 
-            $expressionsdata = $db->get('expressions', ['file_id' => $file_id, 'start' => $start]);
+            $expressionsdata = $db->get('expressions', ['file_id' => $fileid, 'start' => $start]);
 
             foreach ($expressionsdata as $expressiondata) {
                 $expressiondata=(array)$expressiondata;
@@ -112,15 +135,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     } else {
 
-        $lexer = new Lexer($stmtdata['statement']);
+        $variables=$db->get('variables', [
+            'file_id' => $fileid
+        ]);
+        if($variables){
+            $vars=new Map([]);
+            foreach ($variables as $variable) {
+                $variableModel = new Variable(...holdsNull((array) $variable));
+                $name=$variableModel->getName();
+                $value=getApropriateObject(json_decode($variableModel->getValue(),true));
+                $vars->add($name,$value); 
+            }
+            $parser->setVars($vars);
+            $data['variables']=$vars;
+            
+            
+        }
+
+        $lexer->setInput($stmtdata['statement']);
         try {
             $tokens = $lexer->tokenize();
         } catch (LexerException $le) {
             echo json_encode($le);
         }
-        $parser = new Parser($tokens);
+        $parser->setTokens($tokens);
         try {
             $result = $parser->parse();
+        } catch (SemanticException $se) {
+            echo json_encode($se);
+        } catch (UndefinedVariableException $uve) {
+            echo json_encode($uve);
         } catch (ParserException $pe) {
             echo json_encode($pe);
         } catch (InvalidArgumentException $ie){
@@ -129,16 +173,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmtdata['result'] = $result;
         $newvars = $parser->getVars();
-        $data['variables'] = merge_maps($data['variables'], $newvars);
+        $data['variables'] = $newvars;
 
-        if($db->isExist('expressions', ['file_id' =>$file_id, 'start' =>$start])){
-            $expressionsdata = $db->get('expressions', ['file_id' => $file_id, 'start' => $start]);
+        if($db->isExist('expressions', ['file_id' =>$fileid, 'start' =>$start])){
+            $expressionsdata = $db->get('expressions', ['file_id' => $fileid, 'start' => $start]);
             foreach ($expressionsdata as $expressiondata) {
                 $expressiondata=(array)$expressiondata;
+                foreach (HtmlEntityTable::TABLE as $key => $value) {
+                    $stmtdata['statement']= str_replace($key,$value,$stmtdata['statement']);
+                }
                 $expression = new Expression(
                     $expressiondata['id'],
                     $expressiondata['file_id'],
-                    html_entity_decode($stmtdata['statement']),
+                    $stmtdata['statement'],
                     $stmtdata['result'],
                     $stmtdata['start'],
                     $stmtdata['end'],
@@ -159,10 +206,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
         }
         else{
+            foreach (HtmlEntityTable::TABLE as $key => $value) {
+                $stmtdata['statement']= str_replace($key,$value,$stmtdata['statement']);
+            }
             $expression = new Expression(
                 null,
                 $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'],
-                html_entity_decode($stmtdata['statement']),
+                $stmtdata['statement'],
                 $stmtdata['result'],
                 $stmtdata['start'],
                 $stmtdata['end'],
@@ -179,36 +229,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
-       
+
+        foreach ($newvars as $name=>$value) {
+            if($db->isExist('variables', ['file_id' =>$fileid, 'name' =>$name])){
+                $variabledata = $db->get('variables', ['file_id' => $fileid, 'name' => $name]);
+                foreach ($variabledata as $variabledata) {
+                    $variabledata=(array)$variabledata;
+                    $variable = new Variable(
+                        $variabledata['id'],
+                        $variabledata['file_id'],
+                        $name,
+                        json_encode($value),                 
+                        $variabledata['created_at'],
+                        date('Y-m-d H:i:s', (new \DateTime('now'))->getTimestamp()),
+                        null
+                    );
+                    $variableAsArray=$variable->getAsAssociativeArray();
+                    $rowcount = $db->update('variables', $variableAsArray, ['id' => $variableAsArray['id']]);
+                }
+            }
+            else{
+                $variable = new Variable(
+                    null,
+                    $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'],
+                    $name,
+                    json_encode($value),                 
+                    date('Y-m-d H:i:s', (new \DateTime('now'))->getTimestamp()),
+                    date('Y-m-d H:i:s', (new \DateTime('now'))->getTimestamp()),
+                    null
+                );
+                $id = $db->insert('variables', $variable->getAsAssociativeArray());
+            }
+        }
 
     }
-    $fileid = $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'];
     $file_content = $db->get('expressions', [
         'file_id' => $fileid
     ]);
     foreach ($file_content as $expression) {
         unset($expression['length']);
-        $expressionModel = new Expression(...holdsNull((array) $expression));
-        if (strpos($expressionModel->getResult(), 'data:image/png;base64,') !== false) {
-            $image = $expressionModel->getResult();
+        $expressionModel=new Expression(...holdsNull((array)$expression));
+        if(strpos($expressionModel->getResult(),'data:image/png;base64,')!==false){
+            $image=$expressionModel->getResult();
             $expressionModel->setResult("");
-            $data['json'] = array_merge($expressionModel->getAsAssociativeArray(), ["diagram" => $image]);
+            $data['json'][] = array_merge($expressionModel->getAsAssociativeArray(), ["diagram" => $image]);
         } else {
             $data['json'][] = $expressionModel->getAsAssociativeArray();
         }
-
+        
 
     }
 
     echo json_encode($data);
-
-
+    
+    
 } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-
+    $data = ['json' => [], 'variables' => new Map([])];
     if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'])) {
         echo json_encode($data);
     } else {
-        $fileid = $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'];
+        $fileid=intval($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']);
         $file_content = $db->get('expressions', [
             'file_id' => $fileid
         ]);
@@ -219,12 +299,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (strpos($expressionModel->getResult(), 'data:image/png;base64,') !== false) {
                     $image = $expressionModel->getResult();
                     $expressionModel->setResult("");
-                    $data['json'] = array_merge($expressionModel->getAsAssociativeArray(), ["diagram" => $image]);
+                    $data['json'][] = array_merge($expressionModel->getAsAssociativeArray(), ["diagram" => $image]);
                 } else {
                     $data['json'][] = $expressionModel->getAsAssociativeArray();
                 }
             }
         }
+        $variables=$db->get('variables', [
+            'file_id' => $fileid
+        ]);
+        if($variables){
+            $vars=new Map([]);
+            foreach ($variables as $variable) {
+                $variableModel = new Variable(...holdsNull((array) $variable));
+                $name=$variableModel->getName();
+                $value=getApropriateObject(json_decode($variableModel->getValue(),true));
+                $vars->add($name,$value);       
+            }
+            $parser->setVars($vars);
+            $data['variables']=$vars;
+        }
+       
         echo json_encode($data);
     }
 }

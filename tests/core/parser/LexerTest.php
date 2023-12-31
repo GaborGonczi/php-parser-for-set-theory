@@ -33,16 +33,19 @@ class LexerTest extends TestCase
     /**
      * @dataProvider inputProvider
      */
-    public function testLexerWithDifferentInputs($input, $expected,$exception)
+    public function testLexerWithDifferentInputs($input, $expected,$exception,$exceptionMessage)
     {
         $lexer = new Lexer($input);
-        if($exception!==null){
+        //$result = 
+        if ($exception !== null) {
             $this->expectException($exception);
+            $this->expectExceptionMessage($exceptionMessage);
+            $lexer->tokenize();
         }
-        $result=$lexer->tokenize();
-        if($exception===null){
-            $this->assertSame($expected, $result);
+        else{
+            $this->assertSame($expected, $lexer->tokenize());
         }
+
         
     }
 
@@ -51,36 +54,36 @@ class LexerTest extends TestCase
         $tests=[
             ['3∈A',[
                 ['type' => 'number', 'value' => floatval(3)],
-                ['type' => 'elementof', 'value' => '∈'],
+                ['type' => 'elementof', 'value' => '&isin;'],
                 ['type' => 'identifier', 'value' => 'A'],
                 ['type' => 'eol', 'value' => '$']
-            ],null],
+            ],null,null],
            ['-2∉A',[
                 ['type' => 'minus', 'value' => '-'],
                 ['type' => 'number', 'value' => floatval(2)],
-                ['type' => 'notelementof', 'value' => '∉'],
+                ['type' => 'notelementof', 'value' => '&notin;'],
                 ['type' => 'identifier', 'value' => 'A'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
            ['1∈B',[
                 ['type' => 'number', 'value' => floatval(1)],
-                ['type' => 'elementof', 'value' => '∈'],
+                ['type' => 'elementof', 'value' => '&isin;'],
                 ['type' => 'identifier', 'value' => 'B'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
            ['3∉B',[
                 ['type' => 'number', 'value' => floatval(3)],
-                ['type' => 'notelementof', 'value' => '∉'],
+                ['type' => 'notelementof', 'value' => '&notin;'],
                 ['type' => 'identifier', 'value' => 'B'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
            ['A:={}',[
                 ['type' => 'identifier', 'value' => 'A'],
                 ['type' => 'tobeequal', 'value' => ':='],
                 ['type' => 'leftcurlybrace', 'value' => '{'],
                 ['type' => 'rightcurlybrace', 'value' => '}'],
                 ['type' => 'eol', 'value' => '$']
-            ],null],
+           ],null,null],
            ['B:={1,2,3}',[
                 ['type' => 'identifier', 'value' => 'B'],
                 ['type' => 'tobeequal', 'value' => ':='],
@@ -92,7 +95,7 @@ class LexerTest extends TestCase
                 ['type' => 'number', 'value' => floatval(3)],
                 ['type' => 'rightcurlybrace', 'value' => '}'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+            ],null,null],
             ['A.add(2)',[
                 ['type' => 'identifier', 'value' => 'A'],
                 ['type' => 'dot', 'value' => '.'],
@@ -101,7 +104,7 @@ class LexerTest extends TestCase
                 ['type' => 'number', 'value' => floatval(2)],
                 ['type' => 'rightparenthesis', 'value' => ')'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+            ],null,null],
             ['B.delete(1)',[
                 ['type' => 'identifier', 'value' => 'B'],
                 ['type' => 'dot', 'value' => '.'],
@@ -110,7 +113,7 @@ class LexerTest extends TestCase
                 ['type' => 'number', 'value' => floatval(1)],
                 ['type' => 'rightparenthesis', 'value' => ')'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+            ],null,null],
             ['Venn(A,B)',[
                 ['type' => 'venn', 'value' => 'Venn'],
                 ['type' => 'leftparenthesis', 'value' => '('],
@@ -119,7 +122,7 @@ class LexerTest extends TestCase
                 ['type' => 'identifier', 'value' => 'B'],
                 ['type' => 'rightparenthesis', 'value' => ')'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['C:={x|x>1∧x<=3}',[
                 ['type' => 'identifier', 'value' => 'C'],
                 ['type' => 'tobeequal', 'value' => ':='],
@@ -129,13 +132,13 @@ class LexerTest extends TestCase
                 ['type' => 'identifier', 'value' => 'x'],
                 ['type' => 'greaterthan', 'value' => '>'],
                 ['type' => 'number', 'value' => floatval(1)],
-                ['type' => 'land', 'value' => '∧'],
+                ['type' => 'land', 'value' => '&and;'],
                 ['type' => 'identifier', 'value' => 'x'],
                 ['type' => 'lessthanorequal', 'value' => '<='],
                 ['type' => 'number', 'value'=> floatval(3)],
                 ['type' => 'rightcurlybrace', 'value' => '}'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['D:={y | z>=0 ∧ z<3 ∧ y->2*z}',[
                 ['type' => 'identifier', 'value' => 'D'],
                 ['type' => 'tobeequal', 'value' => ':='],
@@ -145,11 +148,11 @@ class LexerTest extends TestCase
                 ['type' => 'identifier', 'value' => 'z'],
                 ['type' => 'greaterthanorequal', 'value' => '>='],
                 ['type' => 'number', 'value' => floatval( 0)],
-                ['type' => 'land', 'value' => '∧'],
+                ['type' => 'land', 'value' => '&and;'],
                 ['type' => 'identifier', 'value' => 'z'],
                 ['type' => 'lessthan', 'value' => '<'],
                 ['type' => 'number', 'value' => floatval( 3)],
-                ['type' => 'land', 'value' => '∧'],
+                ['type' => 'land', 'value' => '&and;'],
                 ['type' => 'identifier', 'value' => 'y'],
                 ['type' => 'arrow', 'value' => '->'],
                 ['type' => 'number', 'value' => floatval( 2)],
@@ -157,7 +160,7 @@ class LexerTest extends TestCase
                 ['type' => 'identifier', 'value' => 'z'],
                 ['type' => 'rightcurlybrace', 'value' => '}'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['E:={y | z>0 ∧ z<=100 ∧ y->z/10}',[
 
                 ['type' => 'identifier', 'value' => 'E'],
@@ -168,11 +171,11 @@ class LexerTest extends TestCase
                 ['type' => 'identifier', 'value' => 'z'],
                 ['type' => 'greaterthan', 'value' => '>'],
                 ['type' => 'number', 'value' => floatval( 0)],
-                ['type' => 'land', 'value' => '∧'],
+                ['type' => 'land', 'value' => '&and;'],
                 ['type' => 'identifier', 'value' => 'z'],
                 ['type' => 'lessthanorequal', 'value' => '<='],
                 ['type' => 'number', 'value' => floatval( 100)],
-                ['type' => 'land', 'value' => '∧'],
+                ['type' => 'land', 'value' => '&and;'],
                 ['type' => 'identifier', 'value' => 'y'],
                 ['type' => 'arrow', 'value' => '->'],
                 ['type' => 'identifier', 'value' => 'z'],
@@ -181,7 +184,7 @@ class LexerTest extends TestCase
                 ['type' => 'rightcurlybrace', 'value' => '}'],
                 ['type' => 'eol', 'value' => '$']
 
-           ],null],
+           ],null,null],
             ['F:={i| i>=0∧i<=20∧(5∣i∨7∣i∧10∤i)}',[
 
                 ['type' => 'identifier', 'value' => 'F'],
@@ -192,164 +195,164 @@ class LexerTest extends TestCase
                 ['type' => 'identifier', 'value' => 'i'],
                 ['type' => 'greaterthanorequal', 'value' => '>='],
                 ['type' => 'number', 'value' => floatval( 0)],
-                ['type' => 'land', 'value' => '∧'],
+                ['type' => 'land', 'value' => '&and;'],
                 ['type' => 'identifier', 'value' => 'i'],
                 ['type' => 'lessthanorequal', 'value' => '<='],
                 ['type' => 'number', 'value' => floatval( 20)],
-                ['type' => 'land', 'value' => '∧'],
+                ['type' => 'land', 'value' => '&and;'],
                 ['type' => 'leftparenthesis', 'value' => '('],
                 ['type' => 'number', 'value' => floatval( 5)],
-                ['type' => 'divides', 'value' => '∣'],
+                ['type' => 'divides', 'value' => '&mid;'],
                 ['type' => 'identifier', 'value' => 'i'],
-                ['type' => 'lor', 'value' => '∨'],
+                ['type' => 'lor', 'value' => '&or;'],
                 ['type' => 'number', 'value' => floatval( 7)],
-                ['type' => 'divides', 'value' => '∣'],
+                ['type' => 'divides', 'value' => '&mid;'],
                 ['type' => 'identifier', 'value' => 'i'],
-                ['type' => 'land', 'value' => '∧'],
+                ['type' => 'land', 'value' => '&and;'],
                 ['type' => 'number', 'value' => floatval( 10)],
-                ['type' => 'doesnotdivide', 'value' => '∤'],
+                ['type' => 'doesnotdivide', 'value' => '&nmid;'],
                 ['type' => 'identifier', 'value' => 'i'],
                 ['type' => 'rightparenthesis', 'value' => ')'],
                 ['type' => 'rightcurlybrace', 'value' => '}'],
                 ['type' => 'eol', 'value' => '$']
 
-           ],null],
+           ],null,null],
             ['A=B',[
                 ['type' => 'identifier', 'value' => 'A'],
                 ['type' => 'equal', 'value' => '='],
                 ['type' => 'identifier', 'value' => 'B'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+            ],null,null],
             ['B=C',[
                 ['type' => 'identifier', 'value' => 'B'],
                 ['type' => 'equal', 'value' => '='],
                 ['type' => 'identifier', 'value' => 'C'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['A⊆B',[
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'subsetof', 'value' => '⊆'],
+                ['type' => 'subsetof', 'value' => '&sube;'],
                 ['type' => 'identifier', 'value' => 'B'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['C⊆D',[
                 ['type' => 'identifier', 'value' => 'C'],
-                ['type' => 'subsetof', 'value' => '⊆'],
+                ['type' => 'subsetof', 'value' => '&sube;'],
                 ['type' => 'identifier', 'value' => 'D'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['A⊂B',[
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'realsubsetof', 'value' => '⊂'],
+                ['type' => 'realsubsetof', 'value' => '&sub;'],
                 ['type' => 'identifier', 'value' => 'B'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['A⊂H',[
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'realsubsetof', 'value' => '⊂'],
+                ['type' => 'realsubsetof', 'value' => '&sub;'],
                 ['type' => 'identifier', 'value' => 'H'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['H⊂H',[
 
                 ['type' => 'identifier', 'value' => 'H'],
-                ['type' => 'realsubsetof', 'value' => '⊂'],
+                ['type' => 'realsubsetof', 'value' => '&sub;'],
                 ['type' => 'identifier', 'value' => 'H'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['A∁',[
 
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'complement', 'value' => '∁'],
+                ['type' => 'complement', 'value' => '&comp;'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['H∁',[
 
                 ['type' => 'identifier', 'value' => 'H'],
-                ['type' => 'complement', 'value' => '∁'],
+                ['type' => 'complement', 'value' => '&comp;'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['D∁',[
 
                 ['type' => 'identifier', 'value' => 'D'],
-                ['type' => 'complement', 'value' => '∁'],
+                ['type' => 'complement', 'value' => '&comp;'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['A∪D',[
 
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'union', 'value' => '∪'],
+                ['type' => 'union', 'value' => '&cup;'],
                 ['type' => 'identifier', 'value' => 'D'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['B∪C',[
 
                 ['type' => 'identifier', 'value' => 'B'],
-                ['type' => 'union', 'value' => '∪'],
+                ['type' => 'union', 'value' => '&cup;'],
                 ['type' => 'identifier', 'value' => 'C'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['C∪D',[
 
                 ['type' => 'identifier', 'value' => 'C'],
-                ['type' => 'union', 'value' => '∪'],
+                ['type' => 'union', 'value' => '&cup;'],
                 ['type' => 'identifier', 'value' => 'D'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['A∪B∪C∪D',[
 
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'union', 'value' => '∪'],
+                ['type' => 'union', 'value' => '&cup;'],
                 ['type' => 'identifier', 'value' => 'B'],
-                ['type' => 'union', 'value' => '∪'],
+                ['type' => 'union', 'value' => '&cup;'],
                 ['type' => 'identifier', 'value' => 'C'],
-                ['type' => 'union', 'value' => '∪'],
+                ['type' => 'union', 'value' => '&cup;'],
                 ['type' => 'identifier', 'value' => 'D'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['B∩C',[
 
                 ['type' => 'identifier', 'value' => 'B'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'C'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['D∩C',[
 
                 ['type' => 'identifier', 'value' => 'D'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'C'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['B∖C',[
 
                 ['type' => 'identifier', 'value' => 'B'],
-                ['type' => 'setminus', 'value' => '∖'],
+                ['type' => 'setminus', 'value' => '&setminus;'],
                 ['type' => 'identifier', 'value' => 'C'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['C∖B',[
 
                 ['type' => 'identifier', 'value' => 'C'],
-                ['type' => 'setminus', 'value' => '∖'],
+                ['type' => 'setminus', 'value' => '&setminus;'],
                 ['type' => 'identifier', 'value' => 'B'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['H∖(A∪B∪C∪D)',[
 
                 ['type' => 'identifier', 'value' => 'H'],
-                ['type' => 'setminus', 'value' => '∖'],
+                ['type' => 'setminus', 'value' => '&setminus;'],
                 ['type' => 'leftparenthesis', 'value' => '('],
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'union', 'value' => '∪'],
+                ['type' => 'union', 'value' => '&cup;'],
                 ['type' => 'identifier', 'value' => 'B'],
-                ['type' => 'union', 'value' => '∪'],
+                ['type' => 'union', 'value' => '&cup;'],
                 ['type' => 'identifier', 'value' => 'C'],
-                ['type' => 'union', 'value' => '∪'],
+                ['type' => 'union', 'value' => '&cup;'],
                 ['type' => 'identifier', 'value' => 'D'],
                 ['type' => 'rightparenthesis', 'value' => ')'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['C:=[1,2]',[
 
                 ['type' => 'identifier', 'value' => 'C'],
@@ -360,7 +363,7 @@ class LexerTest extends TestCase
                 ['type' => 'number', 'value' => floatval( 2)],
                 ['type' => 'rightsquarebracket', 'value' => ']'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['D:=[-2,-8]',[
 
                 ['type' => 'identifier', 'value' => 'D'],
@@ -373,7 +376,7 @@ class LexerTest extends TestCase
                 ['type' => 'number', 'value' => floatval( 8)],
                 ['type' => 'rightsquarebracket', 'value' => ']'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['A:={[3,-4],[5,-6]}',[
 
                 ['type' => 'identifier', 'value' => 'A'],
@@ -394,7 +397,7 @@ class LexerTest extends TestCase
                 ['type' => 'rightsquarebracket', 'value' => ']'],
                 ['type' => 'rightcurlybrace', 'value' => '}'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['B:={C,D}',[
 
                 ['type' => 'identifier', 'value' => 'B'],
@@ -405,7 +408,7 @@ class LexerTest extends TestCase
                 ['type' => 'identifier', 'value' => 'D'],
                 ['type' => 'rightcurlybrace', 'value' => '}'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['PointSetDiagram(A,B)',[
 
                 ['type' => 'pointsetdiagram', 'value' => 'PointSetDiagram'],
@@ -415,7 +418,7 @@ class LexerTest extends TestCase
                 ['type' => 'identifier', 'value' => 'B'],
                 ['type' => 'rightparenthesis', 'value' => ')'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['PointSetDiagram({[3,5],[-7,-8]})',[
 
                 ['type' => 'pointsetdiagram', 'value' => 'PointSetDiagram'],
@@ -437,53 +440,53 @@ class LexerTest extends TestCase
                 ['type' => 'rightcurlybrace', 'value' => '}'],
                 ['type' => 'rightparenthesis', 'value' => ')'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['|H|',[
 
                 ['type' => 'verticalline', 'value' => '|'],
                 ['type' => 'identifier', 'value' => 'H'],
                 ['type' => 'verticalline', 'value' => '|'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+            ],null,null],
             ['|C|',[
 
                 ['type' => 'verticalline', 'value' => '|'],
                 ['type' => 'identifier', 'value' => 'C'],
                 ['type' => 'verticalline', 'value' => '|'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['(A∩C)∁=A∁∪C∁',[
 
                 ['type' => 'leftparenthesis', 'value' => '('],
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'C'],
                 ['type' => 'rightparenthesis', 'value' => ')'],
-                ['type' => 'complement', 'value' => '∁'],
+                ['type' => 'complement', 'value' => '&comp;'],
                 ['type' => 'equal', 'value' => '='],
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'complement', 'value' => '∁'],
-                ['type' => 'union', 'value' => '∪'],
+                ['type' => 'complement', 'value' => '&comp;'],
+                ['type' => 'union', 'value' => '&cup;'],
                 ['type' => 'identifier', 'value' => 'C'],
-                ['type' => 'complement', 'value' => '∁'],
+                ['type' => 'complement', 'value' => '&comp;'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['(A∪C)∁=A∁∩C∁',[
 
                 ['type' => 'leftparenthesis', 'value' => '('],
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'union', 'value' => '∪'],
+                ['type' => 'union', 'value' => '&cup;'],
                 ['type' => 'identifier', 'value' => 'C'],
                 ['type' => 'rightparenthesis', 'value' => ')'],
-                ['type' => 'complement', 'value' => '∁'],
+                ['type' => 'complement', 'value' => '&comp;'],
                 ['type' => 'equal', 'value' => '='],
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'complement', 'value' => '∁'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'complement', 'value' => '&comp;'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'C'],
-                ['type' => 'complement', 'value' => '∁'],
+                ['type' => 'complement', 'value' => '&comp;'],
                 ['type' => 'eol', 'value' => '$']
-           ],null],
+           ],null,null],
             ['|A|+|B|+|C|+|D|-|A∩B|-|A∩C|-|A∩D|-|B∩C|-|B∩D|-|C∩D|+|A∩B∩C|+|A∩B∩D|+|B∩C∩D|+|A∩C∩D|-|A∩ B∩C∩D|+|(A∪B∪C∪D)∁|',[
 
                 ['type' => 'verticalline', 'value' => '|'],
@@ -512,7 +515,7 @@ class LexerTest extends TestCase
 
                 ['type' => 'verticalline', 'value' => '|'],
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'B'],
                 ['type' => 'verticalline', 'value' => '|'],
 
@@ -520,7 +523,7 @@ class LexerTest extends TestCase
 
                 ['type' => 'verticalline', 'value' => '|'],
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'C'],
                 ['type' => 'verticalline', 'value' => '|'],
 
@@ -528,7 +531,7 @@ class LexerTest extends TestCase
 
                 ['type' => 'verticalline', 'value' => '|'],
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'D'],
                 ['type' => 'verticalline', 'value' => '|'],
 
@@ -536,7 +539,7 @@ class LexerTest extends TestCase
 
                 ['type' => 'verticalline', 'value' => '|'],
                 ['type' => 'identifier', 'value' => 'B'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'C'],
                 ['type' => 'verticalline', 'value' => '|'],
 
@@ -544,7 +547,7 @@ class LexerTest extends TestCase
 
                 ['type' => 'verticalline', 'value' => '|'],
                 ['type' => 'identifier', 'value' => 'B'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'D'],
                 ['type' => 'verticalline', 'value' => '|'],
 
@@ -552,37 +555,7 @@ class LexerTest extends TestCase
 
                 ['type' => 'verticalline', 'value' => '|'],
                 ['type' => 'identifier', 'value' => 'C'],
-                ['type' => 'intersection', 'value' => '∩'],
-                ['type' => 'identifier', 'value' => 'D'],
-                ['type' => 'verticalline', 'value' => '|'],
-
-                ['type' => 'plus', 'value' => '+'],
-
-                ['type' => 'verticalline', 'value' => '|'],
-                ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'intersection', 'value' => '∩'],
-                ['type' => 'identifier', 'value' => 'B'],
-                ['type' => 'intersection', 'value' => '∩'],
-                ['type' => 'identifier', 'value' => 'C'],
-                ['type' => 'verticalline', 'value' => '|'],
-
-                ['type' => 'plus', 'value' => '+'],
-
-                ['type' => 'verticalline', 'value' => '|'],
-                ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'intersection', 'value' => '∩'],
-                ['type' => 'identifier', 'value' => 'B'],
-                ['type' => 'intersection', 'value' => '∩'],
-                ['type' => 'identifier', 'value' => 'D'],
-                ['type' => 'verticalline', 'value' => '|'],
-
-                ['type' => 'plus', 'value' => '+'],
-
-                ['type' => 'verticalline', 'value' => '|'],
-                ['type' => 'identifier', 'value' => 'B'],
-                ['type' => 'intersection', 'value' => '∩'],
-                ['type' => 'identifier', 'value' => 'C'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'D'],
                 ['type' => 'verticalline', 'value' => '|'],
 
@@ -590,9 +563,39 @@ class LexerTest extends TestCase
 
                 ['type' => 'verticalline', 'value' => '|'],
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'intersection', 'value' => '&cap;'],
+                ['type' => 'identifier', 'value' => 'B'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'C'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'verticalline', 'value' => '|'],
+
+                ['type' => 'plus', 'value' => '+'],
+
+                ['type' => 'verticalline', 'value' => '|'],
+                ['type' => 'identifier', 'value' => 'A'],
+                ['type' => 'intersection', 'value' => '&cap;'],
+                ['type' => 'identifier', 'value' => 'B'],
+                ['type' => 'intersection', 'value' => '&cap;'],
+                ['type' => 'identifier', 'value' => 'D'],
+                ['type' => 'verticalline', 'value' => '|'],
+
+                ['type' => 'plus', 'value' => '+'],
+
+                ['type' => 'verticalline', 'value' => '|'],
+                ['type' => 'identifier', 'value' => 'B'],
+                ['type' => 'intersection', 'value' => '&cap;'],
+                ['type' => 'identifier', 'value' => 'C'],
+                ['type' => 'intersection', 'value' => '&cap;'],
+                ['type' => 'identifier', 'value' => 'D'],
+                ['type' => 'verticalline', 'value' => '|'],
+
+                ['type' => 'plus', 'value' => '+'],
+
+                ['type' => 'verticalline', 'value' => '|'],
+                ['type' => 'identifier', 'value' => 'A'],
+                ['type' => 'intersection', 'value' => '&cap;'],
+                ['type' => 'identifier', 'value' => 'C'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'D'],
                 ['type' => 'verticalline', 'value' => '|'],
 
@@ -600,11 +603,11 @@ class LexerTest extends TestCase
 
                 ['type' => 'verticalline', 'value' => '|'],
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'B'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'C'],
-                ['type' => 'intersection', 'value' => '∩'],
+                ['type' => 'intersection', 'value' => '&cap;'],
                 ['type' => 'identifier', 'value' => 'D'],
                 ['type' => 'verticalline', 'value' => '|'],
 
@@ -613,31 +616,22 @@ class LexerTest extends TestCase
                 ['type' => 'verticalline', 'value' => '|'],
                 ['type' => 'leftparenthesis', 'value' => '('],
                 ['type' => 'identifier', 'value' => 'A'],
-                ['type' => 'union', 'value' => '∪'],
+                ['type' => 'union', 'value' => '&cup;'],
                 ['type' => 'identifier', 'value' => 'B'],
-                ['type' => 'union', 'value' => '∪'],
+                ['type' => 'union', 'value' => '&cup;'],
                 ['type' => 'identifier', 'value' => 'C'],
-                ['type' => 'union', 'value' => '∪'],
+                ['type' => 'union', 'value' => '&cup;'],
                 ['type' => 'identifier', 'value' => 'D'],
                 ['type' => 'rightparenthesis', 'value' => ')'],
-                ['type' => 'complement', 'value' => '∁'],
+                ['type' => 'complement', 'value' => '&comp;'],
                 ['type' => 'verticalline', 'value' => '|'],
 
                 ['type' => 'eol', 'value' => '$']
-           ],null],
-            ['A?B',
-
-           null,LexerException::class],
-           ['{1,2,3}',[
-            ['type' => 'leftcurlybrace', 'value' => '{'],
-                ['type' => 'number', 'value' => floatval(1)],
-                ['type' => 'comma', 'value' => ','],
-                ['type' => 'number', 'value' => floatval(2)],
-                ['type' => 'comma', 'value' => ','],
-                ['type' => 'number', 'value' => floatval(3)],
-                ['type' => 'rightcurlybrace', 'value' => '}'],
-                ['type' => 'eol', 'value' => '$']
-           ],null]
+            ],null,null],
+            ['A?B',[
+                ['type' => 'identifier', 'value' => 'A'],
+                       
+                ],LexerException::class,'Last good token: {"type":"identifier","value":"A"} ColumnPos: 2']
         ];
         $htmlEntityMap=[
             "∈"=>"&isin;",
@@ -663,5 +657,5 @@ class LexerTest extends TestCase
             $test[0]=$replaced;
         }
         return $tests;
-    }
+    }   
 }

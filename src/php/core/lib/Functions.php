@@ -1,12 +1,13 @@
 <?php
-// TODO: fix venn rendered result
-// todo: Implement inclusion-exclusion priciple to calculate the cardinality of remaining sets in case 2 or 3 sets
+
 namespace core\lib;
 
 use core\parser\Token;
 use core\parser\Parser;
+use core\lib\datastructures\Set;
+use core\lib\datastructures\Map;
+
 use \InvalidArgumentException;
-use \Closure;
 use \core\Regexp;
 
 /**
@@ -711,6 +712,17 @@ class Functions
         return $boundfuncs;
     }
 
+    /**
+    * Removes any duplicated operators from an array of operators.
+    *
+    * This function iterates over an array of operators and removes any consecutive duplicates. 
+    * It returns a new array with the unique operators.
+    *
+    * @param array $arr The array of operators to process.
+    * @return array A new array with the duplicated operators removed.
+    * @throws InvalidArgumentException If the $arr parameter is not an array.
+    */
+
     public static function removeDuplicatedOperator($arr){
         for ($i=0; $i <count($arr) ; $i++) { 
            if($i>0&&$arr[$i-1]===$arr[$i]){
@@ -978,6 +990,17 @@ class Functions
         }
     }
 
+    /**
+    * Evaluates a simple arithmetic expression from an array of tokens.
+    *
+    * This function takes an array of tokens that represent a simple arithmetic expression, such as [2, "+", 3, "*", 4].
+    * It assumes that the tokens are valid and follow the order of operations and parentheses rules.
+    * It returns the result of the expression as a numeric value.
+    *
+    * @param array $array The array of tokens to evaluate.
+    * @return numeric The result of the expression.
+    * @throws InvalidArgumentException If the $array parameter is not an array or is empty.
+    */
     public static function evaluateSimpleExpression($array){
         if(!Functions::isArray($array)) return Functions::illegalArguments(__METHOD__);
         if(count($array)==1){
@@ -1076,10 +1099,7 @@ class Functions
         if(!Functions::isArray($array)) return Functions::illegalArguments(__METHOD__);
         $result = [];
         array_walk_recursive($array, function($value) use (&$result) {
-            if(!(Functions::isSet($value)&&Functions::isEmpty($value))){
-                $result[] = $value;
-            }
-            
+            $result[] = $value;   
         });
         return $result;
     }
@@ -1226,6 +1246,23 @@ class Functions
         return 'data:image/png;base64,' . base64_encode($buffer);
     }
 
+    /**
+    * Separates the operands and operations from an array.
+    *
+    * This function takes an array as an argument and returns an associative array
+    * with three keys: 'sets', 'operations', and 'numbers'. The values of these keys
+    * are arrays that contain the elements of the original array that belong to each category.
+    * The function uses the Functions and Token classes to check the type and value of each element.
+    * If the argument is not an array, the function returns the result of calling Functions::illegalArguments
+    * with the current method name.
+    *
+    * @param array $array The array to be separated.
+    * @return array An associative array with three keys: 'sets', 'operations', and 'numbers'.
+    * @throws InvalidArgumentException If the argument is not an array.
+    * @private
+    *
+    * @codeCoverageIgnore
+    */
     private static function separateOperandsAndOperations($array){
         if(!Functions::isArray($array))  return Functions::illegalArguments(__METHOD__);
         $sets=[];
@@ -1251,6 +1288,20 @@ class Functions
         return ['sets'=>$sets,'operations'=>$operations,'numbers'=>$numbers];
     }
 
+    /**
+    * Splits an array by the type of its keys.
+    *
+    * This function takes an array as an argument and returns an associative array
+    * with two keys: 'stringKeys' and 'numberKeys'. The values of these keys
+    * are arrays that contain the elements of the original array that have string or numeric keys, respectively.
+    * The function uses the Functions class to check the type of each key.
+    *
+    * @param array $array The array to be split.
+    * @return array An associative array with two keys: 'stringKeys' and 'numberKeys'.
+    * @private
+    *
+    * @codeCoverageIgnore
+    */
     private static function splitArrayByKeyType($array){
         $keyIsString=[];
         $keyIsNumeric=[];
@@ -1265,6 +1316,20 @@ class Functions
         return ["stringKeys"=>$keyIsString,'numberKeys'=>$keyIsNumeric];
     }
 
+    /**
+    * Searches for the minimum index among two values.
+    *
+    * This function takes two values as arguments and returns the minimum index among them.
+    * If both values are false, the function returns false. If one of the values is false, the function returns the other value.
+    * The function uses the min function to compare the values.
+    *
+    * @param mixed $first The first value to be compared.
+    * @param mixed $second The second value to be compared.
+    * @return mixed The minimum index among the two values, or false if both are false.
+    * @private
+    *
+    * @codeCoverageIgnore
+    */
     private static function arraySearchMinIndex($first,$second){
         if($first==false&&$second==false) return false;
         if($first===false) return $second;
@@ -1322,8 +1387,20 @@ class Functions
         }
     }
 
-    /**
-    * @codeCoverageIgnore
+   /**
+    * Gets the points for drawing a Venn diagram with two sets.
+    *
+    * This function returns an associative array with four keys: 'inSetAIfInThisPolygon', 'inSetBIfInThisPolygon',
+    * 'inABIntersectionIfInThisPolygon', and 'visibleLines'. The values of these keys are arrays that contain the coordinates
+    * of the points that define the polygons and circles for the Venn diagram. The function uses the round function to round
+    * the coordinates to the nearest integer. The function also uses the @codeCoverageIgnore annotation to exclude it from
+    * code coverage analysis.
+    *
+    * @return array An associative array with four keys: 'inSetAIfInThisPolygon', 'inSetBIfInThisPolygon',
+    * 'inABIntersectionIfInThisPolygon', and 'visibleLines'.
+    * @private
+    * 
+    *@codeCoverageIgnore
     */
     private static function getVennPoints2(){
         $points=[
@@ -1412,6 +1489,25 @@ class Functions
     }
 
     /**
+    * Generates a random point inside a quadrangle.
+    *
+    * This function takes the coordinates of the four vertices of a quadrangle as arguments and returns an associative array
+    * with two keys: 'x' and 'y'. The values of these keys are the coordinates of a random point that lies inside the quadrangle.
+    * The function uses the Functions class to generate random floats and check if a point is inside a quadrangle.
+    * The function also uses the round function to round the coordinates to the nearest integer.
+    * The function uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.
+    *
+    * @param float $x1 The x-coordinate of the first vertex of the quadrangle.
+    * @param float $y1 The y-coordinate of the first vertex of the quadrangle.
+    * @param float $x2 The x-coordinate of the second vertex of the quadrangle.
+    * @param float $y2 The y-coordinate of the second vertex of the quadrangle.
+    * @param float $x3 The x-coordinate of the third vertex of the quadrangle.
+    * @param float $y3 The y-coordinate of the third vertex of the quadrangle.
+    * @param float $x4 The x-coordinate of the fourth vertex of the quadrangle.
+    * @param float $y4 The y-coordinate of the fourth vertex of the quadrangle.
+    * @return array An associative array with two keys: 'x' and 'y'.
+    * @private
+    * 
     * @codeCoverageIgnore
     */
     private static function generateRandomPointInQuadrangle($x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4){
@@ -1424,7 +1520,27 @@ class Functions
     }
 
     /**
-     * @codeCoverageIgnore
+    * Checks if a point is inside a quadrangle.
+    *
+    * This function takes the coordinates of a point and the four vertices of a quadrangle as arguments and returns a boolean value
+    * indicating whether the point lies inside the quadrangle or not. The function uses the winding number algorithm to determine
+    * the point-in-polygon test, which involves calculating the cross product of the vectors and the position of the point relative
+    * to the edges of the quadrangle. The function also uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.
+    *
+    * @param float $x The x-coordinate of the point.
+    * @param float $y The y-coordinate of the point.
+    * @param float $x1 The x-coordinate of the first vertex of the quadrangle.
+    * @param float $y1 The y-coordinate of the first vertex of the quadrangle.
+    * @param float $x2 The x-coordinate of the second vertex of the quadrangle.
+    * @param float $y2 The y-coordinate of the second vertex of the quadrangle.
+    * @param float $x3 The x-coordinate of the third vertex of the quadrangle.
+    * @param float $y3 The y-coordinate of the third vertex of the quadrangle.
+    * @param float $x4 The x-coordinate of the fourth vertex of the quadrangle.
+    * @param float $y4 The y-coordinate of the fourth vertex of the quadrangle.
+    * @return bool True if the point is inside the quadrangle, false otherwise.
+    * @private
+    * 
+    * @codeCoverageIgnore
     */
     private static function isInsideQuadrangle($x, $y, $x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4) {
         $coords = array($x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4);
@@ -1432,14 +1548,18 @@ class Functions
         $winding = 0;
             // 4. Loop through the four edges of the quadrangle
         for ($i = 0; $i < 4; $i++) {
-            if((($point[1] > $coords[$i*2+1]) && ($point[1] <= $coords[($i+1)%4*2+1])) && ((($coords[($i+1)%4*2] - $coords[$i*2]) * ($point[1] - $coords[$i*2+1])) - (($point[0] - $coords[$i*2]) * ($coords[($i+1)%4*2+1] - $coords[$i*2+1])) > 0)){
+            $cross = (($coords[($i+1)%4*2] - $coords[$i*2]) * ($point[1] - $coords[$i*2+1])) - (($point[0] - $coords[$i*2]) * ($coords[($i+1)%4*2+1] - $coords[$i*2+1]));
+            $above = ($point[1] > $coords[$i*2+1]) && ($point[1] <= $coords[($i+1)%4*2+1]);
+            $below = ($point[1] < $coords[$i*2+1]) && ($point[1] >= $coords[($i+1)%4*2+1]);
+
+            if ($above && $cross > 0) {
                 $crossing = 1;
             }
-            else if(((($point[1] < $coords[$i*2+1]) && ($point[1] >= $coords[($i+1)%4*2+1])) && ((($coords[($i+1)%4*2] - $coords[$i*2]) * ($point[1] - $coords[$i*2+1])) - (($point[0] - $coords[$i*2]) * ($coords[($i+1)%4*2+1] - $coords[$i*2+1])) < 0))){
+            elseif ($below && $cross < 0) {
                 $crossing = -1;
             }
-            else{
-                $crossing = 0;
+            else {
+               $crossing = 0;
             }
             $winding += $crossing;
         }
@@ -1538,6 +1658,20 @@ class Functions
     }
 
     /**
+    * Gets the points for drawing a Venn diagram with three sets.
+    *
+    * This method returns an associative array with nine keys: 'inSetAIfInThisPolygon', 'inSetBIfInThisPolygon',
+    * 'inSetCIfInThisPolygon', 'inABIntersectionIfInThisPolygon', 'inACIntersectionIfInThisPolygon',
+    * 'inBCIntersectionIfInThisPolygon', 'inABCIntersectionIfInThisPolygon', and 'visibleLines'. The values of these keys are arrays that contain the coordinates
+    * of the points that define the polygons and circles for the Venn diagram. The method uses the round method to round
+    * the coordinates to the nearest integer. The method also uses the @codeCoverageIgnore annotation to exclude it from
+    * code coverage analysis.
+    *
+    * @return array An associative array with nine keys: 'inSetAIfInThisPolygon', 'inSetBIfInThisPolygon',
+    * 'inSetCIfInThisPolygon', 'inABIntersectionIfInThisPolygon', 'inACIntersectionIfInThisPolygon',
+    * 'inBCIntersectionIfInThisPolygon', 'inABCIntersectionIfInThisPolygon', and 'visibleLines'.
+    * @private
+    *
     * @codeCoverageIgnore
     */
     private static function getVennPoints3(){
@@ -1677,6 +1811,23 @@ class Functions
     }
 
     /**
+    * Generates a random point inside a triangle.
+    *
+    * This method takes the coordinates of the three vertices of a triangle as arguments and returns an associative array
+    * with two keys: 'x' and 'y'. The values of these keys are the coordinates of a random point that lies inside the triangle.
+    * The method uses the Functions class to generate random floats and the barycentric coordinates formula to calculate
+    * the point coordinates. The method also uses the round method to round the coordinates to the nearest integer.
+    * The method uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.
+    *
+    * @param float $x1 The x-coordinate of the first vertex of the triangle.
+    * @param float $y1 The y-coordinate of the first vertex of the triangle.
+    * @param float $x2 The x-coordinate of the second vertex of the triangle.
+    * @param float $y2 The y-coordinate of the second vertex of the triangle.
+    * @param float $x3 The x-coordinate of the third vertex of the triangle.
+    * @param float $y3 The y-coordinate of the third vertex of the triangle.
+    * @return array An associative array with two keys: 'x' and 'y'.
+    * @private
+    *
     * @codeCoverageIgnore
     */
     private static function generateRandomPointInTriangle($x1, $y1, $x2, $y2, $x3, $y3){
@@ -1712,9 +1863,20 @@ class Functions
         $b_intersection_c = $input ['b_intersection_c'];
         $a_intersection_b_intersection_c = $input ['a_intersection_b_intersection_c'];
         
-    }*/
+    }**/
     
+
     /**
+    * Initializes the color palette for an image.
+    *
+    * This method takes an image resource as an argument and assigns it to the static property $colorpalette of the Functions class.
+    * The method then uses the imagecolorallocate function to create and store various colors in the $colorpalette array, such as
+    * black, white, red, blue, yellow, purple, green, and orange. The method uses the @codeCoverageIgnore annotation to exclude it from
+    * code coverage analysis.
+    *
+    * @param resource $image An image resource, returned by one of the image creation functions, such as imagecreatetruecolor().
+    * @public
+    *
     * @codeCoverageIgnore
     */
     public static function initializeColorPalette($image){
@@ -1730,6 +1892,17 @@ class Functions
     }
 
     /**
+    * Generates a random float between two values.
+    *
+    * This function takes two floats as arguments and returns a random float that is between them.
+    * The function uses the lcg_value function to generate a pseudo-random number and the abs function to get the absolute value of the difference between the arguments.
+    * The function also uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.
+    *
+    * @param float $min The lower bound of the random float.
+    * @param float $max The upper bound of the random float.
+    * @return float A random float between $min and $max.
+    * @private
+    *
     * @codeCoverageIgnore
     */
     private static function random_float ($min,$max) {
@@ -1737,6 +1910,15 @@ class Functions
     }
    
     /**
+    * Gets the color palette for an image.
+    *
+    * This function returns the static property $colorpalette of the Functions class, which is an associative array that stores various colors for an image resource.
+    * The function assumes that the $colorpalette property has been initialized by the initializeColorPalette method, which uses the imagecolorallocate function to create and store the colors.
+    * The function uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.
+    *
+    * @return array An associative array that stores various colors for an image resource.
+    * @public
+    *
     * @codeCoverageIgnore
     */
     public static function getColorPalette(){

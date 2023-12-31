@@ -7,7 +7,7 @@ use \app\server\classes\model\File;
 use \app\server\classes\model\Expression;
 use \app\server\classes\model\Log;
 use \app\server\classes\model\User;
-use \core\lib\Map;
+use \core\lib\datastructures\Map;
 
 header('Content-Type: application/json');
 session_start();

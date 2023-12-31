@@ -39,14 +39,13 @@ class Lexer
     */
     public function __construct($input = "")
     {
-        $this->input = $input . "$";
+        $this->setInput($input);
     }
 
-    /**
-    * A method that tokenizes the input and returns an array of tokens.
-    * @return array An array of tokens, each token is an associative array with two keys: type and value.
-    * @throws LexerException If an unknown character or symbol is encountered in the input.
-    */
+    public function setInput($input)
+    {
+        $this->input= $input . "$";
+    }
     public function tokenize()
     {
 
@@ -67,9 +66,47 @@ class Lexer
                 $pos=strpos($this->input,';',$i);
                 $specialchar=substr($this->input,$i,($pos-$i+1));
                 if(in_array($specialchar,$this->specialChars)){
-                    $c=html_entity_decode($specialchar,ENT_HTML5,"UTF-8");
+                    switch ($specialchar) {
+                        case (TOKEN::COMPLEMENT['value']):
+                            $tokens[] = ['type' => TOKEN::COMPLEMENT['name'], 'value' => TOKEN::COMPLEMENT['value']];
+                            break;
+                        case (TOKEN::ELEMENTOF['value']):
+                            $tokens[] = ['type' => TOKEN::ELEMENTOF['name'], 'value' => TOKEN::ELEMENTOF['value']];
+                            break;
+                        case (TOKEN::NOTELEMENTOF['value']):
+                            $tokens[] = ['type' => TOKEN::NOTELEMENTOF['name'], 'value' => TOKEN::NOTELEMENTOF['value']];
+                            break;
+                        case (TOKEN::SUBSETOF['value']):
+                            $tokens[] = ['type' => TOKEN::SUBSETOF['name'], 'value' => TOKEN::SUBSETOF['value']];
+                            break;
+                        case (TOKEN::REALSUBSETOF['value']):
+                            $tokens[] = ['type' => TOKEN::REALSUBSETOF['name'], 'value' => TOKEN::REALSUBSETOF['value']];
+                            break;
+                        case (TOKEN::UNION['value']):
+                            $tokens[] = ['type' => TOKEN::UNION['name'], 'value' => TOKEN::UNION['value']];
+                            break;
+                        case (TOKEN::INTERSECTION['value']):
+                            $tokens[] = ['type' => TOKEN::INTERSECTION['name'], 'value' => TOKEN::INTERSECTION['value']];
+                            break;
+                        case (TOKEN::SETMINUS['value']):
+                            $tokens[] = ['type' => TOKEN::SETMINUS['name'], 'value' => TOKEN::SETMINUS['value']];
+                            break;
+                        case (TOKEN::DIVIDES['value']):
+                            $tokens[] = ['type' => TOKEN::DIVIDES['name'], 'value' => TOKEN::DIVIDES['value']];
+                            break;
+                        case (TOKEN::DOESNOTDIVIDE['value']):
+                            $tokens[] = ['type' => TOKEN::DOESNOTDIVIDE['name'], 'value' => TOKEN::DOESNOTDIVIDE['value']];
+                            break;
+                        case (TOKEN::LAND['value']):
+                            $tokens[] = ['type' => TOKEN::LAND['name'], 'value' => TOKEN::LAND['value']];
+                            break;
+                        case (TOKEN::LOR['value']):
+                            $tokens[] = ['type' => TOKEN::LOR['name'], 'value' => TOKEN::LOR['value']];
+                            break;
+                    }
                 }
                 $i=$pos;
+                continue;
             }
             else{
                 $c=$this->input[$i];
@@ -81,91 +118,54 @@ class Lexer
                 }
                 $tokens[] = ['type' => Token::NUMBER['name'], 'value' => floatval(substr($num, 0, -1))];
                 --$i;
-            } else if ($idregexp->test($c)) {
+            } elseif ($idregexp->test($c)) {
                 $id = $c;
                 while ($idregexp->test($id)) {
                     $id .= $this->input[++$i];
                 }
                 $id = substr($id, 0, -1);
                 if (in_array($id, Builtin::NAMES)) {
-                    $id=strtoupper($id);
-                    $tokens[] = ['type' => constant(self::TOKENCLASSNAMESPACE.strtoupper($id))['name'], 'value' => constant(self::TOKENCLASSNAMESPACE.strtoupper($id))['value']];
+                    $tokens[] = ['type' => strtolower($id), 'value' => $id];
                 } else {
                     $tokens[] = ['type' => Token::IDENTIFIER["name"], 'value' => $id];
                 }
                 --$i;
-            } else if (isset($this->input[$i])&&isset($this->input[$i + 1])&&$tobeeqregexp->test($this->input[$i] . $this->input[$i + 1])) {
+            } elseif (isset($this->input[$i])&&isset($this->input[$i + 1])&&$tobeeqregexp->test($this->input[$i] . $this->input[$i + 1])) {
                 $tokens[] = ['type' => Token::TOBEEQUAL['name'], 'value' => Token::TOBEEQUAL['value']];
                 ++$i;
-            } else if (isset($this->input[$i])&&isset($this->input[$i + 1])&&$lessthanoreqregexp->test($this->input[$i] . $this->input[$i + 1])) {
+            } elseif (isset($this->input[$i])&&isset($this->input[$i + 1])&&$lessthanoreqregexp->test($this->input[$i] . $this->input[$i + 1])) {
                 $tokens[] = ['type' => Token::LESSTHANOREQUAL['name'], 'value' => Token::LESSTHANOREQUAL['value']];
                 ++$i;
-            } else if (isset($this->input[$i])&&isset($this->input[$i + 1])&&$greaterthanoreqregexp->test($this->input[$i] . $this->input[$i + 1])) {
+            } elseif (isset($this->input[$i])&&isset($this->input[$i + 1])&&$greaterthanoreqregexp->test($this->input[$i] . $this->input[$i + 1])) {
                 $tokens[] = ['type' => Token::GREATERTHANOREQUAL['name'], 'value' => Token::GREATERTHANOREQUAL['value']];
                 ++$i;
             } else if (isset($this->input[$i])&&isset($this->input[$i + 1])&&$arrow->test($this->input[$i] . $this->input[$i + 1])) {
                 $tokens[] = ['type' => Token::ARROW['name'], 'value' => Token::ARROW['value']];
                 ++$i;
-            } else if ($c === ' ' || $c === '\t') {
+            }  elseif ($c === ' ' || $c === '\t') {
                 continue;
             } else {
                 switch ($c) {
                     case (TOKEN::PLUS['value']):
-                        $tokens[] = ['type' => TOKEN::PLUS['name'], 'value' => TOKEN::PLUS['value']];
+                        $tokens[] = ['type' => token::PLUS['name'], 'value' => TOKEN::PLUS['value']];
                         break;
                     case (TOKEN::MINUS['value']):
-                        $tokens[] = ['type' => TOKEN::MINUS['name'], 'value' => TOKEN::MINUS['value']];
+                        $tokens[] = ['type' => token::MINUS['name'], 'value' => TOKEN::MINUS['value']];
                         break;
                     case (TOKEN::MULTIPLY['value']):
-                        $tokens[] = ['type' => TOKEN::MULTIPLY['name'], 'value' => TOKEN::MULTIPLY['value']];
+                        $tokens[] = ['type' => token::MULTIPLY['name'], 'value' => TOKEN::MULTIPLY['value']];
                         break;
                     case (TOKEN::DIVIDE['value']):
-                        $tokens[] = ['type' => TOKEN::DIVIDE['name'], 'value' => TOKEN::DIVIDE['value']];
+                        $tokens[] = ['type' => token::DIVIDE['name'], 'value' => TOKEN::DIVIDE['value']];
                         break;
                     case (TOKEN::DOT['value']):
-                        $tokens[] = ['type' => TOKEN::DOT['name'], 'value' => TOKEN::DOT['value']];
-                        break;
-                    case (TOKEN::COMPLEMENT['value']):
-                        $tokens[] = ['type' => TOKEN::COMPLEMENT['name'], 'value' => TOKEN::COMPLEMENT['value']];
-                        break;
-                    case (TOKEN::ELEMENTOF['value']):
-                        $tokens[] = ['type' => TOKEN::ELEMENTOF['name'], 'value' => TOKEN::ELEMENTOF['value']];
-                        break;
-                    case (TOKEN::NOTELEMENTOF['value']):
-                        $tokens[] = ['type' => TOKEN::NOTELEMENTOF['name'], 'value' => TOKEN::NOTELEMENTOF['value']];
+                        $tokens[] = ['type' => token::DOT['name'], 'value' => TOKEN::DOT['value']];
                         break;
                     case (TOKEN::EQUAL['value']):
                         $tokens[] = ['type' => TOKEN::EQUAL['name'], 'value' => TOKEN::EQUAL['value']];
                         break;
-                    case (TOKEN::SUBSETOF['value']):
-                        $tokens[] = ['type' => TOKEN::SUBSETOF['name'], 'value' => TOKEN::SUBSETOF['value']];
-                        break;
-                    case (TOKEN::REALSUBSETOF['value']):
-                        $tokens[] = ['type' => TOKEN::REALSUBSETOF['name'], 'value' => TOKEN::REALSUBSETOF['value']];
-                        break;
-                    case (TOKEN::UNION['value']):
-                        $tokens[] = ['type' => TOKEN::UNION['name'], 'value' => TOKEN::UNION['value']];
-                        break;
-                    case (TOKEN::INTERSECTION['value']):
-                        $tokens[] = ['type' => TOKEN::INTERSECTION['name'], 'value' => TOKEN::INTERSECTION['value']];
-                        break;
-                    case (TOKEN::SETMINUS['value']):
-                        $tokens[] = ['type' => TOKEN::SETMINUS['name'], 'value' => TOKEN::SETMINUS['value']];
-                        break;
                     case (TOKEN::COMMA['value']):
                         $tokens[] = ['type' => TOKEN::COMMA['name'], 'value' => TOKEN::COMMA['value']];
-                        break;
-                    case (TOKEN::DIVIDES['value']):
-                        $tokens[] = ['type' => TOKEN::DIVIDES['name'], 'value' => TOKEN::DIVIDES['value']];
-                        break;
-                    case (TOKEN::DOESNOTDIVIDE['value']):
-                        $tokens[] = ['type' => TOKEN::DOESNOTDIVIDE['name'], 'value' => TOKEN::DOESNOTDIVIDE['value']];
-                        break;
-                    case (TOKEN::LAND['value']):
-                        $tokens[] = ['type' => TOKEN::LAND['name'], 'value' => TOKEN::LAND['value']];
-                        break;
-                    case (TOKEN::LOR['value']):
-                        $tokens[] = ['type' => TOKEN::LOR['name'], 'value' => TOKEN::LOR['value']];
                         break;
                     case (TOKEN::VERTICALLINE['value']):
                         $tokens[] = ['type' => TOKEN::VERTICALLINE['name'], 'value' => TOKEN::VERTICALLINE['value']];
@@ -199,7 +199,7 @@ class Lexer
                         break;   
                     default:
                         $lastGood = $tokens[count($tokens) - 1];
-                        throw new LexerException('Last good: ' . json_encode($lastGood). 'RowPos: '. $i+1);
+                        throw new LexerException('Last good token: ' . json_encode($lastGood). ' ColumnPos: '. $i+1);
                 }
             }
         }

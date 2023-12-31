@@ -1,7 +1,10 @@
 <?php
-namespace core\lib;
+namespace core\lib\datastructures;
 
 use \InvalidArgumentException;
+use \JsonSerializable;
+use \ReflectionClass;
+use \core\lib\Functions;
 
 /**
 * A class that represents a point in a two-dimensional plane.
@@ -11,7 +14,7 @@ use \InvalidArgumentException;
 *
 * @namespace core\lib
 */
-class Point{
+class Point implements JsonSerializable{
 
     /**
     * The x-coordinate of the point
@@ -86,5 +89,34 @@ class Point{
     public function __toString()
     {
         return "[". $this->x.",".$this->y."]";
+    }
+
+    /**
+    * Gets the name of the point class.
+    *
+    * This function uses the ReflectionClass class to get the short name of the point class, which is the class name without the namespace.
+    * The function returns the short name as a string.
+    *
+    * @return string The short name of the point class.
+    */
+    private function getName()
+    {
+        $ref=new ReflectionClass($this);
+        return $ref->getShortName();
+
+    }
+
+    /**
+    * Serializes the point object to JSON format.
+    *
+    * This function implements the JsonSerializable interface, which allows the point object to be serialized by the json_encode function.
+    * The function returns an associative array with three keys: 'name', 'x', and 'y'. 
+    * The values of these keys are the name, x-coordinate, and y-coordinate of the point object, respectively.
+    *
+    * @return array An associative array with three keys: 'name', 'x', and 'y'.
+    */
+    public function jsonSerialize():mixed
+    {
+        return ['name'=>$this->getName(),'x'=>$this->x,'y'=>$this->y];
     }
 }

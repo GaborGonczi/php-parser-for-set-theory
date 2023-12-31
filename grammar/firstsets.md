@@ -121,7 +121,7 @@ STESRUISC' -> SETOPERATIONSIDE STESRUISC'' FIRST(STESRUISC')={leftparenthesis,e}
 |leftparenthesis SETOPERATIONSIDE STESRUISC'' rightparenthesis STESRUISC''
 |e.
 
-TRHS->CURLIEDSETEXP FIRST(TRHS)=FIRST(CURLIEDSETEXP) u FIRST(POINT) u {leftparenthesis}={leftcurlybrace,leftsquarebracket,leftparenthesis}
+TRHS->SETOPERATIONSIDE STESRUISC'' FIRST(TRHS)=FIRST(SETOPERATIONSIDE) u FIRST(POINT) u {leftparenthesis}={identifier,leftcurlybrace,leftsquarebracket,leftparenthesis}
 |leftparenthesis SETOPERATIONSIDE STESRUISC'' rightparenthesis STESRUISC''
 |POINT.
 

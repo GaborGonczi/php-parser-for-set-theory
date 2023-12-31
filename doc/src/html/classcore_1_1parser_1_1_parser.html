@@ -90,8 +90,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aad3f6fcb0bbe85b46a3c1be1ee790c12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aceb4c48b0196dd15215b02e8471ff0e2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcore_1_1parser_1_1_parser.html#aceb4c48b0196dd15215b02e8471ff0e2">__construct</a> ($tokens=[])</td></tr>
 <tr class="separator:aceb4c48b0196dd15215b02e8471ff0e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e24780ebc145a092fcb0f19496be3fb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcore_1_1parser_1_1_parser.html#a0e24780ebc145a092fcb0f19496be3fb">setTokens</a> ($tokens)</td></tr>
+<tr class="separator:a0e24780ebc145a092fcb0f19496be3fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27b6c482f43268e60627cac02736f6ba"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcore_1_1parser_1_1_parser.html#a27b6c482f43268e60627cac02736f6ba">getVars</a> ()</td></tr>
 <tr class="separator:a27b6c482f43268e60627cac02736f6ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7516a40618967ab72c78a05882d615e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcore_1_1parser_1_1_parser.html#ac7516a40618967ab72c78a05882d615e">setVars</a> ($vars=new <a class="el" href="classcore_1_1lib_1_1datastructures_1_1_map.html">Map</a>([]))</td></tr>
+<tr class="separator:ac7516a40618967ab72c78a05882d615e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -221,12 +225,12 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a0e2fe4b71a9f0a67cacb12ecede5202f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a80478b49417f118ae72e861f64fc83e9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcore_1_1parser_1_1_parser.html#a80478b49417f118ae72e861f64fc83e9">$pos</a></td></tr>
 <tr class="separator:a80478b49417f118ae72e861f64fc83e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaafa378124e8802caa9b69de183d2539"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcore_1_1lib_1_1_map.html">Map</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcore_1_1parser_1_1_parser.html#aaafa378124e8802caa9b69de183d2539">$vars</a></td></tr>
-<tr class="separator:aaafa378124e8802caa9b69de183d2539"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
-<tr class="memitem:a186a72baba94d2d2d24fb26f44b7dc97"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classcore_1_1lib_1_1_set.html">Set</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcore_1_1parser_1_1_parser.html#a186a72baba94d2d2d24fb26f44b7dc97">$baseSet</a></td></tr>
+<tr class="memitem:aaafa378124e8802caa9b69de183d2539"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classcore_1_1lib_1_1datastructures_1_1_map.html">Map</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcore_1_1parser_1_1_parser.html#aaafa378124e8802caa9b69de183d2539">$vars</a> = null</td></tr>
+<tr class="separator:aaafa378124e8802caa9b69de183d2539"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a186a72baba94d2d2d24fb26f44b7dc97"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classcore_1_1lib_1_1datastructures_1_1_set.html">Set</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcore_1_1parser_1_1_parser.html#a186a72baba94d2d2d24fb26f44b7dc97">$baseSet</a></td></tr>
 <tr class="separator:a186a72baba94d2d2d24fb26f44b7dc97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -463,7 +467,7 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Parses a divisibility operator and returns its value. A divisibility operator can be either ∣ (divides) or ∤ (does not divide). </p><dl class="section return"><dt>Returns</dt><dd>string|null The value of the divisibility operator, which is either "∣" or "∤", or null if the lookahead token is not valid. </dd></dl>
+<p>Parses a divisibility operator and returns its value. A divisibility operator can be either &amp;mid; (divides) or &amp;nmid; (does not divide). </p><dl class="section return"><dt>Returns</dt><dd>string|null The value of the divisibility operator, which is either "&amp;mid;" or "&amp;nmid;", or null if the lookahead token is not valid. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">ParserException</td><td>If the lookahead token does not match the expected token. </td></tr>
@@ -959,7 +963,7 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Parses a logical operator token and returns its value. A logical operator can be either ∧ (AND) or ∨ (OR). </p><dl class="section return"><dt>Returns</dt><dd>string|null The value of the logical operator token, or null if no match is found. </dd></dl>
+<p>Parses a logical operator token and returns its value. A logical operator can be either &and; (AND) or &or; (OR). </p><dl class="section return"><dt>Returns</dt><dd>string|null The value of the logical operator token, or null if no match is found. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">ParserException</td><td>If the lookahead token is not a valid logical operator. </td></tr>
@@ -1425,7 +1429,7 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Parses an element of or not element of operator and a set and returns an array of results. An element of or not element of operator is either ∈ or ∉, and a set is either a set literal, a set identifier. </p><dl class="section return"><dt>Returns</dt><dd>array|null An associative array of results, containing the operator and the set, or null if the lookahead token is not valid. </dd></dl>
+<p>Parses an element of or not element of operator and a set and returns an array of results. An element of or not element of operator is either &isin; or &notin;, and a set is either a set literal, a set identifier. </p><dl class="section return"><dt>Returns</dt><dd>array|null An associative array of results, containing the operator and the set, or null if the lookahead token is not valid. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">ParserException</td><td>If the lookahead token does not match the expected token. </td></tr>
@@ -1652,6 +1656,42 @@ Static Private Attributes</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a0e24780ebc145a092fcb0f19496be3fb" name="a0e24780ebc145a092fcb0f19496be3fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e24780ebc145a092fcb0f19496be3fb">&#9670;&#160;</a></span>setTokens()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">core\parser\Parser::setTokens </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$tokens</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac7516a40618967ab72c78a05882d615e" name="ac7516a40618967ab72c78a05882d615e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7516a40618967ab72c78a05882d615e">&#9670;&#160;</a></span>setVars()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">core\parser\Parser::setVars </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$vars</em> = <code>new&#160;<a class="el" href="classcore_1_1lib_1_1datastructures_1_1_map.html">Map</a>([])</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -2172,7 +2212,7 @@ Static Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classcore_1_1lib_1_1_set.html">Set</a> core\parser\Parser::$baseSet</td>
+          <td class="memname"><a class="el" href="classcore_1_1lib_1_1datastructures_1_1_set.html">Set</a> core\parser\Parser::$baseSet</td>
         </tr>
       </table>
   </td>
@@ -2238,12 +2278,12 @@ Static Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classcore_1_1lib_1_1_map.html">Map</a> core\parser\Parser::$vars</td>
+          <td class="memname"><a class="el" href="classcore_1_1lib_1_1datastructures_1_1_map.html">Map</a> core\parser\Parser::$vars = null</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

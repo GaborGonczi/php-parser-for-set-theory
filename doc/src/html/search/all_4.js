@@ -2,7 +2,7 @@ var searchData=
 [
   ['calculateposition_0',['calculatePosition',['../classcore_1_1parser_1_1_parser.html#af537c50c7a84ee7b04fe795a2e1e0e76',1,'core::parser::Parser']]],
   ['cardinality_1',['cardinality',['../classcore_1_1lib_1_1_functions.html#ae758808b7b853a984ef84fce6deaf2dc',1,'core::lib::Functions']]],
-  ['clear_2',['clear',['../classcore_1_1lib_1_1_map.html#a17461e3501912cc2ff637dd380471018',1,'core\lib\Map\clear()'],['../classcore_1_1lib_1_1_set.html#aaf351d40d792f0903ca0bad731f9a677',1,'core\lib\Set\clear()']]],
+  ['clear_2',['clear',['../classcore_1_1lib_1_1datastructures_1_1_map.html#a584a3e587418ffa572eca6085b23ecd8',1,'core\lib\datastructures\Map\clear()'],['../classcore_1_1lib_1_1datastructures_1_1_set.html#a796cbf22d62c9b111046ac0bf7beb94c',1,'core\lib\datastructures\Set\clear()']]],
   ['client_3',['client',['../classapp_1_1server_1_1classes_1_1_application.html#a2e96f122a58f4c25b6242ba66bd45bdc',1,'app::server::classes::Application']]],
   ['client_2ejs_4',['client.js',['../client_8js.html',1,'']]],
   ['client_2ephp_5',['client.php',['../client_8php.html',1,'']]],
@@ -26,7 +26,8 @@ var searchData=
   ['createsetfrompointarray_23',['createSetFromPointArray',['../classcore_1_1lib_1_1_point_set_diagram_functions.html#a7d727116f73b045bfc8c8adb39f811aa',1,'core::lib::PointSetDiagramFunctions']]],
   ['createuserfunction_24',['createUserFunction',['../classcore_1_1lib_1_1_functions.html#a88121d04652faf3f7aebe9a14816f859',1,'core::lib::Functions']]],
   ['curliedsetexp_25',['curliedsetexp',['../classcore_1_1parser_1_1_parser.html#ad7606e946a5c57675bc7b5869918b2f4',1,'core::parser::Parser']]],
-  ['exception_26',['exception',['../namespacecore_1_1parser_1_1exception.html',1,'core::parser']]],
-  ['lib_27',['lib',['../namespacecore_1_1lib.html',1,'core']]],
-  ['parser_28',['parser',['../namespacecore_1_1parser.html',1,'core']]]
+  ['datastructures_26',['datastructures',['../namespacecore_1_1lib_1_1datastructures.html',1,'core::lib']]],
+  ['exception_27',['exception',['../namespacecore_1_1parser_1_1exception.html',1,'core::parser']]],
+  ['lib_28',['lib',['../namespacecore_1_1lib.html',1,'core']]],
+  ['parser_29',['parser',['../namespacecore_1_1parser.html',1,'core']]]
 ];

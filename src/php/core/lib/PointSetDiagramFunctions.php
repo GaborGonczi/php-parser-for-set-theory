@@ -2,6 +2,8 @@
 namespace core\lib;
 
 use \InvalidArgumentException;
+use core\lib\datastructures\Point;
+use core\lib\datastructures\Set;
 
 /**
 * A class that provides functions for drawing and manipulating point sets and diagrams.
@@ -45,6 +47,18 @@ class PointSetDiagramFunctions
         return true;
     }
 
+    /**
+    * Checks if an array of sets is a valid point set array.
+    *
+    * This function takes an array of sets as an argument and checks if it is a valid point set array, which is an array of point sets that can be used to draw a point set diagram.
+    * The function uses the Functions class to check if the argument is an array of sets and to throw an exception if it is not.
+    * The function also uses the PointSetDiagramFunctions class to check if each set in the array is a point set and to throw an exception if it is not.
+    * The function returns true if the argument is a valid point set array, otherwise it does not return anything as it throws an exception.
+    *
+    * @param array $sets The array of sets to check for validity.
+    * @return bool True if the argument is a valid point set array.
+    * @throws InvalidArgumentException If the argument is not an array of sets or if any set in the array is not a point set.
+    */
     public static function isPointSetArray($sets)
     {
         if (!Functions::isSetArray($sets))

@@ -39,16 +39,16 @@ class Token
     * @var array The token for the to-be-equal symbol
     */
     const TOBEEQUAL = ['name' => 'tobeequal', 'value' => ':='];
-
+    
     /**
     * @var array The token for the element-of symbol
     */
-    const ELEMENTOF = ['name' => 'elementof', 'value' => '∈'];
+    const ELEMENTOF = ['name' => 'elementof', 'value' => '&isin;'];
 
     /**
     * @var array The token for the not-element-of symbol
     */
-    const NOTELEMENTOF = ['name' => 'notelementof', 'value' => '∉'];
+    const NOTELEMENTOF = ['name' => 'notelementof', 'value' => '&notin;'];
 
     /**
     * @var array The token for the equal symbol
@@ -58,32 +58,32 @@ class Token
     /**
     * @var array The token for the subset-of symbol
     */
-    const SUBSETOF = ['name' => 'subsetof', 'value' => '⊆'];
+    const SUBSETOF = ['name' => 'subsetof', 'value' => '&sube;'];
 
     /**
     * @var array The token for the real-subset-of symbol
     */
-    const REALSUBSETOF = ['name' => 'realsubsetof', 'value' => '⊂'];
+    const REALSUBSETOF = ['name' => 'realsubsetof', 'value' => '&sub;'];
 
     /**
     * @var array The token for the complement symbol
     */
-    const COMPLEMENT = ['name' => 'complement', 'value' => '∁'];
+    const COMPLEMENT = ['name' => 'complement', 'value' => '&comp;'];
 
     /**
     * @var array The token for the union symbol
     */
-    const UNION = ['name' => 'union', 'value' => '∪'];
+    const UNION = ['name' => 'union', 'value' => '&cup;'];
 
     /**
     * @var array The token for the intersection symbol
     */
-    const INTERSECTION = ['name' => 'intersection', 'value' => '∩'];
+    const INTERSECTION = ['name' => 'intersection', 'value' => '&cap;'];
 
     /**
     * @var array The token for the setminus symbol
     */
-    const SETMINUS = ['name' => 'setminus', 'value' => '∖'];
+    const SETMINUS = ['name' => 'setminus', 'value' => '&setminus;'];
 
     /**
     * @var array The token for the comma symbol
@@ -93,12 +93,12 @@ class Token
     /**
     * @var array The token for the divides symbol
     */
-    const DIVIDES = ['name' => 'divides', 'value' => '∣'];
+    const DIVIDES = ['name' => 'divides', 'value' => '&mid;'];
 
     /**
     * @var array The token for the does-not-divide symbol
     */
-    const DOESNOTDIVIDE = ['name' => 'doesnotdivide', 'value' => '∤'];
+    const DOESNOTDIVIDE = ['name' => 'doesnotdivide', 'value' => '&nmid;'];
 
     /**
     * @var array The token for the verticalline symbol
@@ -108,18 +108,18 @@ class Token
     /**
     * @var array The token for the logical-and symbol
     */
-    const LAND = ['name' => 'land', 'value' => '∧'];
+    const LAND = ['name' => 'land', 'value' => '&and;'];
 
     /**
     * @var array The token for the logical-or symbol
     */
-    const LOR = ['name' => 'lor', 'value' => '∨'];
+    const LOR = ['name' => 'lor', 'value' => '&or;'];
 
     /**
     * @var array The token for the leftcurlybrace symbol
     */
     const LEFTCURLYBRACE = ['name' => 'leftcurlybrace', 'value' => '{'];
-
+    
     /**
     * @var array The token for the rightcurlybrace symbol
     */

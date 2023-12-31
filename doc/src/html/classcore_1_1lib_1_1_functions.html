@@ -412,6 +412,17 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Searches for the minimum index among two values.</p>
+<p>This function takes two values as arguments and returns the minimum index among them. If both values are false, the function returns false. If one of the values is false, the function returns the other value. The function uses the min function to compare the values.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">mixed</td><td class="paramname">$first</td><td>The first value to be compared. </td></tr>
+    <tr><td class="paramtype">mixed</td><td class="paramname">$second</td><td>The second value to be compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>mixed The minimum index among the two values, or false if both are false.</dd></dl>
+<p>@codeCoverageIgnore </p>
 
 </div>
 </div>
@@ -1089,6 +1100,21 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Evaluates a simple arithmetic expression from an array of tokens.</p>
+<p>This function takes an array of tokens that represent a simple arithmetic expression, such as [2, "+", 3, "*", 4]. It assumes that the tokens are valid and follow the order of operations and parentheses rules. It returns the result of the expression as a numeric value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">array</td><td class="paramname">$array</td><td>The array of tokens to evaluate. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>numeric The result of the expression. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">InvalidArgumentException</td><td>If the $array parameter is not an array or is empty. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1292,6 +1318,22 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Generates a random point inside a quadrangle.</p>
+<p>This function takes the coordinates of the four vertices of a quadrangle as arguments and returns an associative array with two keys: 'x' and 'y'. The values of these keys are the coordinates of a random point that lies inside the quadrangle. The function uses the Functions class to generate random floats and check if a point is inside a quadrangle. The function also uses the round function to round the coordinates to the nearest integer. The function uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">float</td><td class="paramname">$x1</td><td>The x-coordinate of the first vertex of the quadrangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$y1</td><td>The y-coordinate of the first vertex of the quadrangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$x2</td><td>The x-coordinate of the second vertex of the quadrangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$y2</td><td>The y-coordinate of the second vertex of the quadrangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$x3</td><td>The x-coordinate of the third vertex of the quadrangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$y3</td><td>The y-coordinate of the third vertex of the quadrangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$x4</td><td>The x-coordinate of the fourth vertex of the quadrangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$y4</td><td>The y-coordinate of the fourth vertex of the quadrangle. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>array An associative array with two keys: 'x' and 'y'.</dd></dl>
 <p>@codeCoverageIgnore </p>
 
 </div>
@@ -1353,6 +1395,20 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Generates a random point inside a triangle.</p>
+<p>This method takes the coordinates of the three vertices of a triangle as arguments and returns an associative array with two keys: 'x' and 'y'. The values of these keys are the coordinates of a random point that lies inside the triangle. The method uses the Functions class to generate random floats and the barycentric coordinates formula to calculate the point coordinates. The method also uses the round method to round the coordinates to the nearest integer. The method uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">float</td><td class="paramname">$x1</td><td>The x-coordinate of the first vertex of the triangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$y1</td><td>The y-coordinate of the first vertex of the triangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$x2</td><td>The x-coordinate of the second vertex of the triangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$y2</td><td>The y-coordinate of the second vertex of the triangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$x3</td><td>The x-coordinate of the third vertex of the triangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$y3</td><td>The y-coordinate of the third vertex of the triangle. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>array An associative array with two keys: 'x' and 'y'.</dd></dl>
 <p>@codeCoverageIgnore </p>
 
 </div>
@@ -1379,6 +1435,9 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Gets the color palette for an image.</p>
+<p>This function returns the static property $colorpalette of the Functions class, which is an associative array that stores various colors for an image resource. The function assumes that the $colorpalette property has been initialized by the initializeColorPalette method, which uses the imagecolorallocate function to create and store the colors. The function uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.</p>
+<dl class="section return"><dt>Returns</dt><dd>array An associative array that stores various colors for an image resource.</dd></dl>
 <p>@codeCoverageIgnore </p>
 
 </div>
@@ -1485,6 +1544,9 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Gets the points for drawing a Venn diagram with two sets.</p>
+<p>This function returns an associative array with four keys: 'inSetAIfInThisPolygon', 'inSetBIfInThisPolygon', 'inABIntersectionIfInThisPolygon', and 'visibleLines'. The values of these keys are arrays that contain the coordinates of the points that define the polygons and circles for the Venn diagram. The function uses the round function to round the coordinates to the nearest integer. The function also uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.</p>
+<dl class="section return"><dt>Returns</dt><dd>array An associative array with four keys: 'inSetAIfInThisPolygon', 'inSetBIfInThisPolygon', 'inABIntersectionIfInThisPolygon', and 'visibleLines'.</dd></dl>
 <p>@codeCoverageIgnore </p>
 
 </div>
@@ -1511,6 +1573,9 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Gets the points for drawing a Venn diagram with three sets.</p>
+<p>This method returns an associative array with nine keys: 'inSetAIfInThisPolygon', 'inSetBIfInThisPolygon', 'inSetCIfInThisPolygon', 'inABIntersectionIfInThisPolygon', 'inACIntersectionIfInThisPolygon', 'inBCIntersectionIfInThisPolygon', 'inABCIntersectionIfInThisPolygon', and 'visibleLines'. The values of these keys are arrays that contain the coordinates of the points that define the polygons and circles for the Venn diagram. The method uses the round method to round the coordinates to the nearest integer. The method also uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.</p>
+<dl class="section return"><dt>Returns</dt><dd>array An associative array with nine keys: 'inSetAIfInThisPolygon', 'inSetBIfInThisPolygon', 'inSetCIfInThisPolygon', 'inABIntersectionIfInThisPolygon', 'inACIntersectionIfInThisPolygon', 'inBCIntersectionIfInThisPolygon', 'inABCIntersectionIfInThisPolygon', and 'visibleLines'.</dd></dl>
 <p>@codeCoverageIgnore </p>
 
 </div>
@@ -1577,7 +1642,15 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>@codeCoverageIgnore @codeCoverageIgnore @codeCoverageIgnore </p>
+<p>@codeCoverageIgnore @codeCoverageIgnore Initializes the color palette for an image.</p>
+<p>This method takes an image resource as an argument and assigns it to the static property $colorpalette of the Functions class. The method then uses the imagecolorallocate function to create and store various colors in the $colorpalette array, such as black, white, red, blue, yellow, purple, green, and orange. The method uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">resource</td><td class="paramname">$image</td><td>An image resource, returned by one of the image creation functions, such as imagecreatetruecolor().</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>@codeCoverageIgnore </p>
 
 </div>
 </div>
@@ -1946,6 +2019,24 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Checks if a point is inside a quadrangle.</p>
+<p>This function takes the coordinates of a point and the four vertices of a quadrangle as arguments and returns a boolean value indicating whether the point lies inside the quadrangle or not. The function uses the winding number algorithm to determine the point-in-polygon test, which involves calculating the cross product of the vectors and the position of the point relative to the edges of the quadrangle. The function also uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">float</td><td class="paramname">$x</td><td>The x-coordinate of the point. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$y</td><td>The y-coordinate of the point. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$x1</td><td>The x-coordinate of the first vertex of the quadrangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$y1</td><td>The y-coordinate of the first vertex of the quadrangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$x2</td><td>The x-coordinate of the second vertex of the quadrangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$y2</td><td>The y-coordinate of the second vertex of the quadrangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$x3</td><td>The x-coordinate of the third vertex of the quadrangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$y3</td><td>The y-coordinate of the third vertex of the quadrangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$x4</td><td>The x-coordinate of the fourth vertex of the quadrangle. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$y4</td><td>The y-coordinate of the fourth vertex of the quadrangle. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>bool True if the point is inside the quadrangle, false otherwise.</dd></dl>
 <p>@codeCoverageIgnore </p>
 
 </div>
@@ -2550,6 +2641,16 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Generates a random float between two values.</p>
+<p>This function takes two floats as arguments and returns a random float that is between them. The function uses the lcg_value function to generate a pseudo-random number and the abs function to get the absolute value of the difference between the arguments. The function also uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">float</td><td class="paramname">$min</td><td>The lower bound of the random float. </td></tr>
+    <tr><td class="paramtype">float</td><td class="paramname">$max</td><td>The upper bound of the random float. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>float A random float between $min and $max.</dd></dl>
 <p>@codeCoverageIgnore </p>
 
 </div>
@@ -2617,6 +2718,21 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Removes any duplicated operators from an array of operators.</p>
+<p>This function iterates over an array of operators and removes any consecutive duplicates. It returns a new array with the unique operators.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">array</td><td class="paramname">$arr</td><td>The array of operators to process. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>array A new array with the duplicated operators removed. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">InvalidArgumentException</td><td>If the $arr parameter is not an array. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -2723,6 +2839,22 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Separates the operands and operations from an array.</p>
+<p>This function takes an array as an argument and returns an associative array with three keys: 'sets', 'operations', and 'numbers'. The values of these keys are arrays that contain the elements of the original array that belong to each category. The function uses the Functions and Token classes to check the type and value of each element. If the argument is not an array, the function returns the result of calling Functions::illegalArguments with the current method name.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">array</td><td class="paramname">$array</td><td>The array to be separated. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>array An associative array with three keys: 'sets', 'operations', and 'numbers'. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">InvalidArgumentException</td><td>If the argument is not an array.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>@codeCoverageIgnore </p>
 
 </div>
 </div>
@@ -2749,6 +2881,16 @@ Static Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Splits an array by the type of its keys.</p>
+<p>This function takes an array as an argument and returns an associative array with two keys: 'stringKeys' and 'numberKeys'. The values of these keys are arrays that contain the elements of the original array that have string or numeric keys, respectively. The function uses the Functions class to check the type of each key.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">array</td><td class="paramname">$array</td><td>The array to be split. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>array An associative array with two keys: 'stringKeys' and 'numberKeys'.</dd></dl>
+<p>@codeCoverageIgnore </p>
 
 </div>
 </div>

@@ -2,7 +2,7 @@
 
 
 use PHPUnit\Framework\TestCase;
-use \core\lib\Map;
+use \core\lib\datastructures\Map;
 
 class MapTest extends TestCase
 {

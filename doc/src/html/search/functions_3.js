@@ -2,7 +2,7 @@ var searchData=
 [
   ['calculateposition_0',['calculatePosition',['../classcore_1_1parser_1_1_parser.html#af537c50c7a84ee7b04fe795a2e1e0e76',1,'core::parser::Parser']]],
   ['cardinality_1',['cardinality',['../classcore_1_1lib_1_1_functions.html#ae758808b7b853a984ef84fce6deaf2dc',1,'core::lib::Functions']]],
-  ['clear_2',['clear',['../classcore_1_1lib_1_1_map.html#a17461e3501912cc2ff637dd380471018',1,'core\lib\Map\clear()'],['../classcore_1_1lib_1_1_set.html#aaf351d40d792f0903ca0bad731f9a677',1,'core\lib\Set\clear()']]],
+  ['clear_2',['clear',['../classcore_1_1lib_1_1datastructures_1_1_map.html#a584a3e587418ffa572eca6085b23ecd8',1,'core\lib\datastructures\Map\clear()'],['../classcore_1_1lib_1_1datastructures_1_1_set.html#a796cbf22d62c9b111046ac0bf7beb94c',1,'core\lib\datastructures\Set\clear()']]],
   ['client_3',['client',['../classapp_1_1server_1_1classes_1_1_application.html#a2e96f122a58f4c25b6242ba66bd45bdc',1,'app::server::classes::Application']]],
   ['collectboundfuncs_4',['collectBoundFuncs',['../classcore_1_1lib_1_1_functions.html#ab0d86198bfed1208e144833319012488',1,'core::lib::Functions']]],
   ['collectbounds_5',['collectBounds',['../classcore_1_1lib_1_1_functions.html#afd2f0e23b00b3a2f776c68f3fab7709c',1,'core::lib::Functions']]],

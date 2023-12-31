@@ -1,14 +1,14 @@
 var searchData=
 [
-  ['add_0',['ADD',['../classcore_1_1parser_1_1_token.html#a89a171f4a94c93b32bf6e08e86d4d0d9',1,'core::parser::Token']]],
-  ['add_1',['add',['../classcore_1_1lib_1_1_map.html#a16cb99ca03f3d37a2cccacfa22843fb1',1,'core\lib\Map\add()'],['../classcore_1_1lib_1_1_set.html#a4cde67ae7caa0beee1896a4ae06a7258',1,'core\lib\Set\add()']]],
+  ['add_0',['add',['../classcore_1_1lib_1_1datastructures_1_1_map.html#a6b0c45301de4c5f619b730f42243fcb2',1,'core\lib\datastructures\Map\add()'],['../classcore_1_1lib_1_1datastructures_1_1_set.html#a4f2e370f63f9c6085ba78da92cd72240',1,'core\lib\datastructures\Set\add()']]],
+  ['add_1',['ADD',['../classcore_1_1parser_1_1_token.html#a89a171f4a94c93b32bf6e08e86d4d0d9',1,'core::parser::Token']]],
   ['addelement_2',['addElement',['../classcore_1_1lib_1_1_functions.html#abe3f2600c88284a9a15344ce955c1cf3',1,'core::lib::Functions']]],
   ['addpointelement_3',['addPointElement',['../classcore_1_1lib_1_1_point_set_diagram_functions.html#ad4f89bce40c9db8f14e44b6857458af2',1,'core::lib::PointSetDiagramFunctions']]],
   ['app_4',['app',['../namespaceapp.html',1,'']]],
   ['appendvarnametoarraykeys_5',['appendVarnameToArrayKeys',['../classcore_1_1lib_1_1_functions.html#af06e101ca025e9b2b767c47baca6d109',1,'core::lib::Functions']]],
   ['application_6',['Application',['../classapp_1_1server_1_1classes_1_1_application.html',1,'app::server::classes']]],
   ['application_2ephp_7',['Application.php',['../_application_8php.html',1,'']]],
-  ['areequal_8',['areEqual',['../classcore_1_1lib_1_1_functions.html#a730b670930523c51d12891848b3ddbda',1,'core\lib\Functions\areEqual()'],['../classcore_1_1lib_1_1_map.html#ae231c5ddce521f4dfae5e59267d03263',1,'core\lib\Map\areEqual()'],['../classcore_1_1lib_1_1_point.html#a02291d2d7e67745d5fe419f7e8adeed5',1,'core\lib\Point\areEqual()'],['../classcore_1_1lib_1_1_set.html#a0ce17955896b720f8e27471e84cf933c',1,'core\lib\Set\areEqual()']]],
+  ['areequal_8',['areEqual',['../classcore_1_1lib_1_1datastructures_1_1_map.html#aa4df14c344c25d7011971b3da15b1f36',1,'core\lib\datastructures\Map\areEqual()'],['../classcore_1_1lib_1_1datastructures_1_1_point.html#adedf87c0996d87d440845fabaf388290',1,'core\lib\datastructures\Point\areEqual()'],['../classcore_1_1lib_1_1datastructures_1_1_set.html#a99c9942806d9d83b2dcf01be1b7c66bb',1,'core\lib\datastructures\Set\areEqual()'],['../classcore_1_1lib_1_1_functions.html#a730b670930523c51d12891848b3ddbda',1,'core\lib\Functions\areEqual()']]],
   ['argument_9',['argument',['../classcore_1_1parser_1_1_parser.html#a7eab5a9582bb0d64bfb686114d98ae91',1,'core::parser::Parser']]],
   ['arguments_10',['arguments',['../classcore_1_1parser_1_1_parser.html#a6edf7a256f0ac067f820fe2a85460fb4',1,'core::parser::Parser']]],
   ['arguments_5f_11',['arguments_',['../classcore_1_1parser_1_1_parser.html#a559ecd991aeb27842a174dc5b3e7b5af',1,'core::parser::Parser']]],

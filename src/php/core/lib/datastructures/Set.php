@@ -1,16 +1,18 @@
 <?php
-namespace core\lib;
+namespace core\lib\datastructures;
 
 use \IteratorAggregate;
 use \Traversable;
 use \ArrayIterator;
+use \JsonSerializable;
+use \ReflectionClass;
 
 /**
 * A class that represents a set of unique elements.
 *
 * @package core\lib
 */
-class Set implements IteratorAggregate{
+class Set implements IteratorAggregate,JsonSerializable {
 
     /**
     * A private property that stores the elements of the set as an array.
@@ -22,12 +24,26 @@ class Set implements IteratorAggregate{
     */
     private $elements;
 
+        
+    /**
+    * The type of the set.
+    *
+    * This property stores the type of the set, which can be one of the following values: 'integer', 'double', 'boolean', or 'string' or a user-defined type.
+    * The type of the set determines how the elements of the set are compared and sorted. The type of the set is null by default,
+    * until it is initialized by the constructor or the setType method of the Set class.
+    *
+    * @var string|null The type of the set.
+    */
     private $type=null;
 
     /**
     * Constructs a new Set object from an array of elements.
     *
-    * @param array $elements The array of elements to initialize the set with. Only the unique elements will be kept.
+    * This method takes an array of elements as an argument and assigns it to the $elements property of the Set class, after filtering out the non-unique and non-matching elements.
+    * The method also sets the $type property of the Set class, based on the type or class of the first element in the array, if any.
+    * The method uses the @param tag to indicate the type and name of the argument, which is an array.
+    *
+    * @param array $elements The array of elements to initialize the set with. Only the unique and matching elements will be kept.
     */
     public function __construct($elements)
     {
@@ -50,6 +66,7 @@ class Set implements IteratorAggregate{
 
     /**
     * Adds an element to the set if it is not already present.
+    * Also sets the $type property of the Set class, if it is null, based on the type or class of the element.
     *
     * @param mixed $element The element to add to the set.
     * @return Set The same Set object, for method chaining.
@@ -64,7 +81,7 @@ class Set implements IteratorAggregate{
     }
 
     /**
-    * Clears the set of all elements.
+    * Clears the set of all elements and sets the $type property of the Set class to null.
     *
     * @return null
     */
@@ -77,6 +94,7 @@ class Set implements IteratorAggregate{
 
     /**
     * Deletes an element from the set if it is present.
+    * Also sets the $type property of the Set class to null, if the $elements property becomes empty after the deletion.
     *
     * @param mixed $element The element to delete from the set.
     * @return Set The same Set object, for method chaining.
@@ -144,6 +162,15 @@ class Set implements IteratorAggregate{
 
     }
 
+    /**
+    * Sorts the elements of the set in ascending order.
+    *
+    * This method checks the type of the set, which is a property of the set class, and uses the sort function to sort the elements of the set, which is another property of the set class, in ascending order.
+    * If the type of the set is not 'integer', 'double', or 'boolean', the method uses the SORT_STRING flag to sort the elements as strings.
+    * Otherwise, the method uses the default sort order. The method returns the set object itself for method chaining.
+    *
+    * @return Set The set object with sorted elements.
+    */
     public function orderByAsc(){
         if(!in_array($this->type,array('integer','double','boolean'))){
             sort($this->elements,SORT_STRING);
@@ -163,5 +190,34 @@ class Set implements IteratorAggregate{
     public function __toString()
     {
         return '{'.implode(',',$this->elements).'}';
+    }
+
+    /**
+    * Gets the name of the Set class.
+    *
+    * This method uses the ReflectionClass class to get the short name of the ASet class, which is the class name without the namespace.
+    * The method returns the short name as a string.
+    *
+    * @return string The short name of the ASet class.
+    */
+    private function getName()
+    {
+        $ref=new ReflectionClass($this);
+        return $ref->getShortName();
+
+    }
+
+    /**
+    * Serializes the Set object to JSON format.
+    *
+    * This method implements the JsonSerializable interface, which allows the ASet object to be serialized by the json_encode function.
+    * The method returns an associative array with two keys: 'name' and 'elements'.
+    * The values of these keys are the name and elements of the Set object, respectively.
+    *
+    * @return array An associative array with two keys: 'name' and 'elements'.
+    */
+    public function jsonSerialize():mixed
+    {
+        return ['name'=>$this->getName(),'elements'=>$this->elements];
     }
 }

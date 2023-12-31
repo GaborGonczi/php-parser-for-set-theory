@@ -1,7 +1,7 @@
 <?php
 
 use \PHPUnit\Framework\TestCase;
-use \core\lib\Set;
+use \core\lib\datastructures\Set;
 
 class SetTest extends TestCase
 {
