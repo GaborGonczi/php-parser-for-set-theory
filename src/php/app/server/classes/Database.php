@@ -91,7 +91,7 @@ class Database {
 
             $data_assignments = implode(" = ?, ", $this->backtickColumns(array_keys($data))) . " = ?";
 
-            $where_conditions = implode(" = ? AND ", $this->backtickColumns(array_keys($where))) . " = ?";
+            $where_conditions = $this->whereCond($where);
 
             $sql = "UPDATE " . $table . " SET " . $data_assignments . " WHERE " . $where_conditions;
 
@@ -118,16 +118,17 @@ class Database {
     * @param array $where The associative array of column names and values to match the record.
     * @return int|bool The number of affected rows on success, or false on failure.
     */
-    public function delete($table, $where) {
+    public function delete($table, $deleted_at, $where) {
         if ($table && is_array($where) && !empty($where)) {
 
-            $where_conditions = implode(" = ? AND ", $this->backtickColumns(array_keys($where))) . " = ?";
+            $where_conditions = $this->whereCond($where);
 
-            $sql = "DELETE FROM " . $table . " WHERE " .$where_conditions;
-
+            $sql = "UPDATE " . $table . " SET deleted_at = ?". " WHERE " . $where_conditions;
+      
             $stmt = $this->dbh->prepare($sql);
 
-            if ($stmt->execute(array_values($where))) {
+            if ($stmt->execute(array_values(array_merge(['deleted_at'=>$deleted_at],$where)))) {
+        
                 return $stmt->rowCount();
             } 
             else {
@@ -142,21 +143,41 @@ class Database {
     /**
     * Get one or more records from a table.
     * 
-    * @param string $table The name of the table.
+    * @param array|string $table The name of the table.
     * @param array $where The associative array of column names and values to match the records.
     * @return array|bool The array of records as associative arrays on success, or false on failure.
     */
-    public function get($table, $where) {
-        if ($table && is_array($where) && !empty($where)) {
-        
-            $where_conditions = implode(" = ? AND ", $this->backtickColumns(array_keys($where))) . " = ?";
-            
-            $sql = "SELECT * FROM " . $table . " WHERE " . $where_conditions;
-            
+    public function get($table, $where=[],$whereConn=[],$fields='*') {
+        $whereConnection ="";
+        if(is_array($table)&&!empty($table)){
+            $table=implode(',',$table);
+        }
+        if(!empty($whereConn)){
+            $whereConnection=$this->whereConn($whereConn);
+        }
+        if ($table && is_array($where)) {
+
+            $separatedConditions=$this->separateConditions($where);
+
+            $where_null_conditions=$this->whereNullCond($separatedConditions['nullCond']);
+
+            $where_conditions = $this->whereCond($separatedConditions['filterCond']);
+
+            $in_conditions=$this->inCond($separatedConditions['inCond']);
+
+            $notIn_conditions=$this->notInCond($separatedConditions['notInCond']);
+
+
+
+            $sql = "SELECT $fields FROM " . $table;
+            if($whereConnection||$where_conditions||$where_null_conditions||$in_conditions||$notIn_conditions){
+                $sql.=" WHERE ".implode(" AND ", array_diff([$whereConnection,$where_conditions,$where_null_conditions,$in_conditions,$notIn_conditions], array("")));;
+            }
+
             $stmt = $this->dbh->prepare($sql);
-        
-            if ($stmt->execute(array_values($where))) {
-        
+       
+            if ($stmt->execute($this->removeQuotationMark($this->removeKeywords(array_values($where))))) {
+    
                 if ($stmt->rowCount() > 0) {
                     return $stmt->fetchAll(PDO::FETCH_ASSOC);
                 }
@@ -165,6 +186,7 @@ class Database {
                 }
             }
             else {
+               
                 return false;
             }
         }
@@ -183,13 +205,24 @@ class Database {
     public function isExist($table, $where) {
         if ($table && is_array($where) && !empty($where)) {
 
-            $where_conditions = implode(" = ? AND ", $this->backtickColumns(array_keys($where))) . " = ?";
+            $separatedConditions=$this->separateConditions($where);
 
-            $sql = "SELECT * FROM " . $table . " WHERE " . $where_conditions;
+            $where_null_conditions=$this->whereNullCond($separatedConditions['nullCond']);
+
+
+            $where_conditions = $this->whereCond($separatedConditions['filterCond']);
+
+
+
+            $sql = "SELECT * FROM " . $table;
+            if($where_conditions||$where_null_conditions){
+                $sql.=" WHERE ".implode(" AND ", array_diff([$where_conditions,$where_null_conditions], array("")));;
+            }
 
             $stmt = $this->dbh->prepare($sql);
-
-            if ($stmt->execute(array_values($where))) {
+           
+            if ($stmt->execute($this->removeQuotationMark(array_values($where)))) {
+                
 
                 if ($stmt->rowCount() > 0) {
                     return true;
@@ -215,8 +248,99 @@ class Database {
     */
     private function backtickColumns($columns){
         return array_map(function($column){
+            $colparts=explode('.',$column);
+            if(count($colparts)>1){
+                return "`$colparts[0]`.$colparts[1]";
+            }
             return "`$column`";
         },$columns);
+    }
+
+    private function removeQuotationMark($values){
+        return array_map(function ($value) {
+            if(gettype($value)==="string"){
+                return str_replace('"',' ',$value);
+            }
+            return $value;
+        },$values);
+        
+    }
+    private function whereConn ($conn){
+        $kv=[];
+        foreach ($conn as $key => $value) {
+           $kv[]=$key."=".$value;
+        }
+        return implode(" AND ",$kv);
+    }
+
+    private function separateConditions($where){
+        $nullConditions=array_filter($where,function ($value) {
+            return ($value===null);
+        });
+        $inConditions=array_filter($where,function ($value) {
+            return str_starts_with((string)$value,'IN');
+        });
+       
+        $notInConditions=array_filter($where,function ($value) {
+            return str_starts_with((string)$value,'NOT IN');
+        });
+
+        $filterConditions=array_diff_assoc($where,$nullConditions,$inConditions,$notInConditions);
+
+        $notInConditions=array_map(function ($value) {
+            return substr($value,0,strlen('NOT IN'));
+        },$notInConditions);
+
+        $inConditions=array_map(function ($value) {
+            return substr($value,0,strlen('IN'));
+        },$inConditions);
+
+        return ['nullCond'=>$nullConditions,'filterCond'=>$filterConditions,'inCond'=>$inConditions,'notInCond'=>$notInConditions];
+    }
+
+    private function whereNullCond($where){
+       $cond=implode(" <=> ? AND ",$this->backtickColumns(array_keys($where)));
+       if($cond) return $cond . " <=> ?";
+       return "";
+    }
+
+    private function whereCond($where){
+        $cond=implode(" = ? AND ", $this->backtickColumns(array_keys($where)));
+        if($cond) return $cond . " = ?";
+        return "";
+    }
+
+    private function inCond($where){
+        $cond=implode(" IN ( ? ) AND ", $this->backtickColumns(array_keys($where)));
+        if($cond) return $cond . " IN ( ? )";
+        return "";
+    }
+
+    private function notInCond($where){
+        $cond=implode(" NOT IN ( ? ) AND ", $this->backtickColumns(array_keys($where)));
+        if($cond) return $cond . " NOT IN ( ? )";
+        return "";
+    }
+
+    private function removeKeywords($where_values){
+        $keywords=['IN','NOT IN','AND'];
+        foreach ($keywords as $keyword) {
+            $keyword_length = strlen($keyword);
+            foreach ($where_values as $key=> $where_value) {       
+                $first_part = substr((string)$where_value, 0, $keyword_length);          
+                if ($first_part===$keyword) {
+                    if($offset=strpos($where_value, "(")){
+                        $offset++;
+                        $where_values[$key]=substr((string)$where_value,$offset,strlen($where_value)-1);
+                        continue;
+                    }
+                    $where_values[$key]=substr((string)$where_value,$keyword_length);
+                    
+                }
+            }
+        }
+        return $where_values;
+               
     }
 
     /**

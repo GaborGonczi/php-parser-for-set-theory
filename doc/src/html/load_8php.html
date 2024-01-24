@@ -81,12 +81,12 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a90ebf560f78e24b9079281cc8b544ed3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="client_8php.html#aae4acc1945c0a1d50ce22150e430f509">if</a>(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser']))&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="load_8php.html#a90ebf560f78e24b9079281cc8b544ed3">else</a></td></tr>
-<tr class="separator:a90ebf560f78e24b9079281cc8b544ed3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a253123cdbea9ee8e44cd160c1c385169"><td class="memItemLeft" align="right" valign="top"><a class="el" href="client_8php.html#aae4acc1945c0a1d50ce22150e430f509">if</a>(session_status()==PHP_SESSION_NONE) <a class="el" href="client_8php.html#aae4acc1945c0a1d50ce22150e430f509">if</a>(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser']))&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="load_8php.html#a253123cdbea9ee8e44cd160c1c385169">else</a></td></tr>
+<tr class="separator:a253123cdbea9ee8e44cd160c1c385169"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a907d78797a1b764e913b0c565a5097b0"><td class="memItemLeft" align="right" valign="top">global&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="load_8php.html#a907d78797a1b764e913b0c565a5097b0">$db</a></td></tr>
 <tr class="separator:a907d78797a1b764e913b0c565a5097b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a699c7d4d5fd6f0779943db8f71f9f9fd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="load_8php.html#a699c7d4d5fd6f0779943db8f71f9f9fd">$errormessage</a> =&quot;&quot;</td></tr>
-<tr class="separator:a699c7d4d5fd6f0779943db8f71f9f9fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac319193077976bb217112e5a7b7b8022"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="load_8php.html#ac319193077976bb217112e5a7b7b8022">$location</a> =<a class="el" href="rootfolder_8php.html#ab78d42ac183f7538bc9b557d6ee587f7">rootfolder</a>().'/src/php/app/client/page/program.php'</td></tr>
+<tr class="separator:ac319193077976bb217112e5a7b7b8022"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Variable Documentation</h2>
 <a id="a907d78797a1b764e913b0c565a5097b0" name="a907d78797a1b764e913b0c565a5097b0"></a>
@@ -103,28 +103,28 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a699c7d4d5fd6f0779943db8f71f9f9fd" name="a699c7d4d5fd6f0779943db8f71f9f9fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a699c7d4d5fd6f0779943db8f71f9f9fd">&#9670;&#160;</a></span>$errormessage</h2>
+<a id="ac319193077976bb217112e5a7b7b8022" name="ac319193077976bb217112e5a7b7b8022"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac319193077976bb217112e5a7b7b8022">&#9670;&#160;</a></span>$location</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">$errormessage =&quot;&quot;</td>
+          <td class="memname">$location =<a class="el" href="rootfolder_8php.html#ab78d42ac183f7538bc9b557d6ee587f7">rootfolder</a>().'/src/php/app/client/page/program.php'</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a90ebf560f78e24b9079281cc8b544ed3" name="a90ebf560f78e24b9079281cc8b544ed3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a90ebf560f78e24b9079281cc8b544ed3">&#9670;&#160;</a></span>else</h2>
+<a id="a253123cdbea9ee8e44cd160c1c385169" name="a253123cdbea9ee8e44cd160c1c385169"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a253123cdbea9ee8e44cd160c1c385169">&#9670;&#160;</a></span>else</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="client_8php.html#aae4acc1945c0a1d50ce22150e430f509">if</a> (isset( $_FILES[ 'load'])) else</td>
+          <td class="memname"><a class="el" href="client_8php.html#aae4acc1945c0a1d50ce22150e430f509">if</a>(isset($_FILES['load'])) else <a class="el" href="client_8php.html#aae4acc1945c0a1d50ce22150e430f509">if</a> (isset( $_GET[ 'id'])) else</td>
         </tr>
       </table>
 </div><div class="memdoc">

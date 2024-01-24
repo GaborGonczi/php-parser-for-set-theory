@@ -218,6 +218,6 @@ class Set implements IteratorAggregate,JsonSerializable {
     */
     public function jsonSerialize():mixed
     {
-        return ['name'=>$this->getName(),'elements'=>$this->elements];
+        return ['name'=>$this->getName(),'elements'=>$this->elements,"type"=>$this->type];
     }
 }

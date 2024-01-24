@@ -42,6 +42,7 @@ class Auth
     */
     public function login() {
         require_once dirname(dirname(__FILE__)).'/page/'.__FUNCTION__.'.php';
+        $_SESSION['messages']=[];
     }
 
     /**
@@ -49,6 +50,7 @@ class Auth
     */
     public function register() {
         require_once dirname(dirname(__FILE__)).'/page/'.__FUNCTION__.'.php';
+        $_SESSION['messages']=[];
     }
 
     /**
@@ -63,7 +65,7 @@ class Auth
         $password=htmlspecialchars($_POST['password']);
         $userExist=$this->db->isExist('users',['username'=>$username]);
         if($userExist){
-            $users=$this->db->get('users',['username'=>$username]);
+            $users=$this->db->get('users',['username'=>$username,'deleted_at'=>null]);
             if(count($users)===1){
                 foreach ($users as $user) {
                     $user=new User(...array_values($user));
@@ -71,6 +73,7 @@ class Auth
             }
             else{
                 $_SESSION['messages']['loginerror']='A felhasználónév vagy a jelszó hibás';
+                $_POST['login']='Bejelentkezés!';
             }
 
             if($user){
@@ -78,25 +81,29 @@ class Auth
                     if($user->getFirstLogin()===null) $user->setFirstLogin(date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()));
                     $user->setLastLogin(date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()));
                     $user->setModifiedAt(date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()));
-                    $user->setModifiedBy(1);
+                    if($user->getId()!==1) $user->setModifiedBy(1);
                     $this->db->update('users',$user->getAsAssociativeArray(),['id'=>$user->getId()]);
                     $_SESSION[$_COOKIE['PHPSESSID']]['authedUser']=serialize($user);
                 }
                 else{
                     $_SESSION['messages']['loginerror']='A felhasználónév vagy a jelszó hibás';
+                    $_POST['login']='Bejelentkezés!';
                 }
                 
             }
             else{
                 $_SESSION['messages']['loginerror']='A felhasználónév vagy a jelszó hibás';
+                $_POST['login']='Bejelentkezés!';
             }
            
         }
         else{
             $_SESSION['messages']['loginerror']='A felhasználónév vagy a jelszó hibás';
+            $_POST['login']='Bejelentkezés!';
         }
         $location=rootfolder().'/index.php';
         header("Location:$location");
+        exit(0);
         
         
     }
@@ -112,12 +119,14 @@ class Auth
         $username=htmlspecialchars($_POST['username']);
         $password=htmlspecialchars($_POST['password']);
         $passwordagain=htmlspecialchars($_POST['passwordagain']);
-        $userExist=$this->db->isExist('users',['username'=>$username]);
+        $userExist=$this->db->isExist('users',['username'=>$username,'deleted_at'=>null]);
         if($userExist){
             $_SESSION['messages']['registererror']='A felhasználónév foglalt';
+            $_POST['register']='Regisztráció!';
         }
-        if($password!==$passwordagain){
+        else if($password!==$passwordagain){
             $_SESSION['messages']['registererror']='A két jelszó nem egyezik';
+            $_POST['register']='Regisztráció!';
         }
         else{
             $newUser=new User(null,$_POST['username'],password_hash($_POST['password'],PASSWORD_BCRYPT),null,null,date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()),
@@ -126,9 +135,10 @@ class Auth
             if(!$newid){
                 $_SESSION['messages']['registererror']='Sikertelen regisztráció ismeretlen okból';
             }
-            $location=rootfolder().'/index.php';
-            header("Location:$location");
         }
+        $location=rootfolder().'/index.php';
+        header("Location:$location");
+        exit(0);
     }
 }
     

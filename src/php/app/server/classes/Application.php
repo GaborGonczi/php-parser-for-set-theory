@@ -63,4 +63,15 @@ class Application
     public function help()  {
         require_once dirname(dirname(dirname(__FILE__))).'/client/page/'.__FUNCTION__.'.php';
     }
+
+    public function questionnaire()  {
+        require_once dirname(dirname(dirname(__FILE__))).'/client/page/'.__FUNCTION__.'.php';
+    }
+
+    public function files()  {
+        require_once dirname(dirname(dirname(__FILE__))).'/client/page/'.__FUNCTION__.'.php';
+    }
+    public function logout()  {
+      require_once dirname(dirname(__FILE__)).'/page/'.__FUNCTION__.'.php';
+  }
 }

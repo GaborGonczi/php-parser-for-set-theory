@@ -284,6 +284,7 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::COMMA['name']):
+            case (Token::RIGHTCURLYBRACE['name']):
                 $result = $this->identifierliteral();
                 break;
             case (Token::VERTICALLINE['name']):
@@ -860,7 +861,7 @@ class Parser
                 if (isset($rest['op'])) {
                     switch ($rest['op']) {
                         case (Token::TOBEEQUAL['value']):
-                            if (gettype($setoperationside) === 'string') {
+                                $setoperationside=$lookahead['value'];
                                 $rest = Functions::flatSetExpression($rest);
                                 unset($rest[0]);
                                 $rest = array_values($rest);
@@ -874,7 +875,7 @@ class Parser
                                     Parser::$vars->add($setoperationside, $rest['point']);
                                     $result = $rest['point'];
                                 }
-                            }
+                            
                             break;
                         case (Token::COMPLEMENT['value']):
                             Parser::setBaseSet(Functions::createBaseSet($this->getVars()));
@@ -927,7 +928,13 @@ class Parser
                     }
 
                 } else if (empty($rest)) {
-                    $result = $setoperationside;
+                    if (gettype($setoperationside)==="string") {
+                        $result = Parser::$vars->get($setoperationside);
+                    }
+                    else{
+                        $result=$setoperationside;
+                    }
+                    
                 }
                 break;
             case (Token::LEFTPARENTHESIS['name']):

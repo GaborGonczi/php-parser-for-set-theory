@@ -2,6 +2,8 @@
 
 namespace core\lib;
 
+require_once dirname(dirname(dirname(__FILE__))).'/rootfolder.php';
+
 use core\parser\Token;
 use core\parser\Parser;
 use core\lib\datastructures\Set;
@@ -33,7 +35,7 @@ class Functions
     * @public
     */
     public static function illegalArguments($functionName){
-        throw new InvalidArgumentException(" arguments for $functionName");
+        throw new InvalidArgumentException("Invalid arguments for $functionName");
     }
 
     /**
@@ -1218,7 +1220,7 @@ class Functions
     * @public
     */
     public static function Venn(...$sets){
-        if(count($sets)!==2&&count($sets)!==3){
+        if(count($sets)>3&&count($sets)<=0){
             return Functions::illegalArguments(__METHOD__);
         }
         foreach ($sets as $set) {
@@ -1229,7 +1231,11 @@ class Functions
         Functions::initializeColorPalette($image);
         imagefill($image,0,0,Functions::$colorpalette["white"]);
     
-        if(count($sets)==2){
+        if(count($sets)==1){
+            list($seta)=$sets;
+            Functions::vennOneSet($image,$seta);
+        }
+        else if(count($sets)==2){
             list($seta,$setb)=$sets;
             Functions::vennTwoSets($image,$seta,$setb);
             
@@ -1243,7 +1249,17 @@ class Functions
         imagepng($image);
         $buffer=ob_get_contents();
         ob_end_clean();
-        return 'data:image/png;base64,' . base64_encode($buffer);
+        $data='data:image/png;base64,' . base64_encode($buffer);
+        $html='<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+    <img src="'.$data.'"/>
+</body>
+</html>';
+        file_put_contents('C:/xampp/htdocs/php-parser-for-set-theory/images/image.html',$html);
+        return 'http://localhost/php-parser-for-set-theory/images/image.html';
     }
 
     /**
@@ -1335,6 +1351,31 @@ class Functions
         if($first===false) return $second;
         if($second===false) return $first;
         return min($first,$second);
+    }
+
+    /**
+    * Draws a Venn diagram of a set on an image resource.
+    *
+    * @param resource &$image The image resource to draw on.
+    * @param Set $seta The first set to draw
+    * @return void
+    * @private
+    *
+    * @codeCoverageIgnore
+    */
+    private static function vennOneSet(&$image,$seta){
+        $points=Functions::getVennPoints2();
+        $setau=$points["visibleLines"]["setA"]["Au"];
+        $setav=$points["visibleLines"]["setA"]["Av"];
+        $setar=$points["visibleLines"]["setA"]["Ar"];
+        $setad=$points["visibleLines"]["setA"]["Ad"];
+        $polygonA=$points["inSetAIfInThisPolygon"];
+        imagearc($image,$setau,$setav,$setad,$setad,0,360,Functions::$colorpalette["black"]);
+        foreach ($seta as $number) {
+            $coodinates=Functions::generateRandomPointInQuadrangle($polygonA["A2"]["x"],$polygonA["A2"]["y"],$polygonA["A3"]["x"],$polygonA["A3"]["y"],
+            $polygonA["A4"]["x"],$polygonA["A4"]["y"],$polygonA["A5"]["x"],$polygonA["A5"]["y"]);
+            imagestring($image,3,$coodinates["x"],$coodinates["y"],$number,Functions::$colorpalette["black"]);
+        }
     }
 
     /**

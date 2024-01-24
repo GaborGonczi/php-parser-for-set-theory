@@ -46,6 +46,16 @@ function holdsNull($array)
 
 function getApropriateObject($array){
     if($array['name']==="Set"){
+        if(!in_array($array['type'],array('integer','double','boolean'))){
+            $objects=[];
+            foreach ($array['elements'] as  $value) {
+                if($array['type']==='core\lib\datastructures\Point'){
+                    $p=new Point($value['x'],$value['y']);
+                    $objects[]=$p;
+                }
+            }
+            $array['elements']=$objects;
+        }
         return new Set([...$array['elements']]);
     }
     else if($array['name']==="Point"){
@@ -55,7 +65,9 @@ function getApropriateObject($array){
 }
 
 header('Content-Type: application/json');
-session_start();
+if(session_status() == PHP_SESSION_NONE){
+    session_start();
+}
 if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
     $location=rootfolder().'/index.php';
     header("Location:$location");
@@ -80,11 +92,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $stmtdata = (array) json_decode(file_get_contents("php://input"));
     $fileid=intval($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']);
-    $start=$stmtdata['start'];
+    $expressionId=$stmtdata['id'];
     if ($stmtdata['noparse'] == true) {
-        if ($db->isExist('expressions', ['file_id' =>$fileid , 'start' => $start])) {
+        if (!$expressionId==null&&$db->isExist('expressions', ['file_id' =>$fileid , 'id' => $expressionId,'deleted_at'=>null])) {
 
-            $expressionsdata = $db->get('expressions', ['file_id' => $fileid, 'start' => $start]);
+            $expressionsdata = $db->get('expressions', ['file_id' => $fileid, 'id' => $expressionId,'deleted_at'=>null]);
 
             foreach ($expressionsdata as $expressiondata) {
                 $expressiondata=(array)$expressiondata;
@@ -96,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmtdata['start'],
                     $stmtdata['end'],
                     $stmtdata['noparse'],
+                    $stmtdata['row'],
                     $expressiondata['created_at'],
                     date('Y-m-d H:i:s', (new \DateTime('now'))->getTimestamp()),
                     null
@@ -120,6 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmtdata['start'],
                 $stmtdata['end'],
                 $stmtdata['noparse'],
+                $stmtdata['row'],
                 date('Y-m-d H:i:s', (new \DateTime('now'))->getTimestamp()),
                 date('Y-m-d H:i:s', (new \DateTime('now'))->getTimestamp()),
                 null
@@ -136,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
 
         $variables=$db->get('variables', [
-            'file_id' => $fileid
+            'file_id' => $fileid,'deleted_at'=>null
         ]);
         if($variables){
             $vars=new Map([]);
@@ -153,6 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $lexer->setInput($stmtdata['statement']);
+        
         try {
             $tokens = $lexer->tokenize();
         } catch (LexerException $le) {
@@ -175,12 +190,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $newvars = $parser->getVars();
         $data['variables'] = $newvars;
 
-        if($db->isExist('expressions', ['file_id' =>$fileid, 'start' =>$start])){
-            $expressionsdata = $db->get('expressions', ['file_id' => $fileid, 'start' => $start]);
+        if(!$expressionId==null&&$db->isExist('expressions', ['file_id' =>$fileid , 'id' => $expressionId,'deleted_at'=>null])){
+            $expressionsdata = $db->get('expressions', ['file_id' => $fileid, 'id' => $expressionId,'deleted_at'=>null]);
             foreach ($expressionsdata as $expressiondata) {
                 $expressiondata=(array)$expressiondata;
                 foreach (HtmlEntityTable::TABLE as $key => $value) {
                     $stmtdata['statement']= str_replace($key,$value,$stmtdata['statement']);
+                }
+                if(strpos($stmtdata['result'],'.html')){
+                    rename('C:/xampp/htdocs/php-parser-for-set-theory/images/image.html','C:/xampp/htdocs/php-parser-for-set-theory/images/image_'.$fileid.'_'.$expressiondata['id'].'.html');
+                    $stmtdata['result']='http://localhost/php-parser-for-set-theory/images/image_'.$fileid.'_'.$expressiondata['id'].'.html';
                 }
                 $expression = new Expression(
                     $expressiondata['id'],
@@ -190,6 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmtdata['start'],
                     $stmtdata['end'],
                     $stmtdata['noparse'],
+                    $stmtdata['row'],
                     $expressiondata['created_at'],
                     date('Y-m-d H:i:s', (new \DateTime('now'))->getTimestamp()),
                     null
@@ -217,6 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmtdata['start'],
                 $stmtdata['end'],
                 $stmtdata['noparse'],
+                $stmtdata['row'],
                 date('Y-m-d H:i:s', (new \DateTime('now'))->getTimestamp()),
                 date('Y-m-d H:i:s', (new \DateTime('now'))->getTimestamp()),
                 null,
@@ -228,11 +249,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $db->insert('logs', $logObj->getAsAssociativeArray());
                 }
             }
+            if(strpos($stmtdata['result'],'.html')){
+                $expressions=$db->get('expressions',['id'=>$id,'deleted_at'=>null]);
+                foreach ($expressions as $expressiondata) {
+                    $expressiondata=(array)$expressiondata;
+                    $expression = new Expression(
+                        $expressiondata['id'],
+                        $expressiondata['file_id'],
+                        $expressiondata['statement'],
+                        $expressiondata['result'],
+                        $expressiondata['start'],
+                        $expressiondata['end'],
+                        $expressiondata['noparse'],
+                        $expressiondata['row'],
+                        $expressiondata['created_at'],
+                        $expressiondata['modified_at'],
+                        null
+                    );
+                }
+                rename('C:/xampp/htdocs/php-parser-for-set-theory/images/image.html','C:/xampp/htdocs/php-parser-for-set-theory/images/image_'.$fileid.'_'.$id.'.html');
+                $expression->setResult('http://localhost/php-parser-for-set-theory/images/image_'.$fileid.'_'.$id.'.html');
+                $rowcount = $db->update('expressions', $expression->getAsAssociativeArray(),['id'=>$id]);
+            }
+           
+            
         }
 
         foreach ($newvars as $name=>$value) {
-            if($db->isExist('variables', ['file_id' =>$fileid, 'name' =>$name])){
-                $variabledata = $db->get('variables', ['file_id' => $fileid, 'name' => $name]);
+            if($db->isExist('variables', ['file_id' =>$fileid, 'name' =>$name,'deleted_at'=>null])){
+                $variabledata = $db->get('variables', ['file_id' => $fileid, 'name' => $name,'deleted_at'=>null]);
                 foreach ($variabledata as $variabledata) {
                     $variabledata=(array)$variabledata;
                     $variable = new Variable(
@@ -264,17 +309,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     }
     $file_content = $db->get('expressions', [
-        'file_id' => $fileid
+        'file_id' => $fileid,'deleted_at'=>null
     ]);
     foreach ($file_content as $expression) {
         unset($expression['length']);
         $expressionModel=new Expression(...holdsNull((array)$expression));
-        if(strpos($expressionModel->getResult(),'data:image/png;base64,')!==false){
-            $image=$expressionModel->getResult();
-            $expressionModel->setResult("");
-            $data['json'][] = array_merge($expressionModel->getAsAssociativeArray(), ["diagram" => $image]);
+        if(strpos($expressionModel->getResult(),'.html')!==false){         
+            $data['json'][] = array_merge($expressionModel->getAsAssociativeArray(), ["diagram" => true]);
         } else {
-            $data['json'][] = $expressionModel->getAsAssociativeArray();
+            $data['json'][] = array_merge($expressionModel->getAsAssociativeArray(), ["diagram" => false]);
         }
         
 
@@ -290,23 +333,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $fileid=intval($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']);
         $file_content = $db->get('expressions', [
-            'file_id' => $fileid
+            'file_id' => $fileid,'deleted_at'=>null
         ]);
         if ($file_content) {
             foreach ($file_content as $expression) {
                 unset($expression['length']);
                 $expressionModel = new Expression(...holdsNull((array) $expression));
-                if (strpos($expressionModel->getResult(), 'data:image/png;base64,') !== false) {
-                    $image = $expressionModel->getResult();
-                    $expressionModel->setResult("");
-                    $data['json'][] = array_merge($expressionModel->getAsAssociativeArray(), ["diagram" => $image]);
+                if(strpos($expressionModel->getResult(),'.html')!==false){         
+                    $data['json'][] = array_merge($expressionModel->getAsAssociativeArray(), ["diagram" => true]);
                 } else {
-                    $data['json'][] = $expressionModel->getAsAssociativeArray();
+                    $data['json'][] = array_merge($expressionModel->getAsAssociativeArray(), ["diagram" => false]);
                 }
             }
         }
         $variables=$db->get('variables', [
-            'file_id' => $fileid
+            'file_id' => $fileid,'deleted_at'=>null
         ]);
         if($variables){
             $vars=new Map([]);

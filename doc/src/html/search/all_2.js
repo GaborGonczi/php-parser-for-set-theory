@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['add_0',['add',['../classcore_1_1lib_1_1datastructures_1_1_map.html#a6b0c45301de4c5f619b730f42243fcb2',1,'core\lib\datastructures\Map\add()'],['../classcore_1_1lib_1_1datastructures_1_1_set.html#a4f2e370f63f9c6085ba78da92cd72240',1,'core\lib\datastructures\Set\add()']]],
-  ['add_1',['ADD',['../classcore_1_1parser_1_1_token.html#a89a171f4a94c93b32bf6e08e86d4d0d9',1,'core::parser::Token']]],
+  ['add_0',['ADD',['../classcore_1_1parser_1_1_token.html#a89a171f4a94c93b32bf6e08e86d4d0d9',1,'core::parser::Token']]],
+  ['add_1',['add',['../classcore_1_1lib_1_1datastructures_1_1_map.html#a6b0c45301de4c5f619b730f42243fcb2',1,'core\lib\datastructures\Map\add()'],['../classcore_1_1lib_1_1datastructures_1_1_set.html#a4f2e370f63f9c6085ba78da92cd72240',1,'core\lib\datastructures\Set\add()']]],
   ['addelement_2',['addElement',['../classcore_1_1lib_1_1_functions.html#abe3f2600c88284a9a15344ce955c1cf3',1,'core::lib::Functions']]],
   ['addpointelement_3',['addPointElement',['../classcore_1_1lib_1_1_point_set_diagram_functions.html#ad4f89bce40c9db8f14e44b6857458af2',1,'core::lib::PointSetDiagramFunctions']]],
   ['app_4',['app',['../namespaceapp.html',1,'']]],

@@ -7,12 +7,14 @@ use \app\server\classes\Application;
 use \app\server\classes\Auth;
 
 $page='';
-session_start();
+if(session_status() == PHP_SESSION_NONE){
+    session_start();
+}
 global $db;
 if(isset($_COOKIE['PHPSESSID'])&&isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
     $user=unserialize($_SESSION[$_COOKIE['PHPSESSID']]['authedUser']);
     $app=new Application($user,$db);
-    $appPages=array('client','help','program');
+    $appPages=array('client','help','program','questionnaire','files','logout');
     for ($i=0; $i <count($appPages); $i++) {
         if(isset($_POST[$appPages[$i]])){
             $page=$appPages[$i];

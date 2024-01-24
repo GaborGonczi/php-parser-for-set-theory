@@ -3,7 +3,9 @@
 
 require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/rootfolder.php';
 
-session_start();
+if(session_status() == PHP_SESSION_NONE){
+    session_start();
+}
 if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])) {
     $location = rootfolder() . '/index.php';
     header("Location:$location");
@@ -21,27 +23,28 @@ if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])) {
     <script src="<?php echo rootfolder() . '/src/js/external/mustache.js'; ?>"></script>
     <script type="module" src="<?php echo rootfolder() . '/src/js/app/client/page/program.js'; ?>" defer></script>
     <?php if (isset($_SESSION) && isset($_SESSION['messages']) && isset($_SESSION['messages']['fileerror'])) { ?>
-        <script>
-            let message = <?php echo json_encode($_SESSION['messages']['fileerror']); ?>;
-            alert(message);
+        <script >
+            window.addEventListener("DOMContentLoaded",()=>{
+                document.querySelector('#errors > textarea').innerHTML=<?php echo json_encode($_SESSION['messages']['fileerror']);?>;
+                const backbtn=document.querySelector('#back');
+                backbtn.addEventListener("click",()=>{
+                    document.querySelector('#errors > textarea').innerHTML="";
+                })
+            });
+           
+
+            
         </script>
-    <?php } ?>
+    <?php unset($_SESSION['messages']['fileerror']); } ?>
     <title>Program</title>
 </head>
 
 <body>
     <div class="wrapper">
-        <div id="content-container" class="column resizable">
-            <div id="output" disabled></div>
-            <div id="input">
-                <form method="post">
-                    <textarea id="text"></textarea>
-                    <input type="submit" hidden="hidden">
-                </form>
-            </div>
+    
+            <div id="output"></div>
+            
 
-
-        </div>
         <div id="right-toolbar-container" class="column toolbar">
             <div class="button-grid-container">
                 <button title="legyen egyenlő" class="operator" value=":=">:=</button>
@@ -66,13 +69,25 @@ if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])) {
                 <span class="slider round"></span>
             </label>
             <span>Szöveges mód</span>
-            <div id="variables"><textarea></textarea></div>
+            <div id="variables" class="texts" ><textarea placeholder="Változók"></textarea></div>
+            <div id="errors" class="texts" ><textarea placeholder="Hibaüzenetek"></textarea></div>
             <button id="download">Letöltés</button>
             <button id="print">Nyomtatás</button>
             <button id="new">Új</button>
-            <input type="file" id="load" name="load">
-
-            <button id="back">Vissza a főoldalra</button>
+            <div>
+             <!--https://www.w3docs.com/snippets/css/how-to-customize-file-inputs.html-->
+                <label class="customized-fileupload">
+                    <input type="file" id="load" name="load">
+                    <span>Munkalap betöltése</span>
+                </label>
+                <form id="backform" action="<?php echo rootfolder().'/index.php'; ?>" method="post">
+                 <button id="back" name="client" type="submit">Vissza a főoldalra</button>
+                </form>
+            </div>
+           
+        
+           
+        
         </div>
 </body>
 

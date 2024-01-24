@@ -42,10 +42,20 @@ class Lexer
         $this->setInput($input);
     }
 
+    /**
+    * A method that sets the input to be lexed.
+    * @param string $input The input to be lexed.
+    */
     public function setInput($input)
     {
         $this->input= $input . "$";
     }
+
+    /**
+    * A method that tokenizes the input and returns an array of tokens.
+    * @return array An array of tokens.
+    * @throws LexerException If an invalid character is encountered.
+    */
     public function tokenize()
     {
 

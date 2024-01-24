@@ -1,7 +1,7 @@
 var searchData=
 [
   ['elementof_0',['ELEMENTOF',['../classcore_1_1parser_1_1_token.html#a1aea60890bfa3e0031edba6616cc3473',1,'core::parser::Token']]],
-  ['else_1',['else',['../load_8php.html#a90ebf560f78e24b9079281cc8b544ed3',1,'else:&#160;load.php'],['../new_8php.html#adca9c6c647f6d35f560d6ff47d8b1c47',1,'else:&#160;new.php'],['../parse_8php.html#adca9c6c647f6d35f560d6ff47d8b1c47',1,'else:&#160;parse.php'],['../save_8php.html#a84ace8370119c401928e4b579f83275b',1,'else:&#160;save.php']]],
+  ['else_1',['else',['../crud_8php.html#a69055e1d2addb71ceb29d410986bd567',1,'else:&#160;crud.php'],['../load_8php.html#a253123cdbea9ee8e44cd160c1c385169',1,'else:&#160;load.php'],['../new_8php.html#a69055e1d2addb71ceb29d410986bd567',1,'else:&#160;new.php'],['../parse_8php.html#a69055e1d2addb71ceb29d410986bd567',1,'else:&#160;parse.php'],['../save_8php.html#a84ace8370119c401928e4b579f83275b',1,'else:&#160;save.php']]],
   ['entries_2',['entries',['../classcore_1_1lib_1_1datastructures_1_1_map.html#a38939aedbe2c8fb62c6eb2dd6cef8d70',1,'core::lib::datastructures::Map']]],
   ['env_3',['Env',['../classapp_1_1server_1_1classes_1_1_env.html',1,'app::server::classes']]],
   ['env_2ephp_4',['Env.php',['../_env_8php.html',1,'']]],

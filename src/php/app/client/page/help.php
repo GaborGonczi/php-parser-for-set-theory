@@ -3,7 +3,9 @@
 
 require_once dirname(dirname(dirname(dirname(__FILE__)))).'/rootfolder.php';
 
-session_start();
+if(session_status() == PHP_SESSION_NONE){
+    session_start();
+}
 if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
     $location=rootfolder().'/index.php';
     header("Location:$location");
@@ -24,6 +26,8 @@ if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
 
     <div><iframe src="" width="640" height="480" allow="autoplay"></iframe></div>
     
-    <button id="back">Vissza a főoldalra</button>
+    <form action="<?php echo rootfolder().'/index.php'; ?>" method="post">
+    <button id="back" name="client" type="submit">Vissza a főoldalra</button>
+    </form>
 </body>
 </html>

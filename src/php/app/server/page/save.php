@@ -9,7 +9,9 @@ use \app\server\classes\model\Log;
 use \app\server\classes\model\User;
 
 header('Content-Type: application/json');
-session_start();
+if(session_status() == PHP_SESSION_NONE){
+    session_start();
+}
 if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
     $location=rootfolder().'/index.php';
     header("Location:$location");
@@ -34,14 +36,13 @@ if(isset($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'])){
             
         }
         if($filefound){
-            $isNotEmpty=$db->isExist('expressions',['file_id'=>$fileid]);
+            $isNotEmpty=$db->isExist('expressions',['file_id'=>$fileid,'deleted_at'=>null]);
             $content['id']=$fileid;
             if($isNotEmpty){
-                $expressions=$db->get('expressions',['file_id'=>$fileid]);
+                $expressions=$db->get('expressions',['file_id'=>$fileid,'deleted_at'=>null]);
                 foreach ($expressions as $expression) {
                     $content['expressions'][]=serialize(new Expression(...array_values($expression)));
                 }
-                echo json_encode($content);
             }
             else {
                 $_SESSION['messages']['fileerror']='A fájl üres';
@@ -58,3 +59,4 @@ if(isset($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'])){
 else{
     $_SESSION['messages']['fileerror']='A fájlazonosító hiányzik.';
 }
+echo json_encode($content);

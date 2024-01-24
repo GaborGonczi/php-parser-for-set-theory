@@ -1,6 +1,8 @@
 <?php
 require_once dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))).'/autoloader.php';
 
+require_once dirname(dirname(dirname(dirname(__FILE__)))).'/rootfolder.php';
+
 require_once dirname(dirname(__FILE__)).'/db.php';
 
 use \app\server\classes\model\File;
@@ -9,7 +11,9 @@ use \app\server\classes\model\Log;
 use \app\server\classes\model\User;
 
 header('Content-Type: application/json');
-session_start();
+if(session_status() == PHP_SESSION_NONE){
+    session_start();
+}
 if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
     $location=rootfolder().'/index.php';
     header("Location:$location");
@@ -20,7 +24,6 @@ else{
 }
 global $db;
 
-$errormessage="";
 if(isset($_FILES['load'])){
     $filefound=false;
     $file=$_FILES['load'];
@@ -36,7 +39,7 @@ if(isset($_FILES['load'])){
         if($data!==null){
             if(isset($data['id'])){
                 $fileid=$data['id'];
-                $files=$db->get('files',['user_id'=>$user->getId()]);
+                $files=$db->get('files',['user_id'=>$user->getId(),'deleted_at'=>null]);
                 if($files){
                     foreach ($files as $file) {
                         $filemodel=new File(...array_values($file));
@@ -52,36 +55,53 @@ if(isset($_FILES['load'])){
                             $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']=$fileid;
                         }
                         else {
-                            $errormessage='A fájl üres';
+                            $_SESSION['messages']['fileerror']='A fájl üres';
                         }
                     }
                     else{
-                        $errormessage='A fájl nem található.';
+                        $_SESSION['messages']['fileerror']='A fájl nem található.';
                     }
 
                 }
                 else{
-                    $errormessage='A felhasználónak nincsenek fájljai.';
+                    $_SESSION['messages']['fileerror']='A felhasználónak nincsenek fájljai.';
                 }
 
             }
             else{
-                $errormessage='A fájlazonosító hiányzik.';
+                $_SESSION['messages']['fileerror']='A fájlazonosító hiányzik.';
             }
     
         }
         else{
-            $errormessage='A fájl hibás.';
+            $_SESSION['messages']['fileerror']='A fájl hibás.';
         }
     }
     else{
-        $errormessage='A fájl nem megfelelő típusú';
+        $_SESSION['messages']['fileerror']='A fájl nem megfelelő típusú';
     }
 
 }
+else if(isset($_GET['id'])){
+    $fileid=$_GET['id'];
+    if($db->isExist('files',['user_id'=>$user->getId(),'id'=>$fileid,'deleted_at'=>null])){
+        $isNotEmpty=$db->get('expressions',['file_id'=>$fileid,'deleted_at'=>null]);
+        if($isNotEmpty!==false){
+            $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']=$fileid;
+        }
+        else {
+            $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']=$fileid;
+            $_SESSION['messages']['fileerror']='A fájl üres';
+        }
+    }
+    else{
+        $_SESSION['messages']['fileerror']='A fájl nem található.';
+    }
+    
+}
 else{
-    $errormessage='Nem várt hiba történt a feltöltés közben';
+    $_SESSION['messages']['fileerror']='Nem várt hiba történt a feltöltés közben';
 }
-if($errormessage!==""){
-    echo json_encode(["error"=>$errormessage]);
-}
+$location=rootfolder().'/src/php/app/client/page/program.php';
+header("Location:$location");
+exit(0);

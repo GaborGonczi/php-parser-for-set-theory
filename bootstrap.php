@@ -6,7 +6,7 @@ spl_autoload_register(function ($class) {
 
     if (strpos($class, 'Test') !== false) {
 
-        $file = __DIR__ . '/tests/core/lib' . $class . '.php';
+        $file = __DIR__ . '/tests/core' . $class . '.php';
     } else {
 
         $file = __DIR__ . '/src/php/' . $class . '.php';

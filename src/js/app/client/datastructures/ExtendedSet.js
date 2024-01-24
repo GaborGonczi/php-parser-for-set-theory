@@ -1,3 +1,7 @@
+/**
+ * Creates a new Person.
+ * @class
+ */
 export class ExtendedSet extends Set{
     static BUILTIN_TYPES=['undefined','symbol','string','object','number','function','boolean','bigint'];
     toString(){

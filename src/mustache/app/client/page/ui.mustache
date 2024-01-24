@@ -1,8 +1,14 @@
 {{#json}}
-    <p>{{statement}}</p>
+    <p class="statement">{{statement}}</p>
+    <input type="hidden" id="expression_id" name="expressionId" value="{{id}}">
+    {{^diagram}}
     <p class="result">{{result}}</p>
     <br>
+    {{/diagram}}
     {{#diagram}}
-        <img src="{{diagram}}" />
+        <iframe scrolling="no" src="{{result}}"></iframe>
     {{/diagram}}
 {{/json}}
+<div id="input">
+    <input type="text" class="math" id="text" name="text"  placeholder="Írj ide egy matematikai kifejezést vagy tetszőleges szöveget (szöveges módban)"/>
+</div>

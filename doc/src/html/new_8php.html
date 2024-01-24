@@ -81,28 +81,14 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:adca9c6c647f6d35f560d6ff47d8b1c47"><td class="memItemLeft" align="right" valign="top"><a class="el" href="client_8php.html#aae4acc1945c0a1d50ce22150e430f509">if</a>(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser']))&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="new_8php.html#adca9c6c647f6d35f560d6ff47d8b1c47">else</a></td></tr>
-<tr class="separator:adca9c6c647f6d35f560d6ff47d8b1c47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69055e1d2addb71ceb29d410986bd567"><td class="memItemLeft" align="right" valign="top"><a class="el" href="client_8php.html#aae4acc1945c0a1d50ce22150e430f509">if</a>(session_status()==PHP_SESSION_NONE) <a class="el" href="client_8php.html#aae4acc1945c0a1d50ce22150e430f509">if</a>(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser']))&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="new_8php.html#a69055e1d2addb71ceb29d410986bd567">else</a></td></tr>
+<tr class="separator:a69055e1d2addb71ceb29d410986bd567"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a907d78797a1b764e913b0c565a5097b0"><td class="memItemLeft" align="right" valign="top">global&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="new_8php.html#a907d78797a1b764e913b0c565a5097b0">$db</a></td></tr>
 <tr class="separator:a907d78797a1b764e913b0c565a5097b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6efc15b5a2314dd4b5aaa556a375c6d6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="new_8php.html#a6efc15b5a2314dd4b5aaa556a375c6d6">$data</a> =['json'=&gt;[],'variables'=&gt;new <a class="el" href="classcore_1_1lib_1_1datastructures_1_1_map.html">Map</a>([])]</td></tr>
-<tr class="separator:a6efc15b5a2314dd4b5aaa556a375c6d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3813f9a9766db6bacd87ce680edb2d9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="new_8php.html#aa3813f9a9766db6bacd87ce680edb2d9">if</a> (!isset( $_SESSION[ $_COOKIE[ 'PHPSESSID']][ 'currentFileId']))</td></tr>
+<tr class="separator:aa3813f9a9766db6bacd87ce680edb2d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Variable Documentation</h2>
-<a id="a6efc15b5a2314dd4b5aaa556a375c6d6" name="a6efc15b5a2314dd4b5aaa556a375c6d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6efc15b5a2314dd4b5aaa556a375c6d6">&#9670;&#160;</a></span>$data</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">$data =['json'=&gt;[],'variables'=&gt;new <a class="el" href="classcore_1_1lib_1_1datastructures_1_1_map.html">Map</a>([])]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a907d78797a1b764e913b0c565a5097b0" name="a907d78797a1b764e913b0c565a5097b0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a907d78797a1b764e913b0c565a5097b0">&#9670;&#160;</a></span>$db</h2>
 
@@ -117,20 +103,38 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="adca9c6c647f6d35f560d6ff47d8b1c47" name="adca9c6c647f6d35f560d6ff47d8b1c47"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adca9c6c647f6d35f560d6ff47d8b1c47">&#9670;&#160;</a></span>else</h2>
+<a id="a69055e1d2addb71ceb29d410986bd567" name="a69055e1d2addb71ceb29d410986bd567"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69055e1d2addb71ceb29d410986bd567">&#9670;&#160;</a></span>else</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="client_8php.html#aae4acc1945c0a1d50ce22150e430f509">if</a> (!isset( $_SESSION[ $_COOKIE[ 'PHPSESSID']][ 'authedUser'])) else</td>
+          <td class="memname"><a class="el" href="client_8php.html#aae4acc1945c0a1d50ce22150e430f509">if</a>(session_status()==PHP_SESSION_NONE) <a class="el" href="client_8php.html#aae4acc1945c0a1d50ce22150e430f509">if</a> (!isset( $_SESSION[ $_COOKIE[ 'PHPSESSID']][ 'authedUser'])) else</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">{</div>
 <div class="line">    $user=unserialize($_SESSION[$_COOKIE[<span class="stringliteral">&#39;PHPSESSID&#39;</span>]][<span class="stringliteral">&#39;authedUser&#39;</span>])</div>
 </div><!-- fragment -->
+</div>
+</div>
+<a id="aa3813f9a9766db6bacd87ce680edb2d9" name="aa3813f9a9766db6bacd87ce680edb2d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa3813f9a9766db6bacd87ce680edb2d9">&#9670;&#160;</a></span>if</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'])) </td>
+          <td>(</td>
+          <td class="paramtype">!&#160;</td>
+          <td class="paramname"><em>isset</em> $_SESSION[ $_COOKIE[ 'PHPSESSID']][ 'currentFileId']</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
 </div>
 </div>
 </div><!-- contents -->

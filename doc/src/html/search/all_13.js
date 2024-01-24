@@ -10,10 +10,12 @@ var searchData=
   ['registerhandle_7',['registerHandle',['../classapp_1_1server_1_1classes_1_1_auth.html#a1c01aa4b927ee7a8f4218ae68e662745',1,'app::server::classes::Auth']]],
   ['removeduplicatedoperator_8',['removeDuplicatedOperator',['../classcore_1_1lib_1_1_functions.html#a7d398f3ec5ef7c5d48d6009c55a5125b',1,'core::lib::Functions']]],
   ['removeemptyarrayfromarray_9',['removeEmptyArrayFromArray',['../classcore_1_1lib_1_1_functions.html#aeb9e4af6f807bd87e3f3ec35e8bd5426',1,'core::lib::Functions']]],
-  ['removenullfromarray_10',['removeNullFromArray',['../classcore_1_1lib_1_1_functions.html#a82d8f81f3d34b7fdefca271b8a4fd01a',1,'core::lib::Functions']]],
-  ['rightcurlybrace_11',['RIGHTCURLYBRACE',['../classcore_1_1parser_1_1_token.html#a389de51350805b1c41806d618494983b',1,'core::parser::Token']]],
-  ['rightparenthesis_12',['RIGHTPARENTHESIS',['../classcore_1_1parser_1_1_token.html#a8879b94706281594086ed9352ff97092',1,'core::parser::Token']]],
-  ['rightsquarebracket_13',['RIGHTSQUAREBRACKET',['../classcore_1_1parser_1_1_token.html#a84bf7da47068eda8967d7651c666fa2e',1,'core::parser::Token']]],
-  ['rootfolder_14',['rootfolder',['../rootfolder_8php.html#ab78d42ac183f7538bc9b557d6ee587f7',1,'rootfolder.php']]],
-  ['rootfolder_2ephp_15',['rootfolder.php',['../rootfolder_8php.html',1,'']]]
+  ['removekeywords_10',['removeKeywords',['../classapp_1_1server_1_1classes_1_1_database.html#a035047bfa19a4f281f9259676b4e9aee',1,'app::server::classes::Database']]],
+  ['removenullfromarray_11',['removeNullFromArray',['../classcore_1_1lib_1_1_functions.html#a82d8f81f3d34b7fdefca271b8a4fd01a',1,'core::lib::Functions']]],
+  ['removequotationmark_12',['removeQuotationMark',['../classapp_1_1server_1_1classes_1_1_database.html#a1454e978ee0965c6da8f6906bdcdcf99',1,'app::server::classes::Database']]],
+  ['rightcurlybrace_13',['RIGHTCURLYBRACE',['../classcore_1_1parser_1_1_token.html#a389de51350805b1c41806d618494983b',1,'core::parser::Token']]],
+  ['rightparenthesis_14',['RIGHTPARENTHESIS',['../classcore_1_1parser_1_1_token.html#a8879b94706281594086ed9352ff97092',1,'core::parser::Token']]],
+  ['rightsquarebracket_15',['RIGHTSQUAREBRACKET',['../classcore_1_1parser_1_1_token.html#a84bf7da47068eda8967d7651c666fa2e',1,'core::parser::Token']]],
+  ['rootfolder_16',['rootfolder',['../rootfolder_8php.html#ab78d42ac183f7538bc9b557d6ee587f7',1,'rootfolder.php']]],
+  ['rootfolder_2ephp_17',['rootfolder.php',['../rootfolder_8php.html',1,'']]]
 ];

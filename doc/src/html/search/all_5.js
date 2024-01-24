@@ -4,7 +4,7 @@ var searchData=
   ['database_2ephp_1',['Database.php',['../_database_8php.html',1,'']]],
   ['db_2ephp_2',['db.php',['../db_8php.html',1,'']]],
   ['delete_3',['DELETE',['../classcore_1_1parser_1_1_token.html#aa2c27215cd8c59417c594a49acf4fc32',1,'core::parser::Token']]],
-  ['delete_4',['delete',['../classapp_1_1server_1_1classes_1_1_database.html#ab995b8edec878ac202bd5c932643fae5',1,'app\server\classes\Database\delete()'],['../classcore_1_1lib_1_1datastructures_1_1_map.html#a113585dfcf5de7c63ffeeaf2f58f7a75',1,'core\lib\datastructures\Map\delete()'],['../classcore_1_1lib_1_1datastructures_1_1_set.html#a75dc87b146c087d169e1dd07e5a1c898',1,'core\lib\datastructures\Set\delete()']]],
+  ['delete_4',['delete',['../classapp_1_1server_1_1classes_1_1_database.html#ac051e77867a93610a9ab0e98ae216b63',1,'app\server\classes\Database\delete()'],['../classcore_1_1lib_1_1datastructures_1_1_map.html#a113585dfcf5de7c63ffeeaf2f58f7a75',1,'core\lib\datastructures\Map\delete()'],['../classcore_1_1lib_1_1datastructures_1_1_set.html#a75dc87b146c087d169e1dd07e5a1c898',1,'core\lib\datastructures\Set\delete()']]],
   ['deleteelement_5',['deleteElement',['../classcore_1_1lib_1_1_functions.html#a88b82a53dbe5141c33d3619a51892b40',1,'core::lib::Functions']]],
   ['deletepointelement_6',['deletePointElement',['../classcore_1_1lib_1_1_point_set_diagram_functions.html#a3b81976119af3fcc52989cdba1977e10',1,'core::lib::PointSetDiagramFunctions']]],
   ['difference_7',['difference',['../classcore_1_1lib_1_1_functions.html#ab8eb4af1d8ae54a894d2ee816945a2c7',1,'core::lib::Functions']]],

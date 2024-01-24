@@ -25,7 +25,8 @@ var searchData=
   ['login_22',['login',['../classapp_1_1server_1_1classes_1_1_auth.html#af8e91b3222fdca99d56a7991add3ddb4',1,'app::server::classes::Auth']]],
   ['login_2ephp_23',['login.php',['../login_8php.html',1,'']]],
   ['loginhandle_24',['loginHandle',['../classapp_1_1server_1_1classes_1_1_auth.html#a026b45ff322d289eb74e0072638a4949',1,'app::server::classes::Auth']]],
-  ['logout_2ephp_25',['logout.php',['../logout_8php.html',1,'']]],
-  ['lookahead_26',['lookahead',['../classcore_1_1parser_1_1_parser.html#adf01527b67314922a483882db45a2732',1,'core::parser::Parser']]],
-  ['lor_27',['LOR',['../classcore_1_1parser_1_1_token.html#a3e81f6ee1d6e0a72229ab725d9cccbd3',1,'core::parser::Token']]]
+  ['logout_25',['logout',['../classapp_1_1server_1_1classes_1_1_application.html#a7b7dc9b757b83d90e144a9554a1d7816',1,'app::server::classes::Application']]],
+  ['logout_2ephp_26',['logout.php',['../logout_8php.html',1,'']]],
+  ['lookahead_27',['lookahead',['../classcore_1_1parser_1_1_parser.html#adf01527b67314922a483882db45a2732',1,'core::parser::Parser']]],
+  ['lor_28',['LOR',['../classcore_1_1parser_1_1_token.html#a3e81f6ee1d6e0a72229ab725d9cccbd3',1,'core::parser::Token']]]
 ];

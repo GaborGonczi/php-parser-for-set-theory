@@ -2,7 +2,7 @@
 namespace core;
 
 /**
- * A class that helps to convert htmlentities to the right form.
+ * A class that helps to convert htmlentities to the right mathematical symbol.
  *
  * @package core
  */

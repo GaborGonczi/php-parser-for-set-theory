@@ -11,5 +11,6 @@ var searchData=
   ['logicalsubexp_5f_8',['logicalsubexp_',['../classcore_1_1parser_1_1_parser.html#a20c7e6e9bb5cffb484dca68cff64ab29',1,'core::parser::Parser']]],
   ['login_9',['login',['../classapp_1_1server_1_1classes_1_1_auth.html#af8e91b3222fdca99d56a7991add3ddb4',1,'app::server::classes::Auth']]],
   ['loginhandle_10',['loginHandle',['../classapp_1_1server_1_1classes_1_1_auth.html#a026b45ff322d289eb74e0072638a4949',1,'app::server::classes::Auth']]],
-  ['lookahead_11',['lookahead',['../classcore_1_1parser_1_1_parser.html#adf01527b67314922a483882db45a2732',1,'core::parser::Parser']]]
+  ['logout_11',['logout',['../classapp_1_1server_1_1classes_1_1_application.html#a7b7dc9b757b83d90e144a9554a1d7816',1,'app::server::classes::Application']]],
+  ['lookahead_12',['lookahead',['../classcore_1_1parser_1_1_parser.html#adf01527b67314922a483882db45a2732',1,'core::parser::Parser']]]
 ];

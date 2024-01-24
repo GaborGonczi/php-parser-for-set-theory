@@ -6,7 +6,7 @@ namespace app\server\classes\model;
 * Expression class represents a mathematical expression in a file.
 * 
 * This class extends the Model class and has properties for the
-* expression id, file id, statement, result, start and end positions, length, noparse flag, and timestamps.
+* expression id, file id, statement, result, start and end positions, row, length, noparse flag, and timestamps.
 * 
 * @package app\server\classes\model
 */
@@ -69,6 +69,13 @@ class Expression extends Model{
     private $length;
 
     /**
+    * The row of the expression in the file.
+    * 
+    * @var int
+    */
+    private $row;
+
+    /**
     * The timestamp of when the expression was created.
     * 
     * @var string
@@ -99,11 +106,12 @@ class Expression extends Model{
     * @param int $start The start position of the expression in the file.
     * @param int $end The end position of the expression in the file.
     * @param bool $noparse The flag to indicate if the expression should be parsed or not.
+    * @param int $row The row of the expression in the file.
     * @param string $created_at The timestamp of when the expression was created.
     * @param string $modified_at The timestamp of when the expression was modified.
     * @param string $deleted_at The timestamp of when the expression was deleted.
     */
-    public function __construct($id, $file_id, $statement, $result, $start, $end, $noparse, $created_at, $modified_at,$deleted_at) {
+    public function __construct($id, $file_id, $statement, $result, $start, $end, $noparse, $row, $created_at, $modified_at,$deleted_at) {
    
         $this->id = $id; 
         $this->file_id = $file_id; 
@@ -112,7 +120,8 @@ class Expression extends Model{
         $this->start = $start; 
         $this->end = $end; 
         $this->length=$this->end-$this->start;
-        $this->noparse = $noparse; 
+        $this->noparse = $noparse;
+        $this->row=$row; 
         $this->created_at = $created_at; 
         $this->modified_at = $modified_at; 
         $this->deleted_at = $deleted_at; 
@@ -235,6 +244,25 @@ class Expression extends Model{
     public function setNoparse($noparse) { 
         $this->noparse = $noparse; 
     }
+
+    /**
+    * Get the row  of the expression
+    *
+    * @return int The row of the expression
+    */
+    public function getRow() { 
+        return $this->row; 
+    }
+    
+    /**
+    * Set the row of the expression
+    *
+    * @param int The row of the expression
+    */
+    public function setRow($row) { 
+        $this->row = $row; 
+    }
+
     
     /**
     * Get the length of the expression

@@ -10,19 +10,20 @@
 .wrapper{
     display: grid;
     grid-template-columns:4fr 1fr;
+    grid-auto-rows: 1fr;
     width: 100%;
     height: 100vh;
 }
 
-#right-toolbar-container > #variables{
+#right-toolbar-container > .texts{
   height: 200px;
 }
 
-#variables > textarea{
+.texts > textarea{
   width: 100%;
+  height: 100%;
   overflow: scroll;
   background-color: #fff;
-  height: 200px;
 }
 
 .button-grid-container{
@@ -39,6 +40,9 @@ button{
     height: 50px;
     margin: 0;
     pointer-events: all;
+    border: solid 1px black;
+    border-collapse: collapse ;
+    background-color: #EEEEEE;
 }
 #back{
   width: 70px;
@@ -53,40 +57,84 @@ input[type='checkbox']{
 
 }
 .column{
+  overflow: auto;
     background-color: rgba(255, 255, 255, 0.8);
 }
-#left-toolbar-container{
-    pointer-events: none;
-}
 
-#right-toolbar-container{
-    pointer-events: none;
-}
-
-
-#input{
-    height: 50vh;
+#input #text{
     width: 100%;
     overflow: hidden;
+    line-height: 2;
 
 }
-#input textarea#text{
-    height: 50vh;
-    width: 100%;
-    overflow: scroll;
+
+#input #text:focus .math{
+  background-color: #e5f2fc;
 }
+
+img{
+  width: fit-content;
+  height: fit-content;
+}
+iframe{
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+  border: none;
+  user-select: none;
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
+}
+
+iframe::-webkit-scrollbar {
+  display: none; 
+}
+    
+iframe body {
+  overflow: hidden; 
+}
+    
+  
 .toolbar{
     background-color: #EEEEEE;
 }
 
 #output{
-    height: 50vh;
+    height: 100vh;
     width: 100%;
     overflow: scroll;
+    pointer-events: all;
+}
+#content-container{
+  height: 100vh;
+  width: 100%;
+  overflow: scroll;
+  pointer-events: all;
+}
+p.statement{
+  cursor: pointer;
+  pointer-events: all;
 }
 .result{
     color: blue;
     font-style: italic;
+}
+
+/*https://www.w3docs.com/snippets/css/how-to-customize-file-inputs.html*/
+
+label.customized-fileupload input[type="file"] {
+  position: absolute;
+  top: -1000px;
+}
+.customized-fileupload {
+  cursor: pointer;
+  min-width: 50px;
+  height: 50px;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  background-color: #EEEEEE;
+  border: solid 1px black;
 }
 
 /*From w3schools.com https://www.w3schools.com/howto/howto_css_switch.asp*/

@@ -81,7 +81,7 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:aae4acc1945c0a1d50ce22150e430f509"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="client_8php.html#aae4acc1945c0a1d50ce22150e430f509">if</a> (!isset( $_SESSION[ $_COOKIE[ 'PHPSESSID']][ 'authedUser']))</td></tr>
+<tr class="memitem:aae4acc1945c0a1d50ce22150e430f509"><td class="memItemLeft" align="right" valign="top">if(session_status()==PHP_SESSION_NONE)&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="client_8php.html#aae4acc1945c0a1d50ce22150e430f509">if</a> (!isset( $_SESSION[ $_COOKIE[ 'PHPSESSID']][ 'authedUser']))</td></tr>
 <tr class="separator:aae4acc1945c0a1d50ce22150e430f509"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Variable Documentation</h2>
@@ -101,8 +101,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">{</div>
-<div class="line">    <a class="code hl_variable" href="load_8php.html#a699c7d4d5fd6f0779943db8f71f9f9fd">$errormessage</a>=<span class="stringliteral">&#39;Nem várt hiba történt a feltöltés közben&#39;</span></div>
-<div class="ttc" id="aload_8php_html_a699c7d4d5fd6f0779943db8f71f9f9fd"><div class="ttname"><a href="load_8php.html#a699c7d4d5fd6f0779943db8f71f9f9fd">$errormessage</a></div><div class="ttdeci">$errormessage</div><div class="ttdef"><b>Definition</b> load.php:23</div></div>
+<div class="line">    $_SESSION[<span class="stringliteral">&#39;messages&#39;</span>][<span class="stringliteral">&#39;fileerror&#39;</span>]=<span class="stringliteral">&#39;Nem várt hiba történt a feltöltés közben&#39;</span></div>
 </div><!-- fragment -->
 </div>
 </div>
