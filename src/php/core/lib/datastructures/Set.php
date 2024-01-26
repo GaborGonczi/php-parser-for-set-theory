@@ -76,7 +76,9 @@ class Set implements IteratorAggregate,JsonSerializable {
         if($this->type===null){
             $this->type=gettype($element)!=='object'?gettype($element):get_class($element);
         }
-        $this->elements=array_unique(array_merge($this->elements,[$element]));
+        if(($this->type===gettype($element))||(gettype($element)==="object"&&$this->type===get_class($element))){
+            $this->elements=array_unique(array_merge($this->elements,[$element]));
+        }
         return $this;
     }
 

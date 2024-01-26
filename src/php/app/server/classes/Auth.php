@@ -2,6 +2,7 @@
 namespace app\server\classes;
 
 require_once dirname(dirname(dirname(dirname(__FILE__)))).'/rootfolder.php';
+require_once dirname(dirname(__FILE__)).'/constants.php';
 
 use \app\server\classes\model\User;
 use \DateTime;
@@ -73,7 +74,6 @@ class Auth
             }
             else{
                 $_SESSION['messages']['loginerror']='A felhasználónév vagy a jelszó hibás';
-                $_POST['login']='Bejelentkezés!';
             }
 
             if($user){
@@ -84,28 +84,27 @@ class Auth
                     if($user->getId()!==1) $user->setModifiedBy(1);
                     $this->db->update('users',$user->getAsAssociativeArray(),['id'=>$user->getId()]);
                     $_SESSION[$_COOKIE['PHPSESSID']]['authedUser']=serialize($user);
+                    $location=rootfolder().'/index.php';
+                    header("Location:$location");
+                    exit(0);
                 }
                 else{
                     $_SESSION['messages']['loginerror']='A felhasználónév vagy a jelszó hibás';
-                    $_POST['login']='Bejelentkezés!';
                 }
                 
             }
             else{
                 $_SESSION['messages']['loginerror']='A felhasználónév vagy a jelszó hibás';
-                $_POST['login']='Bejelentkezés!';
             }
            
         }
         else{
             $_SESSION['messages']['loginerror']='A felhasználónév vagy a jelszó hibás';
-            $_POST['login']='Bejelentkezés!';
+
         }
-        $location=rootfolder().'/index.php';
+        $location=rootfolder().'/index.php?login';
         header("Location:$location");
         exit(0);
-        
-        
     }
 
     /**
@@ -119,24 +118,35 @@ class Auth
         $username=htmlspecialchars($_POST['username']);
         $password=htmlspecialchars($_POST['password']);
         $passwordagain=htmlspecialchars($_POST['passwordagain']);
-        $userExist=$this->db->isExist('users',['username'=>$username,'deleted_at'=>null]);
-        if($userExist){
-            $_SESSION['messages']['registererror']='A felhasználónév foglalt';
-            $_POST['register']='Regisztráció!';
-        }
-        else if($password!==$passwordagain){
-            $_SESSION['messages']['registererror']='A két jelszó nem egyezik';
-            $_POST['register']='Regisztráció!';
+        if($_POST['username']==""||$_POST['password']==""||$_POST['passwordagain']==""){
+            $_SESSION['messages']['registererror']='Minden mező kitöltése szükséges';
+            $location=rootfolder().'/index.php?register';
         }
         else{
-            $newUser=new User(null,$_POST['username'],password_hash($_POST['password'],PASSWORD_BCRYPT),null,null,date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()),
-            1,null,null,null,null);
-           $newid=$this->db->insert('users',$newUser->getAsAssociativeArray());
-            if(!$newid){
-                $_SESSION['messages']['registererror']='Sikertelen regisztráció ismeretlen okból';
+            $userExist=$this->db->isExist('users',['username'=>$username,'deleted_at'=>null]);
+            if($userExist){
+                $_SESSION['messages']['registererror']='A felhasználónév foglalt';
+                $location=rootfolder().'/index.php?register';
+            }
+            else if($password!==$passwordagain){
+                $_SESSION['messages']['registererror']='A két jelszó nem egyezik';
+                $location=rootfolder().'/index.php?register';
+                
+            }
+            else{
+                $newUser=new User(null,$_POST['username'],password_hash($_POST['password'],PASSWORD_BCRYPT),null,null,date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()),
+                1,null,null,null,null);
+               $newid=$this->db->insert('users',$newUser->getAsAssociativeArray());
+                if(!$newid){
+                    $_SESSION['messages']['registererror']='Sikertelen regisztráció ismeretlen okból';
+                    $location=rootfolder().'/index.php?register';
+                }
+                else{
+                    $location=rootfolder().'/index.php?login';
+                    
+                }
             }
         }
-        $location=rootfolder().'/index.php';
         header("Location:$location");
         exit(0);
     }

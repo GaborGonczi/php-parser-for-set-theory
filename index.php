@@ -36,6 +36,10 @@ else{
             $page=$authPages[$i];
             break;
         }
+        else if(isset($_GET[$authPages[$i]])){
+            $page=$authPages[$i];
+            break;
+        } 
     }
     if($page){
         $auth->$page();

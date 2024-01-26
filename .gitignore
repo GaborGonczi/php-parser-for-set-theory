@@ -380,3 +380,9 @@ seed.sql
 
 #VSCode plugins
 .vscode
+
+#.htaccess
+.htaccess
+
+#.htpasswd
+.htpasswd
