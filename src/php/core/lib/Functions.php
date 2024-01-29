@@ -2,7 +2,6 @@
 
 namespace core\lib;
 
-require_once dirname(dirname(dirname(__FILE__))).'/rootfolder.php';
 
 use core\parser\Token;
 use core\parser\Parser;

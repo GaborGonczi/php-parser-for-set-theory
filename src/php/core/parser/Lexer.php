@@ -51,12 +51,21 @@ class Lexer
         $this->input= $input . "$";
     }
 
+    public function getTokens(){
+        try {
+            $tokens=$this->tokenize();
+        } catch (LexerException $le) {
+            return (string) $le;
+        }
+        return $tokens;
+    }
+
     /**
     * A method that tokenizes the input and returns an array of tokens.
     * @return array An array of tokens.
     * @throws LexerException If an invalid character is encountered.
     */
-    public function tokenize()
+    private function tokenize()
     {
 
         $tokens = [];

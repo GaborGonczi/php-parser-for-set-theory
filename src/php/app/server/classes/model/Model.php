@@ -2,6 +2,7 @@
 namespace app\server\classes\model;
 
 use \ReflectionClass;
+use \JsonSerializable;
 
 /**
 * An abstract class that represents a model for the application.
@@ -10,7 +11,7 @@ use \ReflectionClass;
 *
 * @package app\server\classes\model
 */
-abstract class Model {
+abstract class Model implements JsonSerializable {
 
     /**
     * A method that returns the model as an associative array.
@@ -32,11 +33,11 @@ abstract class Model {
     }
 
     /**
-    * A magic method that serializes the model into an array.
-    * This method is invoked when calling serialize() on a model object.
-    * @return array An array that contains the serialized data of the model.
+    * A magic method that serialize the model into an array.
+    * This method is invoked when calling json_encode() on a model object.
+    * @return array An array that contains the json encoded data of the model.
     */
-    public function __serialize(): array {
+    public function jsonSerialize():mixed{
         return $this->getAsAssociativeArray();
     }
 }

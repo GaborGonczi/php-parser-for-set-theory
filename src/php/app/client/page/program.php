@@ -1,13 +1,13 @@
 <?php
+require_once dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))).'/autoloader.php';
 
-
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/rootfolder.php';
+use \utils\Rootfolder;
 
 if(session_status() == PHP_SESSION_NONE){
     session_start();
 }
 if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])) {
-    $location = rootfolder() . '/index.php';
+    $location = Rootfolder::getPath() . '/index.php';
     header("Location:$location");
     exit(1);
 }
@@ -19,9 +19,9 @@ if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?php echo rootfolder() . '/src/css/app/client/page/styles.css'; ?>" type="text/css">
-    <script src="<?php echo rootfolder() . '/src/js/external/mustache.js'; ?>"></script>
-    <script type="module" src="<?php echo rootfolder() . '/src/js/app/client/page/program.js'; ?>" defer></script>
+    <link rel="stylesheet" href="<?php echo Rootfolder::getPath() . '/src/css/app/client/page/styles.css'; ?>" type="text/css">
+    <script src="<?php echo Rootfolder::getPath() . '/src/js/external/mustache.js'; ?>"></script>
+    <script type="module" src="<?php echo Rootfolder::getPath() . '/src/js/app/client/page/program.js'; ?>" defer></script>
     <?php if (isset($_SESSION) && isset($_SESSION['messages']) && isset($_SESSION['messages']['fileerror'])) { ?>
         <script >
             window.addEventListener("DOMContentLoaded",()=>{
@@ -36,10 +36,10 @@ if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])) {
             
         </script>
     <?php unset($_SESSION['messages']['fileerror']); } ?>
-    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo rootfolder().'/src/favicon/apple-touch-icon.png'?>">
-    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo rootfolder().'/src/favicon/favicon-32x32.png'?>">
-    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo rootfolder().'/src/favicon/favicon-16x16.png'?>">
-    <link rel="manifest" href="<?php echo rootfolder().'/src/favicon/site.webmanifest'?>">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo Rootfolder::getPath().'/src/favicon/apple-touch-icon.png'?>">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo Rootfolder::getPath().'/src/favicon/favicon-32x32.png'?>">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo Rootfolder::getPath().'/src/favicon/favicon-16x16.png'?>">
+    <link rel="manifest" href="<?php echo Rootfolder::getPath().'/src/favicon/site.webmanifest'?>">
     <title>Program</title>
 </head>
 
@@ -84,7 +84,7 @@ if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])) {
                     <input type="file" id="load" name="load">
                     <span>Munkalap betöltése</span>
                 </label>
-                <form id="backform" action="<?php echo rootfolder().'/index.php'; ?>" method="post">
+                <form id="backform" action="<?php echo Rootfolder::getPath().'/index.php'; ?>" method="post">
                  <button id="back" name="client" type="submit">Vissza a főoldalra</button>
                 </form>
             </div>

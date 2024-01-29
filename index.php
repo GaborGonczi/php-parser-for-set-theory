@@ -5,6 +5,7 @@ require_once 'src/php/app/server/db.php';
 
 use \app\server\classes\Application;
 use \app\server\classes\Auth;
+use \app\server\classes\model\User;
 
 $page='';
 if(session_status() == PHP_SESSION_NONE){
@@ -12,7 +13,8 @@ if(session_status() == PHP_SESSION_NONE){
 }
 global $db;
 if(isset($_COOKIE['PHPSESSID'])&&isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
-    $user=unserialize($_SESSION[$_COOKIE['PHPSESSID']]['authedUser']);
+
+    $user=new User(...array_values(json_decode($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'],true))); 
     $app=new Application($user,$db);
     $appPages=array('client','help','program','questionnaire','files','logout');
     for ($i=0; $i <count($appPages); $i++) {
