@@ -2,6 +2,7 @@
 
 use \PHPUnit\Framework\TestCase;
 use \core\lib\datastructures\Set;
+use \app\server\classes\Env;
 
 class SetTest extends TestCase
 {
@@ -11,6 +12,7 @@ class SetTest extends TestCase
 
     protected function setUp(): void
     {
+        (new Env(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/.env',true))->load();
         $this->set = new Set([1, 2, 3]);
     }
     protected function tearDown(): void
@@ -33,13 +35,13 @@ class SetTest extends TestCase
     {
         return [
 
-            [2, 3, [1, 2, 3]],
+            [2, 3, [1.0, 2.0, 3.0]],
             
-            [5, 4, [1, 2, 3, 5]],
+            [5, 4, [1.0, 2.0, 3.0, 5.0]],
             
-            ['a', 4, [1, 2, 3, 'a']],
+            ['a', 3, [1.0, 2.0, 3.0]],
             
-            [null, 4, [1, 2, 3, null]],
+            [null, 3, [1.0, 2.0, 3.0]],
         ];
     }
 
@@ -82,13 +84,13 @@ class SetTest extends TestCase
     {
         return [
 
-            [3, 2, [1, 2]],
+            [3, 2, [1.0, 2.0]],
             
-            [4, 3, [1, 2, 3]],
+            [4, 3, [1.0, 2.0, 3.0]],
             
-            ['a', 3, [1, 2, 3]],
+            ['a', 3, [1.0, 2.0, 3.0]],
             
-            [null, 3, [1, 2, 3]],
+            [null, 3, [1.0, 2.0, 3.0]],
         ];
     }
 

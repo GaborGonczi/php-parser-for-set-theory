@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use \core\parser\Parser;
 use \core\parser\Token;
 use core\parser\exception\ParserException;
+use \app\server\classes\Env;
 
 class ParserTest extends TestCase
 {
@@ -14,6 +15,7 @@ class ParserTest extends TestCase
 
     protected function setUp(): void
     {
+        (new Env(dirname(dirname(dirname(dirname(__FILE__)))).'/.env',true))->load();
         $this->reflectionObject = new ReflectionClass('\core\parser\Parser');
     }
     protected function tearDown(): void
@@ -25,17 +27,12 @@ class ParserTest extends TestCase
     /**
      * @dataProvider inputProvider
      */
-    public function testParserWithDifferentInputs($tokens, $definedVars,$expected, $resultMap, $exception,$baseSet)
+    public function testParserWithDifferentInputs($tokens, $definedVars,$expected, $resultMap, $exception)
     {
         $parser = new Parser($tokens);
         $internalMap = $this->reflectionObject->getProperty('vars');
         $internalMap->setAccessible(true);
         $internalMap->setValue($parser, $definedVars);
-        if($baseSet!==null) {
-            $internalBaseSet=$this->reflectionObject->getProperty('baseSet');
-            $internalBaseSet->setAccessible(true);
-            $internalBaseSet->setValue($parser,$baseSet);
-        }
         $result = $parser->parse();
         if ($exception !== null) {
             $this->expectException($exception);
@@ -63,8 +60,7 @@ class ParserTest extends TestCase
                 new Map(['A' => new Set([])]),
                 'false',
                 null,
-                null,
-                new Set([])
+                null
             ],
             [
                 [
@@ -77,8 +73,7 @@ class ParserTest extends TestCase
                 new Map(['A' => new Set([])]),
                 'true',
                 null,
-                null,
-                new Set([])
+                null
             ],
             [
                 [
@@ -103,8 +98,7 @@ class ParserTest extends TestCase
                 new Map(['B' => new Set([1, 2, 3])]),
                 'false',
                 null,
-                null,
-                new Set([1,2,3])
+                null
             ],
             [
                 [
@@ -117,8 +111,7 @@ class ParserTest extends TestCase
                 new Map([]),
                 '{}',
                 new Map(['A' => new Set([])]),
-                null,
-                new Set([])
+                null
             ],
             [
                 [
@@ -136,8 +129,7 @@ class ParserTest extends TestCase
                 new Map([]),
                 '{1,2,3}',
                 new Map(['B' => new Set([1,2,3])]),
-                null,
-                new Set([])
+                null
             ],
             [
                 [
@@ -152,8 +144,7 @@ class ParserTest extends TestCase
                 new Map(['A'=>new Set([1])]),
                 'true',
                 new Map(['A'=>new Set([1,2])]),
-                null,
-                new Set([1])
+                null
             ],
             [
                 [
@@ -168,8 +159,7 @@ class ParserTest extends TestCase
                 new Map(['B'=>new Set([1])]),
                 'true',
                 new Map(['B'=>new Set([])]),
-                null,
-                new Set([1])
+                null
             ],
             [
                 [
@@ -184,8 +174,7 @@ class ParserTest extends TestCase
                 new Map(['B'=>new Set([])]),
                 'true',
                 new Map(['B'=>new Set([])]),
-                null,
-                new Set([])
+                null
             ],
             [
                 [
@@ -207,8 +196,7 @@ class ParserTest extends TestCase
                 new Map([]),
                 '{2,3}',
                 new Map(['C'=>new Set([2,3])]),
-                null,
-                new Set([])
+                null
             ],
             [
                 [
@@ -236,8 +224,7 @@ class ParserTest extends TestCase
                 new Map([]),
                 '{0,2,4}',
                 new Map(['D'=>new Set([0,2,4])]),
-                null,
-                new Set([])
+                null
             ],
             [
                 [
@@ -267,8 +254,7 @@ class ParserTest extends TestCase
                 new Map([]),
                 '{1,2,3,4,5,6,7,8,9,10}',
                 new Map(['E'=>new Set([1,2,3,4,5,6,7,8,9,10])]),
-                null,
-                new Set([])
+                null
             ],
             [
                 [
@@ -306,8 +292,7 @@ class ParserTest extends TestCase
                 new Map([]),
                 '{0,5,7,10,14,15,20}',
                 new Map(['F'=>new Set([0,5,7,10,14,15,20])]),
-                null,
-                new Set([])
+                null
             ],
             [
                 [
@@ -319,8 +304,7 @@ class ParserTest extends TestCase
                 new Map(['A'=>new Set([1,2]),'B'=>new Set([1,2])]),
                 'true',
                 null,
-                null,
-                new Set([1,2])
+                null
             ],
             [
                 [
@@ -332,8 +316,7 @@ class ParserTest extends TestCase
                 new Map(['C'=>new Set([2,3]),'B'=>new Set([1,2])]),
                 'false',
                 null,
-                null,
-                new Set([1,2,3])
+                null
             ],
             [
                 [
@@ -345,8 +328,7 @@ class ParserTest extends TestCase
                 new Map(['A'=>new Set([1,2]),'B'=>new Set([1,2])]),
                 'true',
                 null,
-                null,
-                new Set([1,2])
+                null
             ],
             [
                 [
@@ -358,8 +340,7 @@ class ParserTest extends TestCase
                 new Map(['C'=>new Set([2,3]),'D'=>new Set([4,5])]),
                 'false',
                 null,
-                null,
-                new Set([2,3,4,5])
+                null
             ],
             [
                 [
@@ -371,8 +352,7 @@ class ParserTest extends TestCase
                 new Map(['A'=>new Set([1,2]),'B'=>new Set([1,2])]),
                 'false',
                 null,
-                null,
-                new Set([1,2])
+                null
             ],
             [
                 [
@@ -384,8 +364,7 @@ class ParserTest extends TestCase
                 new Map(['A'=>new Set([1,2]),'H'=>new Set([0,1,2,3,4,5])]),
                 'true',
                 null,
-                null,
-                new Set([0,1,2,3,4,5])
+                null
             ],
             [
                 [
@@ -398,8 +377,7 @@ class ParserTest extends TestCase
                 new Map(['H'=>new Set([0,1,2,3,4,5])]),
                 'false',
                 null,
-                null,
-                new Set([0,1,2,3,4,5])
+                null
             ],
             [
                 [
@@ -411,8 +389,7 @@ class ParserTest extends TestCase
                 new Map(['A'=>new Set([1,2]),'H'=>new Set([0,1,2,3,4,5])]),
                 '{0,3,4,5}',
                 null,
-                null,
-                new Set([0,1,2,3,4,5])
+                null
             ],
             [
                 [
@@ -424,8 +401,7 @@ class ParserTest extends TestCase
                 new Map(['H'=>new Set([0,1,2,3,4,5])]),
                 '{}',
                 null,
-                null,
-                new Set([0,1,2,3,4,5])
+                null
             ],
             [
                 [
@@ -437,8 +413,7 @@ class ParserTest extends TestCase
                 new Map(['D'=>new Set([4,5]),'H'=>new Set([0,1,2,3,4,5])]),
                 '{0,1,2,3}',
                 null,
-                null,
-                new Set([0,1,2,3,4,5])
+                null
             ],
             [
                 [
@@ -451,8 +426,7 @@ class ParserTest extends TestCase
                 new Map(['A'=>new Set([1,2]),'D'=>new Set([4,5])]),
                 '{1,2,4,5}',
                 null,
-                null,
-                new Set([1,2,4,5])
+                null
             ],
             [
                 [
@@ -465,8 +439,7 @@ class ParserTest extends TestCase
                 new Map(['B'=>new Set([1,2]),'C'=>new Set([2,3])]),
                 '{1,2,3}',
                 null,
-                null,
-                new Set([1,2,3])
+                null
             ],
             [
                 [
@@ -479,8 +452,7 @@ class ParserTest extends TestCase
                 new Map(['C'=>new Set([2,3]),'D'=>new Set([4,5])]),
                 '{2,3,4,5}',
                 null,
-                null,
-                new Set([2,3,4,5])
+                null
             ],
             [
                 [
@@ -498,8 +470,6 @@ class ParserTest extends TestCase
                 '{1,2,3,4,5}',
                 null,
                 null
-            ,
-            new Set([1,2,3,4,5])
             ],
             [
                 [
@@ -512,8 +482,7 @@ class ParserTest extends TestCase
                 new Map(['B'=>new Set([1,2]),'C'=>new Set([2,3])]),
                 '{2}',
                 null,
-                null,
-                new Set([1,2,3])
+                null
             ],
             [
                 [
@@ -526,8 +495,7 @@ class ParserTest extends TestCase
                 new Map(['C'=>new Set([2,3]),'D'=>new Set([4,5])]),
                 '{}',
                 null,
-                null,
-                new Set([2,3,4,5])
+                null
             ],
             [
                 [
@@ -540,8 +508,7 @@ class ParserTest extends TestCase
                 new Map(['B'=>new Set([1,2]),'C'=>new Set([2,3])]),
                 '{1}',
                 null,
-                null,
-                new Set([0,1,2,3])
+                null
             ],
             [
                 [
@@ -554,8 +521,7 @@ class ParserTest extends TestCase
                 new Map(['B'=>new Set([1,2]),'C'=>new Set([2,3])]),
                 '{3}',
                 null,
-                null,
-                new Set([1,2,3])
+                null
             ],
             [
                 [
@@ -576,8 +542,7 @@ class ParserTest extends TestCase
                 new Map(['H'=>new Set([0,1,2,3,4,5]),'A'=>new Set([1,2]),'B'=>new Set([1,2]),'C'=>new Set([2,3]),'D'=>new Set([4,5])]),
                 '{0}',
                 null,
-                null,
-                new Set([0,1,2,3,4,5])
+                null
             ],
             [
                 [
@@ -594,8 +559,7 @@ class ParserTest extends TestCase
                 new Map([]),
                 '[1,2]',
                 new Map(['C'=>new Point(1,2)]),
-                null,
-                new Set([])
+                null
             ],
             [
                 [
@@ -704,7 +668,7 @@ class ParserTest extends TestCase
                    
                 ],
                 new Map(['A'=>new Set([1,2]),'C'=>new Set([2,3])]),
-                '{1,3}',
+                'H is not defined. Please define it and rerun the expression evaluation.',
                 null,
                 null,
                 new Set([1,2,3])
@@ -719,7 +683,7 @@ class ParserTest extends TestCase
                     ['type' => 'eol', 'value' => '$']
                 ],
                 new Map(['A'=>new Set([1,2]),'C'=>new Set([2,3])]),
-                '{1,3}',
+                'H is not defined. Please define it and rerun the expression evaluation.',
                 null,
                 null,
                 new Set([1,2,3])

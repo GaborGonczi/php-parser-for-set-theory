@@ -1,25 +1,13 @@
 <?php
 
-$path=__DIR__.'/.env';
+require_once 'autoloader.php';
 
-$lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+require_once __DIR__.'/environment.php';
 
-foreach ($lines as $line) {
+use \app\server\classes\Env;
 
-    if (strpos(trim($line), '#') === 0) {
-        continue;
-    }
+(new Env(dirname(__FILE__).'/.env',constant('DEV')))->load();
 
-    list($name, $value) = explode('=', $line, 2);
-    $name = trim($name);
-    $value = trim($value);
-
-    if (!array_key_exists($name, $_SERVER) && !array_key_exists($name, $_ENV)) {
-        putenv(sprintf('%s=%s', $name, $value));
-        $_ENV[$name] = $value;
-        $_SERVER[$name] = $value;
-    }
-}
 $installerInstance=null;
 
 try {
@@ -29,12 +17,13 @@ try {
 }
 
 if($installerInstance){
-    $installerInstance->exec(file_get_contents('sql.sql'));
+    $installerInstance->exec(file_get_contents('szakdolgozat.sql'));
     $seedStmt=$installerInstance->prepare(file_get_contents('seed.sql'));
     $seedStmt->execute(['system',password_hash(getenv('ADMIN_PASSWORD'),PASSWORD_BCRYPT),null,null,
     date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()),null,null,null,null,null]);
     $installerInstance=null;
 }
-unlink('sql.sql');
-unlink('seed.sql');
-unlink(__FILE__);
+echo "Installation completed successfully.";
+//unlink('szakdolgozat.sql');
+//unlink('seed.sql');
+//unlink(__FILE__);

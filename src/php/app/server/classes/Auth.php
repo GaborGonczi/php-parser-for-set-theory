@@ -94,7 +94,7 @@ class Auth
         if($user->getFirstLogin()===null) $user->setFirstLogin(date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()));
         $user->setLastLogin(date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()));
         $user->setModifiedAt(date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()));
-        if($user->getId()!==1) $user->setModifiedBy(1);
+        if($user->getId()!==getenv('ADMIN_ID')) $user->setModifiedBy(getenv('ADMIN_ID'));
         $this->db->update('users',$user->getAsAssociativeArray(),['id'=>$user->getId()]);
         $_SESSION[$_COOKIE['PHPSESSID']]['authedUser']=json_encode($user);
         $this->redirectTo();
@@ -127,7 +127,7 @@ class Auth
             $this->redirectTo('?register');
         }
         if(!$this->isUserCreated(new User(null,$_POST['username'],password_hash($_POST['password'],PASSWORD_BCRYPT),
-        null,null,date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()),1,null,null,null,null))) 
+        null,null,date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()),getenv('ADMIN_ID'),null,null,null,null))) 
         {
             $_SESSION['messages']['registererror']='Sikertelen regisztráció ismeretlen okból';
             $this->redirectTo('?register');

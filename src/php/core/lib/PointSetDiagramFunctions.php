@@ -38,11 +38,9 @@ class PointSetDiagramFunctions
     */
     public static function isPointArray($points)
     {
-        if (!Functions::isArray($points))
-            Functions::illegalArguments(__METHOD__);
+        if (!Functions::isArray($points)) return false;
         foreach ($points as $point) {
-            if (!PointSetDiagramFunctions::isPoint($point))
-                Functions::illegalArguments(__METHOD__);
+            if (!PointSetDiagramFunctions::isPoint($point)) return false;
         }
         return true;
     }
@@ -61,11 +59,9 @@ class PointSetDiagramFunctions
     */
     public static function isPointSetArray($sets)
     {
-        if (!Functions::isSetArray($sets))
-            Functions::illegalArguments(__METHOD__);
+        if (!Functions::isSetArray($sets)) return false;
         foreach ($sets as $set) {
-            if (!PointSetDiagramFunctions::isPointSet($set))
-                Functions::illegalArguments(__METHOD__);
+            if (!PointSetDiagramFunctions::isPointSet($set)) return false;
         }
         return true;
     }
@@ -79,11 +75,9 @@ class PointSetDiagramFunctions
     */
     public static function isPointSet($points)
     {
-        if (!Functions::isSet($points))
-            Functions::illegalArguments(__METHOD__);
+        if (!Functions::isSet($points)) return false;
         foreach ($points as $point) {
-            if (!PointSetDiagramFunctions::isPoint($point))
-                Functions::illegalArguments(__METHOD__);
+            if (!PointSetDiagramFunctions::isPoint($point)) return false;
         }
         return true;
     }
@@ -98,8 +92,7 @@ class PointSetDiagramFunctions
     */
     public static function addPointElement($element, $set)
     {
-        if (!PointSetDiagramFunctions::isPointSet($set) || !PointSetDiagramFunctions::isPoint($element))
-            return Functions::illegalArguments(__METHOD__);
+        if (!PointSetDiagramFunctions::isPointSet($set) || !PointSetDiagramFunctions::isPoint($element)) throw Functions::illegalArguments(__METHOD__);
         $oldSize = $set->size();
         return $set->has($element) || $set->add($element)->size() === $oldSize + 1;
 
@@ -115,8 +108,7 @@ class PointSetDiagramFunctions
     */
     public static function deletePointElement($element, $set)
     {
-        if (!PointSetDiagramFunctions::isPointSet($set) || !PointSetDiagramFunctions::isPoint($element))
-            return Functions::illegalArguments(__METHOD__);
+        if (!PointSetDiagramFunctions::isPointSet($set) || !PointSetDiagramFunctions::isPoint($element)) throw  Functions::illegalArguments(__METHOD__);
         $oldSize = $set->size();
         return !$set->has($element) || $set->delete($element)->size() === $oldSize - 1;
     }
@@ -131,7 +123,7 @@ class PointSetDiagramFunctions
     public static function createSetFromPointArray($points)
     {
         if (!PointSetDiagramFunctions::isPointArray($points))
-            Functions::illegalArguments(__METHOD__);
+            throw Functions::illegalArguments(__METHOD__);
 
         $result = new Set([]);
 
@@ -153,7 +145,7 @@ class PointSetDiagramFunctions
     public static function PointSetDiagram($points, $options = new PointSetDiagramOptions())
     {
         if (!PointSetDiagramFunctions::isPointSet($points))
-            Functions::illegalArguments(__METHOD__);
+            throw Functions::illegalArguments(__METHOD__);
         $computedParams = [
             "xfrom" => $options->get_x_from(),
             "xto" => $options->get_x_to(),
@@ -185,7 +177,18 @@ class PointSetDiagramFunctions
         imagepng($image);
         $buffer = ob_get_contents();
         ob_end_clean();
-        return 'data:image/png;base64,' . base64_encode($buffer);
+
+        $data='data:image/png;base64,' . base64_encode($buffer);
+        $html='<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+    <img src="'.$data.'"/>
+</body>
+</html>';
+        file_put_contents(getenv('BASEPATH').'/images/image.html',$html);
+        return getenv('BASEURL').'/images/image.html';
     }
 
 

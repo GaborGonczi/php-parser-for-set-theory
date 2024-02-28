@@ -97,10 +97,14 @@ class ParseScript extends Runable
         
                 $this->lexer->setInput($stmtdata['statement']);
                 $tokens = $this->lexer->getTokens();
+               
                 if (gettype($tokens) === "string") {
                     $result = $tokens;
                 } else {
                     $this->parser->setTokens($tokens);
+                    if($stmtdata['gdfa']==true){
+                        $this->parser->initDFADiagramBuilder($this->user);
+                    }
                     $result = $this->parser->parse();
                 }
         
@@ -113,6 +117,9 @@ class ParseScript extends Runable
                     foreach ($expressionsdata as $expressiondata) {
                         $expressiondata = (array) $expressiondata;
                         $stmtdata['statement'] = $this->replaceHTMLEntities($stmtdata['statement']);
+                        if($stmtdata['gdfa']==true){
+                            $this->parser->getDFADiagramBuilder()->generateOutput($expressiondata['file_id'].'_'.$expressiondata['id']);
+                        }
                         if ($this->isResulTypeFile($stmtdata['result'])) {
                             $stmtdata['result'] = $this->renderFileResult($fileid, $expressiondata);
                         }
@@ -151,6 +158,9 @@ class ParseScript extends Runable
                     );
                     if ($id = $this->isExpressionCreated($expression->getAsAssociativeArray())) {
                         $this->isLogsCreated($stmtdata,$id);
+                    }
+                    if($stmtdata['gdfa']==true){
+                        $this->parser->getDFADiagramBuilder()->generateOutput($fileid.'_'.$id);
                     }
                     if ($this->isResulTypeFile($stmtdata['result'])) {
                         $expressions = $this->getExpressionById($fileid, $id);
@@ -209,19 +219,41 @@ class ParseScript extends Runable
             
             }
             $file_content = $this->getFileContent($fileid);
-            $this->processFileContent($file_content);
         
+            $this->processFileContent($file_content);
+
+            if($this->baseSetNeedToBeDefined($file_content)&&!$this->isBaseSetDefined($this->getVariables($fileid))){
+                $this->data['baseSet']=false;
+            }
+            else{
+                $this->data['baseSet']=true;
+            }       
             return (string)json_encode($this->data);
         
         
         }
         else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'])) {
+               $this->createNewFile();
+               $fileid = intval($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']);
+               $file_content = $this->getFileContent($fileid);
+               if($this->baseSetNeedToBeDefined($file_content)&&!$this->isBaseSetDefined($this->getVariables($fileid))){
+                    $this->data['baseSet']=false;
+                }
+                else{
+                    $this->data['baseSet']=true;
+                } 
                return (string)json_encode($this->data);
             } else {
                 $fileid = intval($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']);
                 $file_content = $this->getFileContent($fileid);
                 $this->processFileContent($file_content);
+                if($this->baseSetNeedToBeDefined($file_content)&&!$this->isBaseSetDefined($this->getVariables($fileid))){
+                    $this->data['baseSet']=false;
+                }
+                else{
+                    $this->data['baseSet']=true;
+                } 
                 $variables =$this->getVariables($fileid);
                 $vars = $this->createVariableMap($variables);
                 $this->parser->setVars($vars);
@@ -288,7 +320,7 @@ class ParseScript extends Runable
             if ($this->isResulTypeFile($expressionModel->getResult())) {
                 $this->data['json'][] = array_merge($expressionModel->getAsAssociativeArray(), ["diagram" => true]);
             } else {
-                $this->data['json'][] = array_merge($expressionModel->getAsAssociativeArray(), ["diagram" => false]);
+                $this->data['json'][] = array_merge($expressionModel->getAsAssociativeArray(), []);
             }
         }
     }
@@ -302,10 +334,12 @@ class ParseScript extends Runable
     }
     private function isExpressionUpdated( $expressionAsArray)
     {
+        unset($expressionAsArray['length']);
         return $this->db->update('expressions', $expressionAsArray, ['id' => $expressionAsArray['id']]) !== false;
     }
     private function isExpressionCreated($expressionArray)
     {
+        unset($expressionArray['length']);
         return $this->db->insert('expressions', $expressionArray);
     }
     private function isVariableExist( $fileid, $name)
@@ -361,9 +395,31 @@ class ParseScript extends Runable
     {
         return strpos($result, '.html') !== false;
     }
+
     private function renderFileResult($fileid, $expressiondata)
     {
-        rename('C:/xampp/htdocs/php-parser-for-set-theory/images/image.html', 'C:/xampp/htdocs/php-parser-for-set-theory/images/image_' . $fileid . '_' . $expressiondata['id'] . '.html');
-        return 'http://localhost/php-parser-for-set-theory/images/image_' . $fileid . '_' . $expressiondata['id'] . '.html';
+        rename(getenv('BASEPATH').'/images/image.html', getenv('BASEPATH').'/images/image_' . $fileid . '_' . $expressiondata['id'] . '.html');
+        return getenv('BASEURL').'/images/image_' . $fileid . '_' . $expressiondata['id'] . '.html';
+    }
+
+    private function isBaseSetDefined($file_vars){
+        $baseSetarray=array_filter($file_vars,function ($var) {
+            return $var['name']==='H';
+        });
+        return !empty($baseSetarray);
+    }
+    private function baseSetNeedToBeDefined($file_content){
+        foreach ($file_content as  $expression) {
+            unset($expression['length']);
+            $expressionModel = new Expression(...$this->holdsNull((array) $expression));
+            if($expressionModel->getResult()===$this->baseSetNotDefinedError()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function baseSetNotDefinedError(){
+        return "H is not defined. Please define it and rerun the expression evaluation.";
     }
 }

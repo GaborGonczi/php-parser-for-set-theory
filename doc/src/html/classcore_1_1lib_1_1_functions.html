@@ -112,8 +112,8 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a1f355cac0f3b5685e39ef00c852632e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c307bf670751165369642d066b48f1b"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcore_1_1lib_1_1_functions.html#a2c307bf670751165369642d066b48f1b">isMap</a> ($map)</td></tr>
 <tr class="separator:a2c307bf670751165369642d066b48f1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6e16ea843f4bea434a8b7cafe5e2eb2"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcore_1_1lib_1_1_functions.html#ad6e16ea843f4bea434a8b7cafe5e2eb2">IsGoodOperation</a> ($operation, $goodoperations)</td></tr>
-<tr class="separator:ad6e16ea843f4bea434a8b7cafe5e2eb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7543864b8fb7f6884e17d12f73f55fd"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcore_1_1lib_1_1_functions.html#ab7543864b8fb7f6884e17d12f73f55fd">isGoodOperation</a> ($operation, $goodoperations)</td></tr>
+<tr class="separator:ab7543864b8fb7f6884e17d12f73f55fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82d8f81f3d34b7fdefca271b8a4fd01a"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcore_1_1lib_1_1_functions.html#a82d8f81f3d34b7fdefca271b8a4fd01a">removeNullFromArray</a> ($array)</td></tr>
 <tr class="separator:a82d8f81f3d34b7fdefca271b8a4fd01a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb9e4af6f807bd87e3f3ec35e8bd5426"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcore_1_1lib_1_1_functions.html#aeb9e4af6f807bd87e3f3ec35e8bd5426">removeEmptyArrayFromArray</a> ($array)</td></tr>
@@ -272,7 +272,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>bool True if the element was added successfully, false otherwise. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -323,7 +323,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>array An array that has its keys appended with the variable name. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the argument is not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the argument is not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -374,7 +374,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>bool True if the two sets have the same elements, false otherwise. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid sets. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid sets. </td></tr>
   </table>
   </dd>
 </dl>
@@ -461,7 +461,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>int The number of elements in the set. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the argument is not a valid set. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the argument is not a valid set. </td></tr>
   </table>
   </dd>
 </dl>
@@ -501,7 +501,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>array An array of the bound functions. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the argument is not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the argument is not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -541,7 +541,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>array An array of the bound values. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the argument is not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the argument is not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -592,7 +592,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Set A new set that contains the elements that are in the universe but not in the set. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid sets. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid sets. </td></tr>
   </table>
   </dd>
 </dl>
@@ -632,7 +632,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Closure A function that takes a variable as an argument and returns true if it satisfies the concatenated bound conditions, false otherwise. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the argument is not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the argument is not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -672,7 +672,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Set A new set that is the union of all the sets in the map. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -723,7 +723,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Closure A function that takes a variable as an argument and returns true if it satisfies the comparison condition, false otherwise. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -774,7 +774,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Closure A function that takes a number as an argument and returns true if it satisfies the divisibility condition, false otherwise. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -814,7 +814,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Set A new set with the elements from the array. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -879,7 +879,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Set A new set with the elements generated and filtered by the formulas. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -930,7 +930,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Closure A function that takes a variable as an argument and returns the result of applying the arithmetic operation with the number. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -981,7 +981,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>bool True if the element was deleted successfully, false otherwise. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1032,7 +1032,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Set A new set that contains the elements that are in the first set but not in the second set. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid sets. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid sets. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1072,7 +1072,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>mixed The result of evaluating the set expression. It can be a set, a boolean, or null if the expression is invalid. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the argument is not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the argument is not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1113,7 +1113,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>numeric The result of the expression. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the $array parameter is not an array or is empty. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the $array parameter is not an array or is empty. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1153,7 +1153,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>array An array that contains only the first element from each sub-array in the original array. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the argument is not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the argument is not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1193,7 +1193,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>array An array that contains only the non-empty sets in the set expression. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the argument is not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the argument is not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1244,7 +1244,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>array An array that contains the flattened set formula with the optional operator. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the argument is not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the argument is not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1477,7 +1477,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Closure|null The function definition as a closure, or null if not found. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the argument is not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the argument is not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1517,7 +1517,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>array An associative array with keys 'start' and 'end' that contain the minimum and maximum values respectively. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the argument is not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the argument is not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1614,7 +1614,7 @@ Static Private Attributes</h2></td></tr>
 </dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td></td></tr>
+    <tr><td class="paramname">LibException</td><td></td></tr>
   </table>
   </dd>
 </dl>
@@ -1689,7 +1689,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Set A new set that contains the elements that are in all of the sets. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If any of the arguments is not a valid set. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If any of the arguments is not a valid set. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1774,7 +1774,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>bool True if the element is an element of the set, false otherwise. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1814,7 +1814,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>bool True if the set is empty, false otherwise. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1889,8 +1889,8 @@ Static Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ad6e16ea843f4bea434a8b7cafe5e2eb2" name="ad6e16ea843f4bea434a8b7cafe5e2eb2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad6e16ea843f4bea434a8b7cafe5e2eb2">&#9670;&#160;</a></span>IsGoodOperation()</h2>
+<a id="ab7543864b8fb7f6884e17d12f73f55fd" name="ab7543864b8fb7f6884e17d12f73f55fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7543864b8fb7f6884e17d12f73f55fd">&#9670;&#160;</a></span>isGoodOperation()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1899,7 +1899,7 @@ Static Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static core\lib\Functions::IsGoodOperation </td>
+          <td class="memname">static core\lib\Functions::isGoodOperation </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>$operation</em>, </td>
@@ -1933,7 +1933,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>bool True if the operation is a good operation, false otherwise. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2121,7 +2121,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>bool True if the element is an element of the set, false otherwise. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2342,7 +2342,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>bool True if the first set is a subset of the second set and they are not equal, false otherwise. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid sets. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid sets. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2495,7 +2495,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>bool True if every element of the first set is also an element of the second set, false otherwise. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid sets. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid sets. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2603,7 +2603,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>array An associative array of functions that can be applied to the right-hand side variables or constants. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2690,7 +2690,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>array An array that has its keys re-appended with the variable name. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the argument is not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the argument is not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2731,7 +2731,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>array A new array with the duplicated operators removed. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the $arr parameter is not an array. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the $arr parameter is not an array. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2771,7 +2771,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>array A new array without empty arrays. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2811,7 +2811,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>array A new array without null elements. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2852,7 +2852,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>array An associative array with three keys: 'sets', 'operations', and 'numbers'. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the argument is not an array.</td></tr>
+    <tr><td class="paramname">LibException</td><td>If the argument is not an array.</td></tr>
   </table>
   </dd>
 </dl>
@@ -2929,7 +2929,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>array An associative array that represents the tree structure of the conditions. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2969,7 +2969,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Set A new set that contains the elements that are in any of the sets. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If any of the arguments is not a valid set. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If any of the arguments is not a valid set. </td></tr>
   </table>
   </dd>
 </dl>
@@ -3009,7 +3009,7 @@ Static Private Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>string A base64 encoded PNG image of the Venn diagram. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">InvalidArgumentException</td><td>If the arguments are not valid. </td></tr>
+    <tr><td class="paramname">LibException</td><td>If the arguments are not valid. </td></tr>
   </table>
   </dd>
 </dl>

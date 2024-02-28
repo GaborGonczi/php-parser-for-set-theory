@@ -13,6 +13,10 @@ use \core\lib\datastructures\Set;
 use \core\parser\exception\ParserException;
 use \core\parser\exception\SemanticException;
 use \core\parser\exception\UndefinedVariableException;
+use \core\lib\exception\LibException;
+
+use \app\server\classes\model\User;
+use \core\parser\dfa\DFADiagramBuilder;
 
 class Parser
 {
@@ -20,15 +24,20 @@ class Parser
     private $tokens;
     private $pos;
     private static ?Map $vars = null;
-    private static Set $baseSet;
+    private static ?Set $baseSet = null;
+    private ?DFADiagramBuilder $dfaDiagramBuilder = null;
 
     public function parse()
     {
         try {
+            $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,$this->getLookaheadValue(), 'statement');
             $result = $this->statement();
+            $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($)", __FUNCTION__);
             $this->match('$');
         } catch (ParserException $pe) {
             return $this->getStringRepresentation($pe);
+        } catch (LibException $le) {
+            return $this->getStringRepresentation($le);
         }
         return $this->getStringRepresentation($result);
     }
@@ -46,22 +55,31 @@ class Parser
         switch ($lookahead['type']) {
             case (TOKEN::MINUS['name']):
             case (TOKEN::NUMBER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'selementofnelementof');
                 $result = $this->selementofnelementof();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (TOKEN::LEFTCURLYBRACE['name']):
             case (TOKEN::LEFTSQUAREBRACKET['name']):
             case (Token::LEFTPARENTHESIS['name']):
             case (TOKEN::IDENTIFIER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'sexpr');
                 $result = $this->sexpr();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::VERTICALLINE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'ssimpleexpression');
                 $result = $this->ssimpleexpression();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::VENN['name']):
             case (Token::POINTSETDIAGRAM['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'sfunctioncall');
                 $result = $this->sfunctioncall();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -82,14 +100,20 @@ class Parser
         switch ($lookahead['type']) {
             case (TOKEN::MINUS['name']):
             case (TOKEN::NUMBER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,$this->getLookaheadValue(), 'wholenumber');
                 $num = $this->wholenumber();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'selementofnelementof_');
                 $operationandset = $this->selementofnelementof_();
-                if ($operationandset['op'] === Token::ELEMENTOF['value'])
+                if ($operationandset['op'] === Token::ELEMENTOF['value']){
                     $result = Functions::isElementOf($num, $operationandset['set']);
-                else if ($operationandset['op'] === Token::NOTELEMENTOF['value'])
+                }
+                else if ($operationandset['op'] === Token::NOTELEMENTOF['value']){
                     $result = Functions::isNotElementOf($num, $operationandset['set']);
+                }
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -109,16 +133,20 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (TOKEN::MINUS['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", __FUNCTION__);
                 $this->match('-');
                 $lookahead = $this->lookahead();
                 $this->match($lookahead['value']);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $result = -1 * $lookahead['value'];
                 break;
             case (TOKEN::NUMBER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match($lookahead['value']);
                 $result = $lookahead['value'];
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -138,16 +166,21 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (TOKEN::ELEMENTOF['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])",'setoperationside');
                 $this->match('&isin;');
                 $result['op'] = $lookahead['value'];
                 $result['set'] = $this->setoperationside();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (TOKEN::NOTELEMENTOF['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])",'setoperationside');
                 $this->match('&notin;');
                 $result['op'] = $lookahead['value'];
                 $result['set'] = $this->setoperationside();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
         }
@@ -166,9 +199,12 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::LEFTCURLYBRACE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'curliedsetexp');
                 $result = $this->curliedsetexp();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::IDENTIFIER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match($lookahead['value']);
                 $result = Parser::$vars->get($lookahead['value']);
                 if ($result == null) {
@@ -176,6 +212,7 @@ class Parser
                 }
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -195,11 +232,14 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::LEFTCURLYBRACE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'setexp');
                 $this->match('{');
                 $result = $this->setexp();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M(})", $this->getParent());
                 $this->match('}');
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -222,14 +262,19 @@ class Parser
         switch ($lookahead['type']) {
             case (Token::MINUS['name']):
             case (Token::NUMBER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'setliteral');
                 $setliteral = $this->setliteral();
                 $result = Functions::createSetFromArray($setliteral);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::LEFTSQUAREBRACKET['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'pointsetliteral');
                 $pointsetliteral = $this->pointsetliteral();
                 $result = PointSetDiagramFunctions::createSetFromPointArray($pointsetliteral);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::IDENTIFIER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'setexp_');
                 $this->match($lookahead['value']);
                 $id['id'] = $lookahead['value'];
                 $rest = $this->setexp_();
@@ -252,18 +297,19 @@ class Parser
                 } else {
                     $idarr = [$id['id'], ...$rest];
                     $vars = $this->getVarsByIds($idarr);
-                    $wrog = array_filter($vars, function ($var) {
-                        return $var === null;
-                    });
+                    $wrog = $this->getUndefinedVars($vars);
                     if (!empty($wrog))
                         throw new UndefinedVariableException('The following variables are not defined: ' . json_encode($wrog));
                     $result = PointSetDiagramFunctions::createSetFromPointArray($vars);
                 }
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::RIGHTCURLYBRACE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 $result = new Set([]);
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -285,12 +331,17 @@ class Parser
         switch ($lookahead['type']) {
             case (Token::COMMA['name']):
             case (Token::RIGHTCURLYBRACE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'identifierliteral');
                 $result = $this->identifierliteral();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::VERTICALLINE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'setformula');
                 $result = $this->setformula();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -311,18 +362,22 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::COMMA['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", __FUNCTION__);
                 $this->match(',');
                 $lookahead = $this->lookahead();
-                ;
                 $id = $lookahead['value'];
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'identifierliteral');
                 $this->match($lookahead['value']);
                 $rest = $this->identifierliteral();
                 $result = Functions::removeNullFromArray([$id, ...$rest]);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::RIGHTCURLYBRACE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 $result = [];
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $lookahead['value'], 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -345,11 +400,14 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::VERTICALLINE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'logicalexp');
                 $this->match('|');
                 $logicalexp = $this->logicalexp();
                 $result = ['verticalline' => '|', 'logicalexp' => $logicalexp];
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,$this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -375,12 +433,16 @@ class Parser
             case (Token::NUMBER['name']):
             case (Token::IDENTIFIER['name']):
             case (Token::LEFTPARENTHESIS['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'logicalsubexp');
                 $subexp = $this->logicalsubexp();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'logicalexp_');
                 $rest = $this->logicalexp_();
                 $merged = array_merge_recursive(['subexp' => $subexp], [...$rest]);
                 $result = Functions::transformConditionsToTree($merged);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -404,9 +466,12 @@ class Parser
         switch ($lookahead['type']) {
             case (Token::MINUS['name']):
             case (Token::NUMBER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'wholenumber');
                 $num = $this->wholenumber();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'divisibilityoperator');
                 $divop = $this->divisibilityoperator();
                 $lookahead = $this->lookahead();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match($lookahead['value']);
                 $identifier = $lookahead['value'];
                 $rest['dividesfunc'] = Functions::createDivisibilityCondition($num, $divop);
@@ -414,18 +479,23 @@ class Parser
                 $result[$identifier][] = Functions::appendVarnameToArrayKeys($rest, $identifier);
                 break;
             case (Token::IDENTIFIER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,"M($lookahead[value])", 'logicalsubexp_');
                 $this->match($lookahead['value']);
                 $identifier = $lookahead['value'];
                 $rest = $this->logicalsubexp_();
                 $result[$identifier][] = Functions::appendVarnameToArrayKeys($rest, $identifier);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::LEFTPARENTHESIS['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'logicalexp');
                 $this->match('(');
                 $logicalexp = $this->logicalexp();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M())", $this->getParent());
                 $this->match(')');
                 $result = ['(', $logicalexp, ')'];
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -450,16 +520,21 @@ class Parser
             case (Token::GREATERTHAN['name']):
             case (Token::LESSTHANOREQUAL['name']):
             case (Token::GREATERTHANOREQUAL['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'comparsionoperator');
                 $comparsionop = $this->comparsionoperator();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'logicalrhs');
                 $logicalrhs = $this->logicalrhs();
                 $result['boundfunc'] = Functions::createComparsionCondition($comparsionop, Functions::processLogicalRhs($logicalrhs));
                 $result['boundvalue'] = $logicalrhs['num'];
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::ARROW['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'functiondefinition');
                 $result = $this->functiondefinition();
-
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -478,10 +553,13 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::ARROW['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'functiondefinition_');
                 $this->match('->');
                 $result = $this->functiondefinition_();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
         }
@@ -500,21 +578,27 @@ class Parser
         switch ($lookahead['type']) {
             case (Token::MINUS['name']):
             case (Token::NUMBER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'wholenumber');
                 $num = $this->wholenumber();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'simpleoperator');
                 $simpleop = $this->simpleoperator();
                 $lookahead = $this->lookahead();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value]", $this->getParent());
                 $this->match($lookahead['value']);
                 $result[$lookahead['value'] . '_funcdef'] = Functions::createUserFunction($simpleop, $num);
                 break;
 
             case (Token::IDENTIFIER['name']):
-                $lookahead = $this->lookahead();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value]", 'simpleoperator');
                 $this->match($lookahead['value']);
                 $simpleop = $this->simpleoperator();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'wholenumber');
                 $num = $this->wholenumber();
                 $result[$lookahead['value'] . '_funcdef'] = Functions::createUserFunction($simpleop, $num);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
         }
@@ -533,14 +617,17 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::DIVIDES['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('&mid;');
                 $result = $lookahead['value'];
                 break;
             case (Token::DOESNOTDIVIDE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('&nmid;');
                 $result = $lookahead['value'];
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -561,26 +648,32 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::EQUAL['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('=');
                 $result = $lookahead['value'];
                 break;
             case (Token::LESSTHAN['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('<');
                 $result = $lookahead['value'];
                 break;
             case (Token::GREATERTHAN['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('>');
                 $result = $lookahead['value'];
                 break;
             case (Token::LESSTHANOREQUAL['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('<=');
                 $result = $lookahead['value'];
                 break;
             case (Token::GREATERTHANOREQUAL['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('>=');
                 $result = $lookahead['value'];
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -602,17 +695,23 @@ class Parser
         switch ($lookahead['type']) {
             case (Token::MINUS['name']):
             case (Token::NUMBER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'wholenumber');
                 $num = $this->wholenumber();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'logicalrhs_');
                 $rest = $this->logicalrhs_();
                 $result = array_merge_recursive(['num' => $num], [...$rest]);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::IDENTIFIER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'logicalrhs_');
                 $this->match($lookahead['value']);
                 $identifier = $lookahead['value'];
                 $rest = $this->logicalrhs_();
                 $result[$identifier][] = [...$rest];
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -637,17 +736,22 @@ class Parser
             case (Token::MINUS['name']):
             case (Token::MULTIPLY['name']):
             case (Token::DIVIDE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'simpleoperator');
                 $simpleop = $this->simpleoperator();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'logicalrhs__');
                 $rest = $this->logicalrhs__();
                 $result = ['simpleop' => $simpleop, ...$rest];
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::LAND['name']):
             case (Token::LOR['name']):
             case (Token::RIGHTCURLYBRACE['name']):
             case (Token::RIGHTPARENTHESIS['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), $this->getParent());
                 $result = [];
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -668,13 +772,17 @@ class Parser
         switch ($lookahead['type']) {
             case (Token::MINUS['name']):
             case (Token::NUMBER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'wholenumber');
                 $result['num'] = $this->wholenumber();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::IDENTIFIER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match($lookahead['value']);
                 $result['id'] = $lookahead['value'];
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -696,15 +804,20 @@ class Parser
         switch ($lookahead['type']) {
             case (Token::LAND['name']):
             case (Token::LOR['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'logicaloperator');
                 $logicalop = $this->logicaloperator();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'logicalexp');
                 $rest = $this->logicalexp();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 $result = array_merge_recursive(['logicalop' => $logicalop], ['subexp' => [...$rest]]);
                 break;
             case (Token::RIGHTCURLYBRACE['name']):
             case (Token::RIGHTPARENTHESIS['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 $result = [];
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -724,14 +837,17 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::LAND['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('&and;');
                 $result = $lookahead['value'];
                 break;
             case (Token::LOR['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('&or;');
                 $result = $lookahead['value'];
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -751,12 +867,16 @@ class Parser
         switch ($lookahead['type']) {
             case (Token::MINUS['name']):
             case (Token::NUMBER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'wholenumber');
                 $num = $this->wholenumber();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'setliteral_');
                 $rest = $this->setliteral_();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 $result = Functions::removeNullFromArray([$num, ...$rest]);
                 break;
 
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -775,14 +895,18 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::COMMA['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'setliteral');
                 $this->match(',');
                 $result = $this->setliteral();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::RIGHTCURLYBRACE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 $result = [];
                 break;
 
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -801,15 +925,20 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::LEFTSQUAREBRACKET['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'point');
                 $point = $this->point();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'pointsetliteral_');
                 $rest = $this->pointsetliteral_();
                 $result = Functions::removeNullFromArray([$point, ...$rest]);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::RIGHTCURLYBRACE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), $this->getParent());
                 $result = [];
                 break;
 
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -828,14 +957,18 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::COMMA['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'pointsetliteral');
                 $this->match(',');
                 $result = $this->pointsetliteral();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::RIGHTCURLYBRACE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), $this->getParent());
                 $result = [];
                 break;
 
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -855,30 +988,35 @@ class Parser
         switch ($lookahead['type']) {
             case (TOKEN::LEFTCURLYBRACE['name']):
             case (TOKEN::IDENTIFIER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'setoperationside');
                 $setoperationside = $this->setoperationside();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'sexpr_');
                 $rest = $this->sexpr_();
 
                 if (isset($rest['op'])) {
                     switch ($rest['op']) {
                         case (Token::TOBEEQUAL['value']):
-                                $setoperationside=$lookahead['value'];
-                                $rest = Functions::flatSetExpression($rest);
-                                unset($rest[0]);
-                                $rest = array_values($rest);
-                                Parser::setBaseSet(Functions::createBaseSet($this->getVars()));
-                                $rest['set'] = Functions::evaluateSetExpression($rest);
-                                if (isset($rest['set'])) {
-                                    $result = $rest['set'];
-                                    Parser::$vars->add($setoperationside, $result);
-                                    Parser::setBaseSet(Functions::createBaseSet($this->getVars()));
-                                } else if (isset($rest['point'])) {
-                                    Parser::$vars->add($setoperationside, $rest['point']);
-                                    $result = $rest['point'];
-                                }
-                            
+                            $setoperationside = $lookahead['value'];
+                            $rest = Functions::flatSetExpression($rest);
+                            unset($rest[0]);
+                            $rest = array_values($rest);
+                            Parser::setBaseSet($this->getVars()->get("H"));
+                            $rest['set'] = Functions::evaluateSetExpression($rest);
+                            if (isset($rest['set'])) {
+                                $result = $rest['set'];
+                                Parser::$vars->add($setoperationside, $result);
+                                Parser::setBaseSet($this->getVars()->get("H"));
+                            } else if (isset($rest['point'])) {
+                                Parser::$vars->add($setoperationside, $rest['point']);
+                                $result = $rest['point'];
+                            }
+
                             break;
                         case (Token::COMPLEMENT['value']):
-                            Parser::setBaseSet(Functions::createBaseSet($this->getVars()));
+                            Parser::setBaseSet($this->getVars()->get("H"));
+                            if (Parser::$baseSet === null) {
+                                throw new UndefinedVariableException("H is not defined. Please define it and rerun the expression evaluation.");
+                            }
                             $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => $setoperationside], ['rhs' => $rest]));
                             $result = Functions::evaluateSetExpression($array);
                             break;
@@ -922,25 +1060,29 @@ class Parser
                             $result = Functions::evaluateSetExpression($array);
                             break;
                         default:
+                            $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $lookahead['value'], 'err');
                             $pos = $this->calculatePosition();
                             throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
                     }
 
                 } else if (empty($rest)) {
-                    if (gettype($setoperationside)==="string") {
+                    if (gettype($setoperationside) === "string") {
                         $result = Parser::$vars->get($setoperationside);
+                    } else {
+                        $result = $setoperationside;
                     }
-                    else{
-                        $result=$setoperationside;
-                    }
-                    
+
                 }
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::LEFTPARENTHESIS['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'setoperationside');
                 $this->match('(');
                 $setoperationside = $this->setoperationside();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'stesruisc__');
                 $rest = $this->stesruisc__();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M())", 'stesruisc__');
                 $this->match(')');
                 $rest2 = $this->stesruisc__();
                 $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => ['lparen' => '(', 'lhs' => $setoperationside, 'rhs' => $rest, 'rparen' => ')'], ['rhs' => $rest2]]));
@@ -949,11 +1091,15 @@ class Parser
                     $baseSet = Functions::createBaseSet($this->getVars());
                     $result = Functions::complement($result[0], $baseSet);
                 }
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::LEFTSQUAREBRACKET['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'point');
                 $result = $this->point();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -981,13 +1127,17 @@ class Parser
             case (Token::SETMINUS['name']):
             case (Token::VERTICALLINE['name']):
             case (Token::EOL['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'stesruisc');
                 $result = $this->stesruisc();
-
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::DOT['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'sofunctioncall');
                 $result = $this->sofunctioncall();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,$this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1007,31 +1157,39 @@ class Parser
         switch ($lookahead['type']) {
 
             case (Token::TOBEEQUAL['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'trhs');
                 $this->match(':=');
                 $op = $lookahead['value'];
                 $rest = $this->trhs();
                 $result = array_merge_recursive(['op' => $op], ['rhs' => $rest]);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
 
             case (Token::EQUAL['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'stesruisc_');
                 $this->match('=');
                 $op = $lookahead['value'];
                 $rest = $this->stesruisc_();
                 $result = array_merge_recursive(['op' => $op], ['rhs' => $rest]);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
 
             case (Token::SUBSETOF['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'stesruisc_');
                 $this->match('&sube;');
                 $op = $lookahead['value'];
                 $rest = $this->stesruisc_();
                 $result = array_merge_recursive(['op' => $op], ['rhs' => $rest]);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
 
             case (Token::REALSUBSETOF['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'stesruisc_');
                 $this->match('&sub;');
                 $op = $lookahead['value'];
                 $rest = $this->stesruisc_();
                 $result = array_merge_recursive(['op' => $op], ['rhs' => $rest]);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
 
             case (Token::COMPLEMENT['name']):
@@ -1040,20 +1198,28 @@ class Parser
             case (Token::SETMINUS['name']):
             case (TOKEN::VERTICALLINE['name']):
             case (Token::EOL['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'uisc');
                 $result = $this->uisc();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
 
             case (Token::LEFTPARENTHESIS['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'setoperationside');
                 $this->match('(');
                 $setoperationside = $this->setoperationside();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'stesruisc__');
                 $rest = $this->stesruisc__();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'stesruisc__');
                 $this->match(')');
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'stesruisc__');
                 $rest2 = $this->stesruisc__();
                 $array = Functions::flatSetExpression(array_merge_recursive(['lparen' => '(',], ['lhs' => $setoperationside], ['rest' => $rest], ['rparen' => ')'], ['rest2' => $rest2]));
                 $result = Functions::evaluateSetExpression($array);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
 
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1074,25 +1240,35 @@ class Parser
 
             case (Token::LEFTCURLYBRACE['name']):
             case (Token::IDENTIFIER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'setoperationside');
                 $setoperationside = $this->setoperationside();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'stesruisc__');
                 $rest = $this->stesruisc__();
                 $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => $setoperationside], ['rest' => $rest]));
                 $result['set'] = Functions::evaluateSetExpression($array);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::LEFTPARENTHESIS['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  "M($lookahead[value])", 'setoperationside');
                 $this->match('(');
                 $setoperationside = $this->setoperationside();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'stesruisc__');
                 $rest = $this->stesruisc__();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  "M())", 'stesruisc__');
                 $this->match(')');
                 $rest2 = $this->stesruisc__();
                 $array = Functions::flatSetExpression(array_merge_recursive(['lparen' => '(',], ['lhs' => $setoperationside], ['rest' => $rest], ['rparen' => ')'], ['rest2' => $rest2]));
                 $result['set'] = Functions::evaluateSetExpression($array);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
 
             case (Token::LEFTSQUAREBRACKET['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'point');
                 $result['point'] = $this->point();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1113,25 +1289,34 @@ class Parser
 
             case (Token::LEFTCURLYBRACE['name']):
             case (Token::IDENTIFIER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'setoperationside');
                 $setoperationside = $this->setoperationside();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'stesruisc__');
                 $rest = $this->stesruisc__();
                 $result = array_merge_recursive(['lhs' => $setoperationside], ['rhs' => $rest]);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::LEFTPARENTHESIS['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'setoperationside');
                 $this->match('(');
                 $setoperationside = $this->setoperationside();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'stesruisc__');
                 $rest = $this->stesruisc__();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M())", 'stesruisc__');
                 $this->match(')');
                 $rest2 = $this->stesruisc__();
                 $result = array_merge_recursive(['lparen' => '(',], ['lhs' => $setoperationside], ['rest' => $rest], ['rparen' => ')'], ['rest2' => $rest2]);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::RIGHTPARENTHESIS['name']):
             case (Token::VERTICALLINE['name']):
             case (Token::EOL['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 $result = [];
                 break;
 
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1157,10 +1342,13 @@ class Parser
             case (Token::RIGHTPARENTHESIS['name']):
             case (Token::VERTICALLINE['name']):
             case (Token::EOL['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'uisc');
                 $result = $this->uisc();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
 
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1179,35 +1367,45 @@ class Parser
         switch ($lookahead['type']) {
 
             case (Token::UNION['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'stesruisc_');
                 $this->match('&cup;');
                 $op = $lookahead['value'];
                 $rest = $this->stesruisc_();
                 $result = array_merge_recursive(['op' => $op], ['rhs' => $rest]);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::INTERSECTION['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'stesruisc_');
                 $this->match('&cap;');
                 $op = $lookahead['value'];
                 $rest = $this->stesruisc_();
                 $result = array_merge_recursive(['op' => $op], ['rhs' => $rest]);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::SETMINUS['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'stesruisc_');
                 $this->match('&setminus;');
                 $op = $lookahead['value'];
                 $rest = $this->stesruisc_();
                 $result = array_merge_recursive(['op' => $op], ['rhs' => $rest]);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::COMPLEMENT['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'uisc');
                 $this->match('&comp;');
                 $op = $lookahead['value'];
                 $rest = $this->uisc();
                 $result = array_merge_recursive(['op' => $op], ['rhs' => $rest]);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::RIGHTPARENTHESIS['name']):
             case (Token::VERTICALLINE['name']):
             case (Token::EOL['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 $result = [];
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
         }
@@ -1226,15 +1424,19 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::DOT['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'sofunctionname');
                 $this->match('.');
                 $funcname = $this->sofunctionname();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M(()", 'arguments');
                 $this->match('(');
                 $arguments = $this->arguments();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M())", $this->getParent());
                 $this->match(')');
                 $result = ['op' => '.', 'funcname' => $funcname, 'arguments' => $arguments];
                 break;
 
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
         }
@@ -1254,13 +1456,16 @@ class Parser
         switch ($lookahead['type']) {
             case (Token::ADD['name']):
                 $result = $lookahead['value'];
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('add');
                 break;
             case (Token::DELETE['name']):
                 $result = $lookahead['value'];
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('delete');
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1280,25 +1485,36 @@ class Parser
         switch ($lookahead['type']) {
             case (Token::MINUS['name']):
             case (Token::NUMBER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'argument');
                 $arg = $this->argument();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'arguments_');
                 $rest = $this->arguments_();
                 $result = Functions::isObject($rest) ? [$arg, $rest] : [$arg, ...$rest];
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::IDENTIFIER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'argument');
                 $arg = $this->argument();
                 if ($arg === null) {
+                    $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, 'if arg==null', 'err');
                     $pos = $this->calculatePosition();
                     throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
                 }
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'arguments_');
                 $rest = $this->arguments_();
                 $result = Functions::isObject($rest) ? [$arg, $rest] : [$arg, ...$rest];
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::LEFTCURLYBRACE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'argument');
                 $arg = $this->argument();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'arguments_');
                 $rest = $this->arguments_();
                 $result = Functions::removeEmptyArrayFromArray([...$arg, $rest]);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1318,16 +1534,22 @@ class Parser
         switch ($lookahead['type']) {
             case (Token::MINUS['name']):
             case (Token::NUMBER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'wholenumber');
                 $result = $this->wholenumber();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::LEFTCURLYBRACE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'curliedsetexp');
                 $result = $this->curliedsetexp();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::IDENTIFIER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 $this->match($lookahead['value']);
                 $result = Parser::$vars->get($lookahead['value']);
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
         }
@@ -1345,13 +1567,17 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::COMMA['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'argument');
                 $this->match(',');
                 $result = $this->argument();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::RIGHTPARENTHESIS['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 $result = [];
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1370,15 +1596,19 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::LEFTSQUAREBRACKET['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'wholenumber');
                 $this->match('[');
                 $point_x = $this->wholenumber();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M(,)", 'wholenumber');
                 $this->match(',');
                 $point_y = $this->wholenumber();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M(])", $this->getParent());
                 $this->match(']');
                 $result = new LPoint($point_x, $point_y);
                 break;
 
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1397,12 +1627,16 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::VERTICALLINE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,$this->getLookaheadValue(), 'scardinality');
                 $cardinality = $this->scardinality();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,$this->getLookaheadValue(), 'ssimpleexpression_');
                 $rest = $this->ssimpleexpression_();
                 $array = [$cardinality, ...$rest];
                 $result = Functions::evaluateSimpleExpression($array);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1422,10 +1656,13 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::VERTICALLINE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value]", 'scardinality_');
                 $this->match('|');
                 $result = $this->scardinality_();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1450,27 +1687,35 @@ class Parser
         switch ($lookahead['type']) {
             case (Token::LEFTCURLYBRACE['name']):
             case (Token::IDENTIFIER['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'setoperationside');
                 $setoperationside = $this->setoperationside();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'sexpr_');
                 $rest = $this->sexpr_();
+                Parser::setBaseSet($this->getVars()->get("H"));
                 $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => $setoperationside], ['rhs' => $rest]));
                 $set = Functions::evaluateSetExpression($array);
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M(|)", $this->getParent());
                 $this->match('|');
-                Parser::setBaseSet(Functions::createBaseSet($this->getVars()));
                 $result = Functions::cardinality($set);
                 break;
             case (Token::LEFTPARENTHESIS['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'setoperationside');
                 $this->match('(');
                 $setoperationside = $this->setoperationside();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'sexpr_');
                 $rest = $this->sexpr_();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M())", 'uisc');
                 $this->match(')');
                 $rest2 = $this->uisc();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M(|)", $this->getParent());
                 $this->match('|');
-                Parser::setBaseSet(Functions::createBaseSet($this->getVars()));
+                Parser::setBaseSet($this->getVars()->get("H"));
                 $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => ['lparen' => '(', 'lhs' => $setoperationside, 'rhs' => $rest, 'rparen' => ')'], ['rhs' => $rest2]]));
                 $set = Functions::evaluateSetExpression($array);
                 $result = Functions::cardinality($set);
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
         }
@@ -1491,15 +1736,21 @@ class Parser
             case (Token::MINUS['name']):
             case (Token::MULTIPLY['name']):
             case (Token::DIVIDE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'simpleoperator');
                 $result[] = $this->simpleoperator();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'scardinality');
                 $result[] = $this->scardinality();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'ssimpleexpression_');
                 $rest = $this->ssimpleexpression_();
                 $result = [...$result, ...$rest];
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::EOL['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 $result = [];
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1518,22 +1769,27 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::PLUS['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('+');
                 $result = $lookahead['value'];
                 break;
             case (Token::MINUS['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('-');
                 $result = $lookahead['value'];
                 break;
             case (Token::MULTIPLY['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('*');
                 $result = $lookahead['value'];
                 break;
             case (Token::DIVIDE['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", $this->getParent());
                 $this->match('/');
                 $result = $lookahead['value'];
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1554,9 +1810,12 @@ class Parser
         switch ($lookahead['type']) {
             case (Token::VENN['name']):
             case (Token::POINTSETDIAGRAM['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'sfunctionname');
                 $name = $this->sfunctionname();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M(()", 'arguments');
                 $this->match('(');
                 $arguments = $this->arguments();
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M())", $this->getParent());
                 $this->match(')');
                 if ($name === 'Venn') {
                     $result = Functions::$name(...$arguments);
@@ -1572,6 +1831,7 @@ class Parser
 
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1590,14 +1850,17 @@ class Parser
         $lookahead = $this->lookahead();
         switch ($lookahead['type']) {
             case (Token::POINTSETDIAGRAM['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value]", $this->getParent());
                 $result = $lookahead['value'];
                 $this->match('PointSetDiagram');
                 break;
             case (Token::VENN['name']):
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value]", $this->getParent());
                 $result = $lookahead['value'];
                 $this->match('Venn');
                 break;
             default:
+                $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
                 throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
 
@@ -1622,6 +1885,14 @@ class Parser
 
 
     }
+    public function initDFADiagramBuilder(User $authedUser)
+    {
+        $this->dfaDiagramBuilder = new DFADiagramBuilder($authedUser);
+    }
+    public function getDFADiagramBuilder()
+    {
+        return $this->dfaDiagramBuilder;
+    }
 
     /**
      * Returns the Map object that contains the variables and their values.
@@ -1632,7 +1903,7 @@ class Parser
         return Parser::$vars;
     }
 
-    public function setVars($vars = new Map([]))
+    public function setVars($vars = new Map(['A'=>new Set([1])]))
     {
         Parser::$vars = $vars;
     }
@@ -1644,6 +1915,13 @@ class Parser
             $vars[$value] = Parser::$vars->get($value);
         }
         return $vars;
+    }
+
+    private function getUndefinedVars($vars)
+    {
+       return array_filter($vars, function ($var) {
+            return $var === null;
+        });
     }
     public static function getBaseSet()
     {
@@ -2094,6 +2372,15 @@ class Parser
 
         return $possibletokens[$nonterminal];
     }
-
+    private function getParent(){
+        $trace = debug_backtrace();
+        // Get the caller information
+        $caller = $trace[2];
+        return $caller['function'];
+    }
+    private function getLookaheadValue(){
+        $lookahead=$this->lookahead();
+        return $lookahead['value'];
+    }
 
 }

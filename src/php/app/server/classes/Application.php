@@ -2,6 +2,7 @@
 namespace app\server\classes;
 
 use \app\server\classes\model\User;
+use \utils\Rootfolder;
 
 /**
 * Application class represents the logic for rendering the client pages of the application.
@@ -72,6 +73,7 @@ class Application
         require_once dirname(dirname(dirname(__FILE__))).'/client/page/'.__FUNCTION__.'.php';
     }
     public function logout()  {
-      require_once dirname(dirname(__FILE__)).'/page/'.__FUNCTION__.'.php';
-  }
+        $location=Rootfolder::getPath().'/src/php/app/server/page/backendentry.php?page=logout';
+        header("Location:$location");
+    }
 }

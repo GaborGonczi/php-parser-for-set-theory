@@ -1,9 +1,9 @@
 <?php
-require_once dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))).'/autoloader.php';
+require_once dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))) . '/autoloader.php';
 
 use \utils\Rootfolder;
 
-if(session_status() == PHP_SESSION_NONE){
+if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])) {
@@ -19,35 +19,41 @@ if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?php echo Rootfolder::getPath() . '/src/css/app/client/page/styles.css'; ?>" type="text/css">
+    <link rel="stylesheet" href="<?php echo Rootfolder::getPath() . '/src/css/app/client/page/styles.css'; ?>"
+        type="text/css">
     <script src="<?php echo Rootfolder::getPath() . '/src/js/external/mustache.js'; ?>"></script>
-    <script type="module" src="<?php echo Rootfolder::getPath() . '/src/js/app/client/page/program.js'; ?>" defer></script>
+    <script type="module" src="<?php echo Rootfolder::getPath() . '/src/js/app/client/page/program.js'; ?>"
+        defer></script>
     <?php if (isset($_SESSION) && isset($_SESSION['messages']) && isset($_SESSION['messages']['fileerror'])) { ?>
-        <script >
-            window.addEventListener("DOMContentLoaded",()=>{
-                document.querySelector('#errors > textarea').innerHTML=<?php echo json_encode($_SESSION['messages']['fileerror']);?>;
-                const backbtn=document.querySelector('#back');
-                backbtn.addEventListener("click",()=>{
-                    document.querySelector('#errors > textarea').innerHTML="";
+        <script>
+            window.addEventListener("DOMContentLoaded", () => {
+                document.querySelector('#errors > textarea').innerHTML = <?php echo json_encode($_SESSION['messages']['fileerror']); ?>;
+                const backbtn = document.querySelector('#back');
+                backbtn.addEventListener("click", () => {
+                    document.querySelector('#errors > textarea').innerHTML = "";
                 })
             });
-           
 
-            
+
+
         </script>
-    <?php unset($_SESSION['messages']['fileerror']); } ?>
-    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo Rootfolder::getPath().'/src/favicon/apple-touch-icon.png'?>">
-    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo Rootfolder::getPath().'/src/favicon/favicon-32x32.png'?>">
-    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo Rootfolder::getPath().'/src/favicon/favicon-16x16.png'?>">
-    <link rel="manifest" href="<?php echo Rootfolder::getPath().'/src/favicon/site.webmanifest'?>">
+        <?php unset($_SESSION['messages']['fileerror']);
+    } ?>
+    <link rel="apple-touch-icon" sizes="180x180"
+        href="<?php echo Rootfolder::getPath() . '/src/favicon/apple-touch-icon.png' ?>">
+    <link rel="icon" type="image/png" sizes="32x32"
+        href="<?php echo Rootfolder::getPath() . '/src/favicon/favicon-32x32.png' ?>">
+    <link rel="icon" type="image/png" sizes="16x16"
+        href="<?php echo Rootfolder::getPath() . '/src/favicon/favicon-16x16.png' ?>">
+    <link rel="manifest" href="<?php echo Rootfolder::getPath() . '/src/favicon/site.webmanifest' ?>">
     <title>Program</title>
 </head>
 
 <body>
     <div class="wrapper">
-    
-            <div id="output"></div>
-            
+
+        <div id="output"></div>
+
 
         <div id="right-toolbar-container" class="column toolbar">
             <div class="button-grid-container">
@@ -69,30 +75,33 @@ if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])) {
             </div>
             <span>Matematikai mód</span>
             <label class="switch">
-                <input type="checkbox">
+                <input id="mode" type="checkbox">
                 <span class="slider round"></span>
             </label>
             <span>Szöveges mód</span>
-            <div id="variables" class="texts" ><textarea placeholder="Változók"></textarea></div>
-            <div id="errors" class="texts" ><textarea placeholder="Hibaüzenetek"></textarea></div>
+            <div id="variables" class="texts"><textarea placeholder="Változók"></textarea></div>
+            <div id="errors" class="texts"><textarea placeholder="Hibaüzenetek"></textarea></div>
             <button id="download">Letöltés</button>
             <button id="print">Nyomtatás</button>
             <button id="new">Új</button>
+            <span>DVA:ki</span>
+            <label class="switch">
+                <input id="dfa" type="checkbox">
+                <span class="slider round"></span>
+            </label>
+            <span>DVA:be</span>
             <div>
-             <!--https://www.w3docs.com/snippets/css/how-to-customize-file-inputs.html-->
+                <!--https://www.w3docs.com/snippets/css/how-to-customize-file-inputs.html-->
                 <label class="customized-fileupload">
                     <input type="file" id="load" name="load">
                     <span>Munkalap betöltése</span>
                 </label>
                 <form id="backform" action="<?php echo Rootfolder::getPath().'/index.php'; ?>" method="post">
-                 <button id="back" name="client" type="submit">Vissza a főoldalra</button>
+                    <button id="back" name="client" type="submit">Vissza a főoldalra</button>
                 </form>
             </div>
-           
-        
-           
-        
         </div>
+    </div>
 </body>
 
 </html>

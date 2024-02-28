@@ -10,5 +10,10 @@
     {{/diagram}}
 {{/json}}
 <div id="input">
-    <input type="text" class="math" id="text" name="text"  placeholder="Írj ide egy matematikai kifejezést vagy tetszőleges szöveget (szöveges módban)"/>
+    {{^baseSet}}
+       <input type="text" class="math" id="text" name="text"  placeholder="Írj ide egy matematikai kifejezést vagy tetszőleges szöveget (szöveges módban)" value="H:={}"/>
+    {{/baseSet}}
+    {{#baseSet}}
+       <input type="text" class="math" id="text" name="text"  placeholder="Írj ide egy matematikai kifejezést vagy tetszőleges szöveget (szöveges módban)"/>
+    {{/baseSet}}
 </div>

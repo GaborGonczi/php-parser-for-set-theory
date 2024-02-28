@@ -3,6 +3,7 @@
 
 use PHPUnit\Framework\TestCase;
 use \core\lib\datastructures\Map;
+use \app\server\classes\Env;
 
 class MapTest extends TestCase
 {
@@ -10,6 +11,7 @@ class MapTest extends TestCase
 
     protected function setUp(): void
     {
+        (new Env(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/.env',true))->load();
         $this->map = new Map(["one" => 1, "two" => 2, "three" => 3]);
     }
 

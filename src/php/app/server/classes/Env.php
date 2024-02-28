@@ -31,8 +31,9 @@ class Env
     * @param string $path The directory where the .env file can be located.
     * @throws \InvalidArgumentException If the file does not exist.
     */
-    public function __construct(string $path)
+    public function __construct(string $path,bool $dev=false)
     {
+        $path=$dev?$path.'.local':$path.'.production';
         if(!file_exists($path)) {
             throw new \InvalidArgumentException(sprintf('%s does not exist', $path));
         }

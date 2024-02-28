@@ -3,12 +3,15 @@
 namespace core\lib;
 
 
+use core\lib\exception\DividedByZeroException;
+use core\lib\exception\WrongArgumentException;
 use core\parser\Token;
 use core\parser\Parser;
+use core\parser\exception\UndefinedVariableException;
 use core\lib\datastructures\Set;
 use core\lib\datastructures\Map;
 
-use \InvalidArgumentException;
+use core\lib\exception\LibException;
 use \core\Regexp;
 
 /**
@@ -30,11 +33,11 @@ class Functions
     * Throws an exception for  arguments for a function.
     *
     * @param string $functionName The name of the function that received  arguments.
-    * @throws InvalidArgumentException
+    * @throws LibException
     * @public
     */
     public static function illegalArguments($functionName){
-        throw new InvalidArgumentException("Invalid arguments for $functionName");
+        return new WrongArgumentException("Invalid arguments for $functionName");
     }
 
     /**
@@ -167,10 +170,9 @@ class Functions
     * @public
     */
     public static function isSetArray($sets){
-        if (!Functions::isArray($sets)) Functions::illegalArguments(__METHOD__);
+        if (!Functions::isArray($sets)) return false;
         foreach ($sets as $set) {
-            if (!Functions::isSet($set))
-                Functions::illegalArguments(__METHOD__);
+            if (!Functions::isSet($set)) return false;
         }
         return true;
     }
@@ -192,11 +194,11 @@ class Functions
     * @param string $operation The operation to check.
     * @param array $goodoperations The array of good operations to compare with.
     * @return bool True if the operation is a good operation, false otherwise.
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public
     */
-    public static function IsGoodOperation($operation, $goodoperations){
-        if(!Functions::isString($operation)||!Functions::isArray($goodoperations)) Functions::illegalArguments(__METHOD__);
+    public static function isGoodOperation($operation, $goodoperations){
+        if(!Functions::isString($operation)||!Functions::isArray($goodoperations)) return false;
         return in_array($operation,$goodoperations);
     }
 
@@ -205,11 +207,11 @@ class Functions
     *
     * @param array $array The array to remove null elements from.
     * @return array A new array without null elements.
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public
     */
     public static function removeNullFromArray($array){
-        if(!Functions::isArray($array)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($array)) throw Functions::illegalArguments(__METHOD__);
         return array_values(array_filter($array,__CLASS__.'::isNotNull'));
     }
     
@@ -218,11 +220,11 @@ class Functions
     *
     * @param array $array The array to remove empty arrays from.
     * @return array A new array without empty arrays.
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public
     */
     public static function removeEmptyArrayFromArray($array){
-        if(!Functions::isArray($array)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($array)) throw Functions::illegalArguments(__METHOD__);
         return array_values(array_filter($array,__CLASS__.'::isNotEmptyArray'));
     }
 
@@ -231,11 +233,11 @@ class Functions
     *
     * @param array $array The array of elements to create a set from.
     * @return Set A new set with the elements from the array.
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public
     */
     public static function createSetFromArray($array){
-        if(!Functions::isArray($array)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($array)) throw Functions::illegalArguments(__METHOD__);
         $result= new Set([]);
         foreach ($array as $value) {
             $result->add($value);
@@ -249,11 +251,11 @@ class Functions
     *
     * @param Map $map The map of sets to create a base set from.
     * @return Set A new set that is the union of all the sets in the map.
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public
     */
     public static function createBaseSet($map){
-        if(!Functions::isMap($map)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isMap($map)) throw Functions::illegalArguments(__METHOD__);
         $sets=array_filter($map->values(),__CLASS__.'::isSet');
         return Functions::union(...$sets);
     }
@@ -266,13 +268,13 @@ class Functions
     * @param Closure|null $filterformula The formula that filters the elements in the range. Optional, default null.
     * @param Closure|null $formula The formula that generates the elements in the range. Optional, default null.
     * @return Set A new set with the elements generated and filtered by the formulas.
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public
     */
     public static function createSetFromFormula($start,$end,$filterformula=null, $formula=null){
         if(!Functions::isWholeNumber($start) || !Functions::isWholeNumber($end)
         ||(!Functions::isFunction($filterformula)&&!Functions::isNull($filterformula))
-        ||(!Functions::isFunction($formula)&&!Functions::isNull($formula))) return Functions::illegalArguments(__METHOD__);
+        ||(!Functions::isFunction($formula)&&!Functions::isNull($formula))) throw Functions::illegalArguments(__METHOD__);
         $numbers=range($start,$end);
         if($filterformula!==null){
             $numbers=array_filter($numbers,$filterformula);
@@ -291,11 +293,11 @@ class Functions
     *
     * @param Set $set The set to check.
     * @return bool True if the set is empty, false otherwise.
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public
     */
     public static function isEmpty($set){
-        if(!Functions::isSet($set)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isSet($set)) return false;
         return $set->size()===0;
     }
 
@@ -305,11 +307,11 @@ class Functions
     * @param int $element The element to check.
     * @param Set $set The set to check.
     * @return bool True if the element is an element of the set, false otherwise.
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public
     */
     public static function isElementOf($element,$set){
-        if(!Functions::isSet($set) || !Functions::isWholeNumber($element)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isSet($set) || !Functions::isWholeNumber($element)) return false;
         return $set->has($element);
     }
 
@@ -319,11 +321,11 @@ class Functions
     * @param int $element The element to check.
     * @param Set $set The set to check.
     * @return bool True if the element is an element of the set, false otherwise.
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public
     */
     public static function isNotElementOf($element,$set){
-        if(!Functions::isSet($set) || !Functions::isWholeNumber($element)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isSet($set) || !Functions::isWholeNumber($element)) return false;
         return !Functions::isElementOf($element,$set);
     }
 
@@ -333,11 +335,11 @@ class Functions
     * @param Set $seta The first set.
     * @param Set $setb The second set.
     * @return Set A new set that contains the elements that are in the first set but not in the second set.
-    * @throws InvalidArgumentException If the arguments are not valid sets.
+    * @throws LibException If the arguments are not valid sets.
     * @public
     */
     public static function difference($seta,$setb){
-        if(!Functions::isSet($seta) || !Functions::isSet($setb)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isSet($seta) || !Functions::isSet($setb)) throw Functions::illegalArguments(__METHOD__);
         $result= new Set([]);
         foreach ($seta as $value) {
             if(!$setb->has($value)){
@@ -353,11 +355,11 @@ class Functions
     * @param Set $seta The first set.
     * @param Set $setb The second set.
     * @return bool True if the two sets have the same elements, false otherwise.
-    * @throws InvalidArgumentException If the arguments are not valid sets.
+    * @throws LibException If the arguments are not valid sets.
     * @public
     */
     public static function areEqual($seta,$setb){
-        if(!Functions::isSet($seta) || !Functions::isSet($setb)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isSet($seta) || !Functions::isSet($setb)) return false;
         return Functions::isEmpty(Functions::difference($seta,$setb)) && Functions::isEmpty(Functions::difference($setb,$seta));
     }
 
@@ -367,11 +369,11 @@ class Functions
     * @param Set $seta The subset candidate.
     * @param Set $setb The superset candidate.
     * @return bool True if every element of the first set is also an element of the second set, false otherwise.
-    * @throws InvalidArgumentException If the arguments are not valid sets.
+    * @throws LibException If the arguments are not valid sets.
     * @public
     */
     public static function isSubsetOf($seta,$setb){
-        if(!Functions::isSet($seta) || !Functions::isSet($setb)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isSet($seta) || !Functions::isSet($setb)) return false;
         foreach ($seta as $value) {
             if(!$setb->has($value)){
               return false;
@@ -386,11 +388,11 @@ class Functions
     * @param Set $seta The proper subset candidate.
     * @param Set $setb The proper superset candidate.
     * @return bool True if the first set is a subset of the second set and they are not equal, false otherwise.
-    * @throws InvalidArgumentException If the arguments are not valid sets.
+    * @throws LibException If the arguments are not valid sets.
     * @public
     */
     public static function isRealSubsetOf($seta,$setb){
-        if(!Functions::isSet($seta) || !Functions::isSet($setb)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isSet($seta) || !Functions::isSet($setb)) return false;
         return Functions::isSubsetOf($seta,$setb) && !Functions::areEqual($seta,$setb);
     }
 
@@ -400,11 +402,11 @@ class Functions
     * @param Set $set The set to complement.
     * @param Set $universe The set that contains the set to complement.
     * @return Set A new set that contains the elements that are in the universe but not in the set.
-    * @throws InvalidArgumentException If the arguments are not valid sets.
+    * @throws LibException If the arguments are not valid sets.
     * @public
     */
     public static function complement($set,$universe){
-        if(!Functions::isSet($set) || !Functions::isSet($universe)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isSet($set) || !Functions::isSet($universe)) throw Functions::illegalArguments(__METHOD__);
         return Functions::difference($universe,$set);
     }
 
@@ -413,12 +415,12 @@ class Functions
     *
     * @param array ...$sets The sets to union.
     * @return Set A new set that contains the elements that are in any of the sets.
-    * @throws InvalidArgumentException If any of the arguments is not a valid set.
+    * @throws LibException If any of the arguments is not a valid set.
     * @public
     */
     public static function union(...$sets){
         foreach ($sets as $set) {
-           if(!Functions::isSet($set)) return Functions::illegalArguments(__METHOD__);
+           if(!Functions::isSet($set)) throw Functions::illegalArguments(__METHOD__);
         }
         $result=new Set([]);
         foreach ($sets as $set) {
@@ -434,12 +436,12 @@ class Functions
     *
     * @param array ...$sets The sets to intersect.
     * @return Set A new set that contains the elements that are in all of the sets.
-    * @throws InvalidArgumentException If any of the arguments is not a valid set.
+    * @throws LibException If any of the arguments is not a valid set.
     * @public
     */
     public static function intersection(...$sets){
         foreach ($sets as $set) {
-            if(!Functions::isSet($set)) return Functions::illegalArguments(__METHOD__);
+            if(!Functions::isSet($set)) throw Functions::illegalArguments(__METHOD__);
         }
         $result=[...$sets[0]];
         foreach ($sets as $set) {
@@ -453,11 +455,11 @@ class Functions
     *
     * @param Set $set The set to measure.
     * @return int The number of elements in the set.
-    * @throws InvalidArgumentException If the argument is not a valid set.
+    * @throws LibException If the argument is not a valid set.
     * @public
     */
     public static function cardinality($set){
-        if(!Functions::isSet($set)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isSet($set)) throw Functions::illegalArguments(__METHOD__);
         return $set->size();
     }
 
@@ -467,11 +469,11 @@ class Functions
     * @param int $element The element to add. 
     * @param Set $set The set to add to. 
     * @return bool True if the element was added successfully, false otherwise. 
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public 
     */
     public static function addElement($element,$set){
-        if(!Functions::isSet($set) || !Functions::isWholeNumber($element)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isSet($set) || !Functions::isWholeNumber($element)) throw Functions::illegalArguments(__METHOD__);
         $oldSize=$set->size();
         return $set->has($element) || $set->add($element)->size()===$oldSize+1;
     }
@@ -482,11 +484,11 @@ class Functions
     * @param int $element The element to delete. 
     * @param Set $set The set to delete from. 
     * @return bool True if the element was deleted successfully, false otherwise. 
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public 
     */
     public static function deleteElement($element,$set){
-        if(!Functions::isSet($set) || !Functions::isWholeNumber($element)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isSet($set) || !Functions::isWholeNumber($element)) throw Functions::illegalArguments(__METHOD__);
         $oldSize=$set->size();
         return !$set->has($element) || $set->delete($element)->size()===$oldSize-1;
     }
@@ -497,11 +499,11 @@ class Functions
     * @param int $number The number to check divisibility for. 
     * @param string $operation The operation to use for divisibility. Can be either Token::DIVIDE['value'] or Token::DOESNOTDIVIDE['value'].
     * @return Closure A function that takes a number as an argument and returns true if it satisfies the divisibility condition, false otherwise. 
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public 
     */
     public static function createDivisibilityCondition($number, $operation){
-        if(!Functions::isWholeNumber($number)||!Functions::IsGoodOperation($operation,array(Token::DIVIDES['value'],Token::DOESNOTDIVIDE['value']))) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isWholeNumber($number)||!Functions::isGoodOperation($operation,array(Token::DIVIDES['value'],Token::DOESNOTDIVIDE['value']))) throw Functions::illegalArguments(__METHOD__);
         return $operation===Token::DIVIDES['value']? function($num) use($number){ return $num%$number===0;}:function($num)use($number){ return $num%$number!==0;};
     }
 
@@ -510,15 +512,15 @@ class Functions
     *
     * @param array $rhsparts The right-hand side parts of the logical expression. 
     * @return array An associative array of functions that can be applied to the right-hand side variables or constants.
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public
     */
     public static function processLogicalRhs($rhsparts){
         $rhsfuncs=[];
-        if(!Functions::isArray($rhsparts)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($rhsparts)) throw Functions::illegalArguments(__METHOD__);
         if(isset($rhsparts['num'])&&isset($rhsparts['simpleop'])&&isset($rhsparts['id'])){
-            if(!Functions::isWholeNumber($rhsparts['num'])||!Functions::IsGoodOperation($rhsparts['simpleop'],
-            array(Token::PLUS['value'],Token::MINUS['value'],Token::MULTIPLY['value'],Token::DIVIDE['value']))) return Functions::illegalArguments(__METHOD__);
+            if(!Functions::isWholeNumber($rhsparts['num'])||!Functions::isGoodOperation($rhsparts['simpleop'],
+            array(Token::PLUS['value'],Token::MINUS['value'],Token::MULTIPLY['value'],Token::DIVIDE['value']))) throw Functions::illegalArguments(__METHOD__);
             switch ($rhsparts['simpleop']) {
                 case (Token::PLUS['value']):
                     $rhsfuncs[$rhsparts['id']][]=function($var) use($rhsparts) {return $var + $rhsparts['num']; };
@@ -530,7 +532,7 @@ class Functions
                     $rhsfuncs[$rhsparts['id']][]=function($var) use($rhsparts) {return $var * $rhsparts['num']; };
                     break;
                 case (Token::DIVIDE['value']):
-                    $rhsfuncs[$rhsparts['id']][]=function($var) use($rhsparts) {return $rhsparts['num']!==0? $var / $rhsparts['num'] :Functions::illegalArguments('Functions::processLogicalRhs');};
+                    $rhsfuncs[$rhsparts['id']][]=function($var) use($rhsparts) {return $rhsparts['num']!==0? $var / $rhsparts['num'] :throw new DividedByZeroException('Functions::processLogicalRhs');};
                     break;
             }
         }
@@ -546,7 +548,7 @@ class Functions
                     $rhsfuncs['constant']=function() use($rhsparts) {$nums=$rhsparts['num'];return $nums[0] * $nums[1]; };
                     break;
                 case (Token::DIVIDE['value']):
-                    $rhsfuncs['constant']=function() use($rhsparts) {$nums=$rhsparts['num'];return $nums[1]!==0?$nums[0] / $nums[1] :Functions::illegalArguments('Functions::processLogicalRhs');};
+                    $rhsfuncs['constant']=function() use($rhsparts) {$nums=$rhsparts['num'];return $nums[1]!==0?$nums[0] / $nums[1] :throw new DividedByZeroException('Functions::processLogicalRhs');};
                     break;
             }
         }
@@ -562,11 +564,11 @@ class Functions
     * @param string $comparsionop The comparison operator to use. Can be one of the Token constants: LESSTHAN, GREATERTHAN, LESSTHANOREQUAL, GREATERTHANOREQUAL, or EQUAL.
     * @param array $logicalrhsfuncs An associative array of functions that can be applied to the right-hand side variables or constants.
     * @return Closure A function that takes a variable as an argument and returns true if it satisfies the comparison condition, false otherwise.
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public
     */
     public static function createComparsionCondition($comparsionop,$logicalrhsfuncs){
-        if(!Functions::isString($comparsionop)||!Functions::isArray($logicalrhsfuncs)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isString($comparsionop)||!Functions::isArray($logicalrhsfuncs)) throw Functions::illegalArguments(__METHOD__);
         switch ($comparsionop) {
             case (Token::LESSTHAN['value']):
                 $compCond=function($var) use($logicalrhsfuncs) {$constantrhs=$logicalrhsfuncs['constant'];return $var <  $constantrhs();};
@@ -593,12 +595,12 @@ class Functions
     * @param string $simpleop The simple arithmetic operator to use. Can be one of the Token constants: PLUS, MINUS, MULTIPLY, or DIVIDE.
     * @param int $num The number to use for the arithmetic operation.
     * @return Closure A function that takes a variable as an argument and returns the result of applying the arithmetic operation with the number.
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public
     */
     public static function createUserFunction($simpleop,$num){
-        if(!Functions::isWholeNumber($num)||!Functions::IsGoodOperation($simpleop, array(Token::PLUS['value'],Token::MINUS['value'],
-        Token::MULTIPLY['value'],Token::DIVIDE['value']))) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isWholeNumber($num)||!Functions::isGoodOperation($simpleop, array(Token::PLUS['value'],Token::MINUS['value'],
+        Token::MULTIPLY['value'],Token::DIVIDE['value']))) throw Functions::illegalArguments(__METHOD__);
         switch ($simpleop) {
             case (Token::PLUS['value']):
                 $userfunc=function($var) use($num) {return $var + $num; };
@@ -610,7 +612,7 @@ class Functions
                 $userfunc=function($var) use($num) {return $var * $num; };
                 break;
             case (Token::DIVIDE['value']):
-                $userfunc=function($var) use($num) {return $num!==0? $var / $num :Functions::illegalArguments('Functions::processLogicalRhs'); };
+                $userfunc=function($var) use($num) {return $num!=0? $var / $num :throw new DividedByZeroException('Trying to divide by zero in a user defined function.');};
                 break;
         }
         return $userfunc;
@@ -622,15 +624,15 @@ class Functions
     *
     * @param array $partsToConcat The parts of the conditions to be concatenated. 
     * @return array An associative array that represents the tree structure of the conditions. 
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public
     */
     public static function transformConditionsToTree($partsToConcat){
-        if(!Functions::isArray($partsToConcat)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($partsToConcat)) throw Functions::illegalArguments(__METHOD__);
         $varname=array_diff(array_keys($partsToConcat),array('logicalop'));
         if(isset($partsToConcat['logicalop'])){
-            if(!Functions::IsGoodOperation($partsToConcat['logicalop'],
-            array(Token::LAND['value'],Token::LOR['value']))) return Functions::illegalArguments(__METHOD__);
+            if(!Functions::isGoodOperation($partsToConcat['logicalop'],
+            array(Token::LAND['value'],Token::LOR['value']))) throw Functions::illegalArguments(__METHOD__);
             
             if(isset($partsToConcat['subexp'])) {
                 switch ($partsToConcat['logicalop']) {
@@ -669,11 +671,11 @@ class Functions
     *
     * @param array $obj The object to collect the bound values from. 
     * @return array An array of the bound values. 
-    * @throws InvalidArgumentException If the argument is not valid.
+    * @throws LibException If the argument is not valid.
     * @public
     */
     public static function collectBounds($obj) {
-        if(!Functions::isArray($obj)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($obj)) throw Functions::illegalArguments(__METHOD__);
         $bounds = array(); 
         foreach ($obj as $prop => $value){
             if(strpos($prop,'boundfunc')!==false){
@@ -692,11 +694,11 @@ class Functions
     *
     * @param array $obj The object to collect the bound functions from. 
     * @return array An array of the bound functions. 
-    * @throws InvalidArgumentException If the argument is not valid.
+    * @throws LibException If the argument is not valid.
     * @public
     */
     public static function collectBoundFuncs($obj) {
-        if(!Functions::isArray($obj)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($obj)) throw Functions::illegalArguments(__METHOD__);
         $boundfuncs = array(); 
         foreach ($obj as $key=>$value){
             if((strpos($key,'boundfunc')!==false&&Functions::isArray($value))||(strpos($key,'dividesfunc')!==false&&Functions::isArray($value))){
@@ -721,7 +723,7 @@ class Functions
     *
     * @param array $arr The array of operators to process.
     * @return array A new array with the duplicated operators removed.
-    * @throws InvalidArgumentException If the $arr parameter is not an array.
+    * @throws LibException If the $arr parameter is not an array.
     */
 
     public static function removeDuplicatedOperator($arr){
@@ -739,11 +741,11 @@ class Functions
     *
     * @param array $boundfuncswithop The bound functions with logical operators to concatenate. 
     * @return Closure A function that takes a variable as an argument and returns true if it satisfies the concatenated bound conditions, false otherwise. 
-    * @throws InvalidArgumentException If the argument is not valid.
+    * @throws LibException If the argument is not valid.
     * @public
     */
     public static function concatBoundConditions($boundfuncswithop){
-        if(!Functions::isArray($boundfuncswithop)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($boundfuncswithop)) throw Functions::illegalArguments(__METHOD__);
         if(!(array_search('(',$boundfuncswithop)!==false&&array_search(')',$boundfuncswithop)!==false)){        
             while ($index=array_search("&&",$boundfuncswithop)) {
                 $indexbefore=$index-1;
@@ -784,11 +786,11 @@ class Functions
     *
     * @param array $obj The object to get the function definition from.
     * @return Closure|null The function definition as a closure, or null if not found.
-    * @throws InvalidArgumentException If the argument is not valid.
+    * @throws LibException If the argument is not valid.
     * @public
     */
     public static function getFuncDef($obj){
-        if(!Functions::isArray($obj)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($obj)) throw Functions::illegalArguments(__METHOD__);
        $key=array_filter(array_keys($obj),function ($var)  {
              return str_contains($var,'funcdef');
         });
@@ -842,11 +844,11 @@ class Functions
     *
     * @param array $array The array to get the minimum and maximum values from.
     * @return array An associative array with keys 'start' and 'end' that contain the minimum and maximum values respectively.
-    * @throws InvalidArgumentException If the argument is not valid.
+    * @throws LibException If the argument is not valid.
     * @public
     */
     public static function getMinMax($array){
-        if(!Functions::isArray($array)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($array)) throw Functions::illegalArguments(__METHOD__);
         return [
             'start'=>min($array),
             'end'=>max($array)
@@ -858,11 +860,11 @@ class Functions
     *
     * @param array $array The array that represents the set expression. It can contain sets, operators, or parentheses.
     * @return mixed The result of evaluating the set expression. It can be a set, a boolean, or null if the expression is invalid.
-    * @throws InvalidArgumentException If the argument is not valid.
+    * @throws LibException If the argument is not valid.
     * @public
     */
     public static function evaluateSetExpression($array){
-        if(!Functions::isArray($array)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($array)) throw Functions::illegalArguments(__METHOD__);
         if(!(array_search('(',$array)!==false&&array_search(')',$array)!==false)){
             
             if(count($array)==1){
@@ -878,6 +880,9 @@ class Functions
 
             if(count($operations)>1){
                 while ($index=array_search(Token::COMPLEMENT['value'],$operations)) {
+                    if(Parser::getBaseSet()===null){
+                        throw new UndefinedVariableException("H is not defined. Please define it and rerun the expression evaluation.");
+                    }
                     $result=Functions::complement($sets[$index-1],Parser::getBaseSet());
                     $sets[$index-1]=$result;
                     unset($operations[$index]);
@@ -969,6 +974,9 @@ class Functions
                         $result=Functions::intersection($sets[array_key_first($sets)],$sets[array_key_last($sets)]);
                         break;
                     case (Token::COMPLEMENT['value']):
+                        if(Parser::getBaseSet()===null){
+                            throw new UndefinedVariableException("H is not defined. Please define it and rerun the expression evaluation.");
+                        }
                         $result=Functions::complement($sets[array_key_first($sets)],Parser::getBaseSet());
                         break;   
                 }
@@ -1000,10 +1008,10 @@ class Functions
     *
     * @param array $array The array of tokens to evaluate.
     * @return numeric The result of the expression.
-    * @throws InvalidArgumentException If the $array parameter is not an array or is empty.
+    * @throws LibException If the $array parameter is not an array or is empty.
     */
     public static function evaluateSimpleExpression($array){
-        if(!Functions::isArray($array)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($array)) throw Functions::illegalArguments(__METHOD__);
         if(count($array)==1){
             return $array[0];
         }
@@ -1093,11 +1101,11 @@ class Functions
     *
     * @param array $array The array that represents the set expression. It can contain sets, operators, or parentheses.
     * @return array An array that contains only the non-empty sets in the set expression.
-    * @throws InvalidArgumentException If the argument is not valid.
+    * @throws LibException If the argument is not valid.
     * @public
     */
     public static function flatSetExpression($array){
-        if(!Functions::isArray($array)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($array)) throw Functions::illegalArguments(__METHOD__);
         $result = [];
         array_walk_recursive($array, function($value) use (&$result) {
             $result[] = $value;   
@@ -1111,11 +1119,11 @@ class Functions
     * @param array $array The array that represents the set formula. It can contain sets or logical operators.
     * @param string|null $op The optional operator to add to the flattened formula. Can be one of the Token constants value of LAND or LOR.
     * @return array An array that contains the flattened set formula with the optional operator.
-    * @throws InvalidArgumentException If the argument is not valid.
+    * @throws LibException If the argument is not valid.
     * @public
     */
     public static function flatSetFormula($array,$op=null){
-        if(!Functions::isArray($array)) return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($array)) throw Functions::illegalArguments(__METHOD__);
         $result = [];
         $oparray=[];
         if($op!==null){
@@ -1154,7 +1162,7 @@ class Functions
     *
     * @param array $array The array to extract the first element from each sub-array.
     * @return array An array that contains only the first element from each sub-array in the original array.
-    * @throws InvalidArgumentException If the argument is not valid.
+    * @throws LibException If the argument is not valid.
     * @public
     */
     public static function extractArrayFromArray($array){
@@ -1175,7 +1183,7 @@ class Functions
     *
     * @param array $array The array to re-append the variable name to its keys.
     * @return array An array that has its keys re-appended with the variable name.
-    * @throws InvalidArgumentException If the argument is not valid.
+    * @throws LibException If the argument is not valid.
     * @public
     */
     public static function reAppendVarnameToArrayKeys($array){
@@ -1199,7 +1207,7 @@ class Functions
     * @param array $array The array to append the variable name to its keys.
     * @param string $varname The variable name to append to the keys.
     * @return array An array that has its keys appended with the variable name.
-    * @throws InvalidArgumentException If the argument is not valid.
+    * @throws LibException If the argument is not valid.
     * @public
     */
     public static function appendVarnameToArrayKeys($array,$varname){
@@ -1215,15 +1223,15 @@ class Functions
     *
     * @param array ...$sets The sets to create the Venn diagram for. There must be either two or three sets as arguments.
     * @return string A base64 encoded PNG image of the Venn diagram.
-    * @throws InvalidArgumentException If the arguments are not valid.
+    * @throws LibException If the arguments are not valid.
     * @public
     */
     public static function Venn(...$sets){
-        if(count($sets)>3&&count($sets)<=0){
-            return Functions::illegalArguments(__METHOD__);
+        if(count($sets)>3||count($sets)<=0){
+            throw Functions::illegalArguments(__METHOD__);
         }
         foreach ($sets as $set) {
-            if(!Functions::isSet($set)) return Functions::illegalArguments(__METHOD__);
+            if(!Functions::isSet($set)) throw Functions::illegalArguments(__METHOD__);
         }
 
         $image=imagecreate(500,500);
@@ -1257,8 +1265,8 @@ class Functions
     <img src="'.$data.'"/>
 </body>
 </html>';
-        file_put_contents('C:/xampp/htdocs/php-parser-for-set-theory/images/image.html',$html);
-        return 'http://localhost/php-parser-for-set-theory/images/image.html';
+        file_put_contents(getenv('BASEPATH').'/images/image.html',$html);
+        return getenv('BASEURL').'/images/image.html';
     }
 
     /**
@@ -1273,13 +1281,13 @@ class Functions
     *
     * @param array $array The array to be separated.
     * @return array An associative array with three keys: 'sets', 'operations', and 'numbers'.
-    * @throws InvalidArgumentException If the argument is not an array.
+    * @throws LibException If the argument is not an array.
     * @private
     *
     * @codeCoverageIgnore
     */
     private static function separateOperandsAndOperations($array){
-        if(!Functions::isArray($array))  return Functions::illegalArguments(__METHOD__);
+        if(!Functions::isArray($array))  throw Functions::illegalArguments(__METHOD__);
         $sets=[];
         $numbers=[];
         $operations=[];

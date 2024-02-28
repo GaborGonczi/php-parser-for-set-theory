@@ -5,7 +5,8 @@ use \core\lib\datastructures\Point;
 use \core\lib\PointSetDiagramFunctions;
 use \core\lib\PointSetDiagramOptions;
 use \core\lib\datastructures\Set;
-
+use core\lib\exception\WrongArgumentException;
+use \app\server\classes\Env;
 class PointSetDiagramFunctionsTest extends TestCase
 {
 
@@ -14,6 +15,7 @@ class PointSetDiagramFunctionsTest extends TestCase
 
     protected function setUp(): void
     {
+        (new Env(dirname(dirname(dirname(dirname(__FILE__)))).'/.env',true))->load();
         $this->image = imagecreate(100, 100);
     }
 
@@ -67,8 +69,7 @@ class PointSetDiagramFunctionsTest extends TestCase
         if ($expected) {
             $this->assertTrue(PointSetDiagramFunctions::isPointArray($points));
         } else {
-            $this->expectException(InvalidArgumentException::class);
-            PointSetDiagramFunctions::isPointArray($points);
+            $this->assertFalse(PointSetDiagramFunctions::isPointArray($points));
         }
     }
 
@@ -93,8 +94,7 @@ class PointSetDiagramFunctionsTest extends TestCase
         if ($expected) {
             $this->assertTrue(PointSetDiagramFunctions::isPointSet($points));
         } else {
-            $this->expectException(InvalidArgumentException::class);
-            PointSetDiagramFunctions::isPointSet($points);
+            $this->assertFalse(PointSetDiagramFunctions::isPointSet($points));
         }
     }
 
@@ -116,7 +116,7 @@ class PointSetDiagramFunctionsTest extends TestCase
         $this->assertEquals(3, $set->size());
 
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
         PointSetDiagramFunctions::addPointElement('a', 'b');
     }
 
@@ -139,7 +139,7 @@ class PointSetDiagramFunctionsTest extends TestCase
         $this->assertEquals(1, $set->size());
 
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
         PointSetDiagramFunctions::deletePointElement('a', 'b');
 
     }
@@ -165,7 +165,7 @@ class PointSetDiagramFunctionsTest extends TestCase
         if ($expected) {
             $this->assertEquals($expected, PointSetDiagramFunctions::createSetFromPointArray($points));
         } else {
-            $this->expectException(InvalidArgumentException::class);
+            $this->expectException(WrongArgumentException::class);
             PointSetDiagramFunctions::createSetFromPointArray($points);
         }
     }
@@ -219,8 +219,14 @@ class PointSetDiagramFunctionsTest extends TestCase
         $points = new Set([new Point(1, 2), new Point(-3, 4), new Point(0, 0)]);
         $options = new PointSetDiagramOptions();
 
-
         $imageData = PointSetDiagramFunctions::pointSetDiagram($points, $options);
+        $imageData=str_replace(getenv('BASEURL'),getenv('BASEPATH'),$imageData);
+        
+        $this->assertNotFalse(file_exists($imageData));
+        $content=file_get_contents($imageData);
+        $start=strpos($content,"data:image/png");
+        $end=strpos($content,'"',$start);
+        $imageData=substr($content,$start,$end-$start);
         $imageData = substr($imageData, strlen('data:image/png;base64,'));
         $imageData = base64_decode($imageData);
 

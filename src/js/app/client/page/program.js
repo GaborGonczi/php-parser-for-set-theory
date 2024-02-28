@@ -6,7 +6,8 @@ import { Point } from "../datastructures/Point.js";
 const downloadbtn=document.querySelector('#download');
 const printbtn=document.querySelector('#print');
 const opButtons=document.querySelectorAll('.operator');
-const mode=document.querySelector('.switch input');
+const mode=document.querySelector('.switch input#mode');
+const dfa=document.querySelector('.switch input#dfa');
 const loadfile=document.querySelector('#load');
 const variables=document.querySelector('#variables textarea');
 const newbtn=document.querySelector('#new');
@@ -46,18 +47,18 @@ function setVars(data){
     let vars=data.variables;
     let varstr='';
     for (let index = 0; index < vars.length; index++) {
-        let element = vars[index];
-        for (const key in element) {
-            varstr+=`${key} (${element[key].name}) : `;
-            if(element[key].name==="Set"){
-                let elements=element[key].elements;
-                let set=new ExtendedSet(elements.map(element=>getObjectElement(element)));
-                varstr+=set.toString();
-            }
-            else if(element[key].name==="Point"){
-                let point=new Point(element[key].x,element[key].y);
-                varstr+=point.toString();
-            }
+        const variable = vars[index];
+        let name=Object.keys(variable).shift();
+        let value=variable[name];
+        varstr+=`${name} (${value.name}) : `;
+        if(value.name==="Set"){
+            let elements=value.elements;
+            let set=new ExtendedSet(elements.map(element=>getObjectElement(element)));
+            varstr+=set.toString();
+        }
+        else if(value.name==="Point"){
+            let point=new Point(value.x,value.y);
+            varstr+=point.toString();
         }
         varstr+='\n';
     }
@@ -74,7 +75,7 @@ function save(e){
     let element=e.target;
     let statement= element.innerText||element.value;
     let startpos=0;
-    let id=null
+    let id=null;
     statement.replace(/\n/g, "");
     element.innerHTML=statement;
     element.innerText=statement;
@@ -94,16 +95,17 @@ function save(e){
     
     let start=startpos;
     let end=start+statement.length;
-    let noparse=mode.checked
+    let noparse=mode.checked;
+    let gdfa=dfa.checked;
     statement=encodeHtmlEntities(statement);
    
-    let data={id:id,statement:statement,start:start, end:end,noparse:noparse,row:row,beforelogs:logs};
+    let data={id:id,statement:statement,start:start, end:end,noparse:noparse,row:row,beforelogs:logs,gdfa:gdfa};
 
     postData(data,CONSTANTS.parseUrl).then(data=>{
-        fillTemplate(data)
+        fillTemplate(data);
         setVars(data);
 
-    })
+    });
     
 
 }
@@ -197,6 +199,13 @@ function edit(e){
         elem.removeEventListener("keydown",save);
         elem.setAttribute("contenteditable", "true");
         elem.addEventListener("keydown",save);  
+    }
+    else{
+        let statements=document.querySelectorAll('p.statement');
+        statements.forEach(element=>{
+            element.removeEventListener("keydown",save);
+            element.setAttribute("contenteditable", "false")
+        });
     }
 }
 function log(e){

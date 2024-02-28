@@ -2,9 +2,16 @@
 
 use \PHPUnit\Framework\TestCase;
 use \core\parser\Token;
+use \app\server\classes\Env;
+
 
 class TokenTest extends TestCase
 {
+
+    public function setUp():void
+    {
+        (new Env(dirname(dirname(dirname(dirname(__FILE__)))).'/.env',true))->load();
+    }
 
     /**
      * @dataProvider constantProvider

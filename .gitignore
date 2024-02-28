@@ -366,11 +366,10 @@ FodyWeavers.xsd
 vendor/
 
 #.env
-.env
+.env*
 
 #sql
-sql.sql
-seed.sql
+*.sql
 
 #loc statistics
 .VSCodeCounter/

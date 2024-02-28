@@ -1,15 +1,23 @@
 <?php
 
-use core\lib\datastructures\Map;
+use \core\lib\datastructures\Map;
 use \core\lib\datastructures\Point;
+use core\lib\exception\DividedByZeroException;
+use core\lib\exception\WrongArgumentException;
 use \PHPUnit\Framework\TestCase;
 use \core\lib\Functions;
 use \core\lib\datastructures\Set;
 use \core\parser\Token;
-use core\Regexp;
+use \app\server\classes\Env;
 
 class FunctionsTest extends TestCase
 {
+    
+
+    protected function setUp():void
+    {
+        (new Env(dirname(dirname(dirname(dirname(__FILE__)))).'/.env',true))->load();
+    }
 
     /**
      * @covers \core\lib\Functions::isNumber
@@ -172,9 +180,7 @@ class FunctionsTest extends TestCase
         $this->assertFalse(Functions::IsGoodOperation('*', $goodoperations));
         $this->assertFalse(Functions::IsGoodOperation('/', $goodoperations));
 
-
-        $this->expectException(InvalidArgumentException::class);
-        Functions::IsGoodOperation(1, "not an array");
+        $this->assertFalse(Functions::IsGoodOperation(1, "not an array"));
     }
     /**
      * @covers \core\lib\Functions::removeNullFromArray
@@ -185,7 +191,7 @@ class FunctionsTest extends TestCase
         $this->assertIsArray(Functions::removeNullFromArray([]));
 
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
         Functions::removeNullFromArray("not an array");
 
 
@@ -197,7 +203,7 @@ class FunctionsTest extends TestCase
     public function testRemoveEmptyArrayFromArray(): void
     {
         $this->assertIsArray(Functions::removeEmptyArrayFromArray([]));
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
         Functions::removeEmptyArrayFromArray("not an array");
         $this->assertEquals([1, [2, 3], 4], Functions::removeEmptyArrayFromArray([1, [], [2, 3], [], 4]));
     }
@@ -216,7 +222,7 @@ class FunctionsTest extends TestCase
         }
 
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
         Functions::createSetFromArray('abc');
     }
 
@@ -242,7 +248,7 @@ class FunctionsTest extends TestCase
         }
 
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
         Functions::createSetFromFormula('a', 'b', 'c');
     }
 
@@ -259,8 +265,7 @@ class FunctionsTest extends TestCase
         $this->assertFalse(Functions::isEmpty(new Set([1, 2, 3])));
 
 
-        $this->expectException(InvalidArgumentException::class);
-        Functions::isEmpty(42);
+        $this->assertFalse(Functions::isEmpty(42));
     }
 
     /**
@@ -281,9 +286,8 @@ class FunctionsTest extends TestCase
 
 
 
-        $this->expectException(InvalidArgumentException::class);
-        Functions::isElementOf('abc', $set);
-        Functions::isElementOf('a', 'b');
+        $this->assertFalse(Functions::isElementOf('abc', $set));
+        $this->assertFalse(Functions::isElementOf('a', 'b'));
     }
 
     /**
@@ -304,9 +308,8 @@ class FunctionsTest extends TestCase
         $this->assertFalse(Functions::isNotElementOf(3, $set));
 
 
-        $this->expectException(InvalidArgumentException::class);
-        Functions::isNotElementOf('abc', $set);
-        Functions::isNotElementOf('a', 'b');
+        $this->assertFalse(Functions::isNotElementOf('abc', $set));
+        $this->assertFalse(Functions::isNotElementOf('a', 'b'));
     }
 
     /**
@@ -327,7 +330,7 @@ class FunctionsTest extends TestCase
             }
 
 
-            $this->expectException(InvalidArgumentException::class);
+            $this->expectException(WrongArgumentException::class);
             Functions::difference('a', 'b');
 
         }
@@ -352,8 +355,7 @@ class FunctionsTest extends TestCase
         $this->assertFalse(Functions::areEqual(new Set([1, 2]), new Set([1, 2, 3])));
 
 
-        $this->expectException(InvalidArgumentException::class);
-        Functions::areEqual('a', 'b');
+        $this->assertFalse(Functions::areEqual('a', 'b'));
     }
 
 
@@ -372,8 +374,7 @@ class FunctionsTest extends TestCase
         $this->assertFalse(Functions::isSubsetOf(new Set([1, 2, 3]), new Set([1, 2])));
 
 
-        $this->expectException(InvalidArgumentException::class);
-        Functions::isSubsetOf('a', 'b');
+        $this->assertFalse(Functions::isSubsetOf('a', 'b'));
     }
 
     /**
@@ -392,8 +393,7 @@ class FunctionsTest extends TestCase
         $this->assertFalse(Functions::isRealSubsetOf(new Set([1, 2, 3]), new Set([1, 2])));
 
 
-        $this->expectException(InvalidArgumentException::class);
-        Functions::isRealSubsetOf('a', 'b');
+        $this->assertFalse(Functions::isRealSubsetOf('a', 'b'));
     }
 
     /**
@@ -414,7 +414,7 @@ class FunctionsTest extends TestCase
             }
 
 
-            $this->expectException(InvalidArgumentException::class);
+            $this->expectException(WrongArgumentException::class);
             Functions::complement('a', 'b');
 
         }
@@ -437,7 +437,7 @@ class FunctionsTest extends TestCase
         }
 
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
         Functions::union('a', 'b', 'c');
     }
 
@@ -461,7 +461,7 @@ class FunctionsTest extends TestCase
         }
 
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
         Functions::intersection('a', 'b', 'c');
 
     }
@@ -477,7 +477,7 @@ class FunctionsTest extends TestCase
         $this->assertEquals(3, Functions::cardinality(new Set([1, 2, 3])));
 
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
         Functions::cardinality('a');
 
     }
@@ -498,7 +498,7 @@ class FunctionsTest extends TestCase
         $this->assertEquals(3, $set->size());
 
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
         Functions::addElement('a', 'b');
 
     }
@@ -519,7 +519,7 @@ class FunctionsTest extends TestCase
         $this->assertEquals(1, $set->size());
 
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
         Functions::deleteElement('a', 'b');
 
     }
@@ -550,7 +550,7 @@ class FunctionsTest extends TestCase
 
 
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
         Functions::createDivisibilityCondition('a', 'b');
     }
 
@@ -576,9 +576,9 @@ class FunctionsTest extends TestCase
         $this->assertArrayHasKey('constant', $output2);
         $this->assertIsCallable($output2['constant']);
         $output2Fun=$output2['constant'];
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(DividedByZeroException::class);
         $output2Fun();
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(DividedByZeroException::class);
         Functions::processLogicalRhs($input3);
     }
 
@@ -630,7 +630,7 @@ class FunctionsTest extends TestCase
         $this->assertFalse($equalCond($num3));
 
         
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
         Functions::createComparsionCondition('a', 'b');
     }
     /**
@@ -646,8 +646,27 @@ class FunctionsTest extends TestCase
         $this->assertSame($minmax2, Functions::getMinMax($bounds2));
 
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
         Functions::getMinMax('a');
+    }
+
+    /**
+     * @covers \core\lib\Functions::venn
+     * @uses \core\lib\datastructures\Set
+     */
+    public function testVennWithOneSet()
+    {
+
+        $setA = new Set([1, 2, 3]);
+
+
+        $image = Functions::venn($setA);
+
+
+        $this->assertNotNull($image);
+
+
+        $this->assertSame(file_get_contents(getenv('BASEPATH').'/images/image.html'), file_get_contents($image));
     }
 
     /**
@@ -667,7 +686,7 @@ class FunctionsTest extends TestCase
         $this->assertNotNull($image);
 
 
-        $this->assertStringStartsWith('data:image/png;base64,', $image);
+        $this->assertSame(file_get_contents(getenv('BASEPATH').'/images/image.html'), file_get_contents($image));
     }
 
     /**
@@ -677,9 +696,9 @@ class FunctionsTest extends TestCase
     public function testVennWithThreeSets()
     {
 
-        $setA = new set([1, 2, 3]);
-        $setB = new set([2, 3, 4]);
-        $setC = new set([3, 4, 5]);
+        $setA = new Set([1, 2, 3]);
+        $setB = new Set([2, 3, 4]);
+        $setC = new Set([3, 4, 5]);
 
 
         $image = Functions::venn($setA, $setB, $setC);
@@ -688,23 +707,22 @@ class FunctionsTest extends TestCase
         $this->assertNotNull($image);
 
 
-        $this->assertStringStartsWith('data:image/png;base64,', $image);
+        $this->assertSame(file_get_contents(getenv('BASEPATH').'/images/image.html'), file_get_contents($image));
     }
     /**
-     * @covers \core\lib\Functions::venn
+     * @covers \core\lib\Functions::Venn
      * @uses \core\lib\datastructures\Set
      */
     public function testVennWithMoreThanThreeSets()
     {
 
-        $setA = new set([1, 2, 3]);
-        $setB = new set([2, 3, 4]);
-        $setC = new set([3, 4, 5]);
-        $setD = new set([4, 5, 6]);
+        $setA = new Set([1, 2, 3]);
+        $setB = new Set([2, 3, 4]);
+        $setC = new Set([3, 4, 5]);
+        $setD = new Set([4, 5, 6]);
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(WrongArgumentException::class);
 
-        Functions::venn($setA, $setB, $setC, $setD);
-
+        Functions::Venn($setA, $setB, $setC, $setD);
     }
 }

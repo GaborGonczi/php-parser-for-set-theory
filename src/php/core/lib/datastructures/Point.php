@@ -1,7 +1,7 @@
 <?php
 namespace core\lib\datastructures;
 
-use \InvalidArgumentException;
+use \core\lib\exception\WrongArgumentException;
 use \JsonSerializable;
 use \ReflectionClass;
 use \core\lib\Functions;
@@ -33,11 +33,11 @@ class Point implements JsonSerializable{
     *
     * @param int|float $x The x-coordinate of the point.
     * @param int|float $y The y-coordinate of the point.
-    * @throws InvalidArgumentException If the arguments are not valid numbers.
+    * @throws WrongArgumentException If the arguments are not valid numbers.
     */
     public function __construct($x,$y) 
     {
-        if(!Functions::isNumber($x)||!Functions::isNumber($y)) Functions::illegalArguments(__METHOD__);
+        if(!Functions::isNumber($x)||!Functions::isNumber($y)) throw Functions::illegalArguments(__METHOD__);
         if(!Functions::isWholeNumber($x)||!Functions::isWholeNumber($y))
         {
             $this->x=round($x,0,PHP_ROUND_HALF_UP);

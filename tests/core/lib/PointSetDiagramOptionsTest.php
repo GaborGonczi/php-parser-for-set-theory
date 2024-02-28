@@ -2,6 +2,7 @@
 
 use \PHPUnit\Framework\TestCase;
 use \core\lib\PointSetDiagramOptions;
+use \app\server\classes\Env;
 
 class PointSetDiagramOptionsTest extends TestCase
 {
@@ -9,6 +10,7 @@ class PointSetDiagramOptionsTest extends TestCase
     
     protected function setUp(): void
     {
+        (new Env(dirname(dirname(dirname(dirname(__FILE__)))).'/.env',true))->load();
         $this->options = new PointSetDiagramOptions();
     }
     

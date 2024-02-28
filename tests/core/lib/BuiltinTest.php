@@ -1,6 +1,7 @@
 <?php
 
 use \PHPUnit\Framework\TestCase;
+use \app\server\classes\Env;
 
 class BuiltinTest extends TestCase
 {
@@ -9,6 +10,7 @@ class BuiltinTest extends TestCase
 
     protected function setUp(): void
     {
+        (new Env(dirname(dirname(dirname(dirname(__FILE__)))).'/.env',true))->load();
         $this->reflectionObject= new ReflectionClass("\core\lib\Builtin");
     }
     protected function tearDown(): void

@@ -49,6 +49,9 @@ class Set implements IteratorAggregate,JsonSerializable {
     {
         if(!empty($elements)){
             $elements=array_values($elements);
+            if(is_numeric($elements[0])){
+                $elements=array_map('floatval',$elements);
+            }
             $this->type=gettype($elements[0])!=='object'?gettype($elements[0]):get_class($elements[0]);
             $elements=array_filter($elements,function ($element) {
                 if(gettype($element)!=='object'){
@@ -73,6 +76,9 @@ class Set implements IteratorAggregate,JsonSerializable {
     */
     public function add($element)
     {
+        if(is_numeric($element)){
+            $element=floatval($element);
+        }
         if($this->type===null){
             $this->type=gettype($element)!=='object'?gettype($element):get_class($element);
         }

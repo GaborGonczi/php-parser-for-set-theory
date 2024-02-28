@@ -19,26 +19,29 @@ class SaveScript extends Runable
         $this->content = [];
     }
 
-    public function run()
+    public function run():string
     {
         
         if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'])) {
             $_SESSION['messages']['fileerror'] = 'A fájlazonosító hiányzik.';
             $this->redirectToProgram();
+            return "";
         }
         $fileid = $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'];
         if (!$this->isFileExistsWithCurrentUserIdAndId($fileid)) {
             $_SESSION['messages']['fileerror'] = 'A fájl nem található';
             $this->redirectToProgram();
+            return "";
         }
         $content['id'] = $fileid;
         if (!$this->isFileNotEmpty($fileid)) {
             $_SESSION['messages']['fileerror'] = 'A fájl üres';
             $this->redirectToProgram();
+            return "";
         }
         $expressions = $this->getFileContent($fileid);
         foreach ($expressions as $expression) {
-            $content['expressions'][] = json_encode(new Expression(...array_values($expression)));
+            $content['expressions'][] = new Expression(...array_values($expression));
         }
         return json_encode($content);
 
