@@ -1510,7 +1510,7 @@ class Parser
                 $arg = $this->argument();
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'arguments_');
                 $rest = $this->arguments_();
-                $result = Functions::removeEmptyArrayFromArray([...$arg, $rest]);
+                $result = Functions::isObject($arg) ? Functions::removeEmptyArrayFromArray([$arg, $rest]):Functions::removeEmptyArrayFromArray([...$arg, $rest]);
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             default:
@@ -1819,6 +1819,7 @@ class Parser
                 $this->match(')');
                 if ($name === 'Venn') {
                     $result = Functions::$name(...$arguments);
+
                 } else if ($name === 'PointSetDiagram') {
                     if (PointSetDiagramFunctions::isPointSetArray($arguments)) {
                         $argumentSet = Functions::union(...$arguments);

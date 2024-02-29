@@ -24,6 +24,6 @@ if($installerInstance){
     $installerInstance=null;
 }
 echo "Installation completed successfully.";
-//unlink('szakdolgozat.sql');
-//unlink('seed.sql');
-//unlink(__FILE__);
+unlink('szakdolgozat.sql');
+unlink('seed.sql');
+unlink(__FILE__);
