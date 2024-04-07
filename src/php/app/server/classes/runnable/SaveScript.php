@@ -7,15 +7,16 @@ use \app\server\classes\model\User;
 use \app\server\classes\model\Expression;
 
 use \utils\Rootfolder;
+use utils\Lang;
 
 class SaveScript extends Runnable
 {
 
     private array $content;
 
-    public function __construct(User $authedUser, Database $db)
+    public function __construct(User $authedUser, Database $db,string $lang='hun')
     {
-        parent::__construct($authedUser, $db);
+        parent::__construct($authedUser, $db,$lang);
         $this->content = [];
     }
 
@@ -23,19 +24,19 @@ class SaveScript extends Runnable
     {
         
         if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'])) {
-            $_SESSION['messages']['fileerror'] = 'A fájlazonosító hiányzik.';
+            $_SESSION['messages']['fileerror'] =Lang::getString('missingFileIdErrorSave',$this->lang);
             $this->redirectToProgram();
             return "";
         }
         $fileid = $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'];
         if (!$this->isFileExistsWithCurrentUserIdAndId($fileid)) {
-            $_SESSION['messages']['fileerror'] = 'A fájl nem található';
+            $_SESSION['messages']['fileerror'] =Lang::getString('missingFileErrorSave',$this->lang);
             $this->redirectToProgram();
             return "";
         }
         $content['id'] = $fileid;
         if (!$this->isFileNotEmpty($fileid)) {
-            $_SESSION['messages']['fileerror'] = 'A fájl üres';
+            $_SESSION['messages']['fileerror'] =Lang::getString('emptyFileErrorSave',$this->lang); 'A fájl üres';
             $this->redirectToProgram();
             return "";
         }

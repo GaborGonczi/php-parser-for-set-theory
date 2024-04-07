@@ -9,12 +9,13 @@ use \app\server\classes\model\User;
 use \DateTime;
 
 use \utils\Rootfolder;
+use utils\Lang;
 
 class QuestionnaireScript extends Runnable
 {
-    public function __construct(User $authedUser, Database $db)
+    public function __construct(User $authedUser, Database $db,string $lang='hun')
     {
-        parent::__construct($authedUser, $db);
+        parent::__construct($authedUser, $db,$lang);
     }
 
     public function run():string
@@ -28,16 +29,16 @@ class QuestionnaireScript extends Runnable
             $questionnaireModel= new Questionaire(null,$this->user->getId(),json_encode($_POST),date('Y-m-d H:i:s', (new DateTime('now'))->getTimestamp()), date('Y-m-d H:i:s', (new DateTime('now'))->getTimestamp()), null);
             $id=$this->isQuestionnaireCreated($questionnaireModel->getAsAssociativeArray());
             if($id){
-                $_SESSION['messages']['questionnairemessage_success']="Köszönöm, hogy a kérdőív kitöltésével támogattad a diplomamunkám elkészítését.";
+                $_SESSION['messages']['questionnairemessage_success']=Lang::getString('questionnairemessageSuccess',$this->lang);
                 $this->redirectToQuestionnaire();
                 return "";
             }
-            $_SESSION['messages']['questionnairemessage_error']="Hiba történt a kérdőív mentése közben.";
+            $_SESSION['messages']['questionnairemessage_error']=Lang::getString('questionnairemessageError',$this->lang);
             $this->redirectToQuestionnaire();
             return "";
         }
         else {
-           $_SESSION['messages']['questionnairemessage_success']="Köszönöm, hogy a kérdőív kitöltésével támogattad a diplomamunkám elkészítését.";
+           $_SESSION['messages']['questionnairemessage_success']=Lang::getString('questionnairemessageSuccess',$this->lang);
            $this->redirectToQuestionnaire();
            return "";
         }

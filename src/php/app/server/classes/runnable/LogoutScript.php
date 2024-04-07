@@ -6,8 +6,8 @@ use app\server\classes\model\User;
 use \utils\Rootfolder;
 
 class LogoutScript extends Runnable{
-    public function __construct( User $user= null, Database $db = null){
-        parent::__construct($user, $db);
+    public function __construct( User $user= null, Database $db = null,string $lang='hun'){
+        parent::__construct($user, $db,$lang);
     }
     public function run() :string{
         session_unset();

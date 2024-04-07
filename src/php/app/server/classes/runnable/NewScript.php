@@ -10,9 +10,9 @@ use \DateTime;
 
 class NewScript extends Runnable
 {
-    public function __construct(User $authedUser, Database $db)
+    public function __construct(User $authedUser, Database $db,string $lang='hun')
     {
-        parent::__construct($authedUser, $db);
+        parent::__construct($authedUser, $db,$lang);
     }
 
     public function run():string
@@ -27,7 +27,7 @@ class NewScript extends Runnable
 
     private function createNewFile() 
     {
-        $file = new File(null, $this->user->getId(), date('Y-m-d H:i:s', (new DateTime('now'))->getTimestamp()), date('Y-m-d H:i:s', (new DateTime('now'))->getTimestamp()), null);
+        $file = new File(null, $this->user->getId(),false, date('Y-m-d H:i:s', (new DateTime('now'))->getTimestamp()), date('Y-m-d H:i:s', (new DateTime('now'))->getTimestamp()), null);
         $id = $this->db->insert('files', $file->getAsAssociativeArray());
         if ($id) {
             $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'] = $id;

@@ -6,14 +6,15 @@ use \app\server\classes\Database;
 use \app\server\classes\model\User;
 
 use \utils\Rootfolder;
+use \utils\Lang;
 
 use \finfo;
 
 class LoadScript extends Runnable
 {
-    public function __construct(User $authedUser, Database $db)
+    public function __construct(User $authedUser, Database $db,string $lang='hun')
     {
-        parent::__construct($authedUser, $db);
+        parent::__construct($authedUser, $db,$lang);
     }
 
     public function run():string
@@ -26,27 +27,27 @@ class LoadScript extends Runnable
             $file_mime_type=$finfo->file($file_tmp);
             
             if($file_mime_type!=="application/json"){
-                $_SESSION['messages']['fileerror']='A fájl nem megfelelő típusú';
-                 $this->redirectToProgram();
+                $_SESSION['messages']['fileerror']=Lang::getString('fileTypeErrorLoad',$this->lang);
+                $this->redirectToProgram();
             }
             $data=json_decode(file_get_contents($file_tmp),true);       
             if($data===null){
-                $_SESSION['messages']['fileerror']='A fájl hibás.';
-                 $this->redirectToProgram();
+                $_SESSION['messages']['fileerror']=Lang::getString('incorrectFileErrorLoad',$this->lang);
+                $this->redirectToProgram();
             }
             if(!isset($data['id'])){
-               $_SESSION['messages']['fileerror']='A fájlazonosító hiányzik.';
+               $_SESSION['messages']['fileerror']=Lang::getString('missingFileIdErrorLoad',$this->lang);
                 $this->redirectToProgram();
             }
             $fileid=$data['id'];
 
             if(!$this->isFileExistsWithCurrentUserIdAndId($fileid)){
-                $_SESSION['messages']['fileerror']='A fájl nem található.';
-                 $this->redirectToProgram();
+                $_SESSION['messages']['fileerror']=Lang::getString('missingFileErrorLoad',$this->lang);
+                $this->redirectToProgram();
             }   
             if($this->isFileEmpty($fileid)){
-                $_SESSION['messages']['fileerror']='A fájl üres';
-                 $this->redirectToProgram();
+                $_SESSION['messages']['fileerror']=Lang::getString('emptyFileErrorLoad',$this->lang);
+                $this->redirectToProgram();
             }
             $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']=$fileid;
         
@@ -54,17 +55,17 @@ class LoadScript extends Runnable
         else if(isset($_GET['id'])){
             $fileid=$_GET['id'];
             if(!$this->isFileExistsWithCurrentUserIdAndId($fileid)){
-                $_SESSION['messages']['fileerror']='A fájl nem található.';
+                $_SESSION['messages']['fileerror']=Lang::getString('missingFileErrorLoad',$this->lang);
             }
             if($this->isFileEmpty($fileid)){
-                $_SESSION['messages']['fileerror']='A fájl üres';
+                $_SESSION['messages']['fileerror']=Lang::getString('emptyFileErrorLoad',$this->lang);
                  $this->redirectToProgram();
             }
             $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']=$fileid;
             
         }
         else{
-            $_SESSION['messages']['fileerror']='Nem várt hiba történt a feltöltés közben';
+            $_SESSION['messages']['fileerror']=Lang::getString('generalFileErrorLoad',$this->lang);
         }
         $this->redirectToProgram();
         return "";

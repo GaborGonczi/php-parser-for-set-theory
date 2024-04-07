@@ -11,6 +11,7 @@ use \app\server\classes\model\File;
 use \app\server\classes\model\Expression;
 use \app\server\classes\model\Log;
 use \app\server\classes\model\Variable;
+use \app\server\classes\model\Automaton;
 
 use \core\parser\Lexer;
 use \core\parser\Parser;
@@ -18,6 +19,9 @@ use \core\parser\Parser;
 use \core\HtmlEntityTable;
 
 use \app\server\classes\Database;
+
+use utils\Lang;
+use \utils\Rootfolder;
 
 use \DateTime;
 
@@ -30,10 +34,10 @@ class ParseScript extends Runnable
 
     private array $data;
 
-    public function __construct(User $authedUser,Database $db)  {
-        parent::__construct($authedUser,$db);
-        $this->lexer=new Lexer();
-        $this->parser=new Parser();
+    public function __construct(User $authedUser,Database $db,string $lang='hun')  {
+        parent::__construct($authedUser,$db,$lang);
+        $this->lexer=new Lexer('',false,$this->lang);
+        $this->parser=new Parser([],false,$this->lang);
         $this->data=['json' => [], 'variables' => new Map([])];
     }
 
@@ -42,7 +46,7 @@ class ParseScript extends Runnable
             if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'])) {
                 $this->createNewFile();
             }
-            $stmtdata = (array) json_decode(file_get_contents("php://input"));
+            $stmtdata = json_decode(file_get_contents("php://input"),true);
             $fileid = intval($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']);
             $expressionId = $stmtdata['id'];
             if ($stmtdata['noparse'] == true) {
@@ -89,7 +93,10 @@ class ParseScript extends Runnable
                 }
         
             } else {
-        
+                if($stmtdata['derrorMessages']==true){
+                    $this->lexer->setDevErrorMessages(true);
+                    $this->parser->setDevErrorMessages(true);
+                }
                 $variables = $this->getVariables($fileid);
                 $vars = $this->createVariableMap($variables);
                 $this->parser->setVars($vars);
@@ -118,7 +125,17 @@ class ParseScript extends Runnable
                         $expressiondata = (array) $expressiondata;
                         $stmtdata['statement'] = $this->replaceHTMLEntities($stmtdata['statement']);
                         if($stmtdata['gdfa']==true){
-                            $this->parser->getDFADiagramBuilder()->generateOutput($expressiondata['file_id'].'_'.$expressiondata['id']);
+                            $filename=$expressiondata['file_id'].'_'.$expressiondata['id'];
+                            $this->parser->getDFADiagramBuilder()->generateOutput($filename);
+                            $url=$this->parser->getDFADiagramBuilder()->getOutputUrl($filename);
+                            $automaton=new Automaton(null,
+                                                    $expressiondata['id'],
+                                                    $url,
+                                                    date('Y-m-d H:i:s', (new DateTime('now'))->getTimestamp()),
+                                                    date('Y-m-d H:i:s', (new DateTime('now'))->getTimestamp()),
+                                                    null);
+                            $this->isAutomatonUpdated($automaton->getAsAssociativeArray());
+
                         }
                         if ($this->isResulTypeFile($stmtdata['result'])) {
                             $stmtdata['result'] = $this->renderFileResult($fileid, $expressiondata);
@@ -160,7 +177,17 @@ class ParseScript extends Runnable
                         $this->isLogsCreated($stmtdata,$id);
                     }
                     if($stmtdata['gdfa']==true){
-                        $this->parser->getDFADiagramBuilder()->generateOutput($fileid.'_'.$id);
+                        $filename=$fileid.'_'.$id;
+                        $this->parser->getDFADiagramBuilder()->generateOutput($filename);
+                        $url=$this->parser->getDFADiagramBuilder()->getOutputUrl($filename);
+                        $automaton=new Automaton(null,
+                                                $id,
+                                                $url,
+                                                date('Y-m-d H:i:s', (new DateTime('now'))->getTimestamp()),
+                                                date('Y-m-d H:i:s', (new DateTime('now'))->getTimestamp()),
+                                                null);
+                        $id = $this->isAutomatonCreated($automaton->getAsAssociativeArray());
+
                     }
                     if ($this->isResulTypeFile($stmtdata['result'])) {
                         $expressions = $this->getExpressionById($fileid, $id);
@@ -227,12 +254,17 @@ class ParseScript extends Runnable
             }
             else{
                 $this->data['baseSet']=true;
-            }       
+            }
+            $variables =$this->getVariables($fileid);
+            $vars = $this->createVariableMap($variables);
+            $this->parser->setVars($vars);
+            $this->data['variables'] = $vars;       
             return (string)json_encode($this->data);
         
         
         }
         else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    
             if (!isset($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'])) {
                $this->createNewFile();
                $fileid = intval($_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']);
@@ -297,7 +329,7 @@ class ParseScript extends Runnable
 
     private function createNewFile() 
     {
-        $file = new File(null, $this->user->getId(), date('Y-m-d H:i:s', (new DateTime('now'))->getTimestamp()), date('Y-m-d H:i:s', (new DateTime('now'))->getTimestamp()), null);
+        $file = new File(null, $this->user->getId(),false, date('Y-m-d H:i:s', (new DateTime('now'))->getTimestamp()), date('Y-m-d H:i:s', (new DateTime('now'))->getTimestamp()), null);
         $id = $this->db->insert('files', $file->getAsAssociativeArray());
         if ($id) {
             $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId'] = $id;
@@ -342,6 +374,16 @@ class ParseScript extends Runnable
         unset($expressionArray['length']);
         return $this->db->insert('expressions', $expressionArray);
     }
+
+    private function isAutomatonUpdated( $automatonAsArray)
+    {
+        return $this->db->update('automatons', $automatonAsArray, ['id' => $automatonAsArray['id']]) !== false;
+    }
+    private function isAutomatonCreated($automatonAsArray)
+    {
+        return $this->db->insert('automatons', $automatonAsArray);
+    }
+
     private function isVariableExist( $fileid, $name)
     {
         return $this->db->isExist('variables', ['file_id' => $fileid, 'name' => $name, 'deleted_at' => null]);
@@ -398,7 +440,7 @@ class ParseScript extends Runnable
 
     private function renderFileResult($fileid, $expressiondata)
     {
-        rename(getenv('BASEPATH').'/images/image.html', getenv('BASEPATH').'/images/image_' . $fileid . '_' . $expressiondata['id'] . '.html');
+        rename(Rootfolder::getPhysicalPath().'/images/image.html', Rootfolder::getPhysicalPath().'/images/image_' . $fileid . '_' . $expressiondata['id'] . '.html');
         return getenv('BASEURL').'/images/image_' . $fileid . '_' . $expressiondata['id'] . '.html';
     }
 
@@ -420,6 +462,6 @@ class ParseScript extends Runnable
     }
 
     private function baseSetNotDefinedError(){
-        return "H is not defined. Please define it and rerun the expression evaluation.";
+        return htmlentities(Lang::getString('baseSetNotDefinedError',$this->lang));
     }
 }

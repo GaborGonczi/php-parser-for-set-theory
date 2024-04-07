@@ -8,12 +8,10 @@ function loadData() {
   container.innerHTML = "";
 
   if (localStorage.getItem("message") !== null) {
-    console.log(JSON.parse(localStorage.getItem("message")))
     message.innerHTML = JSON.parse(localStorage.getItem("message"))["message"];
     localStorage.removeItem("message");
   }
   getData(CONSTANTS.crudUrl + "&files/get").then((data) => {
-    console.log(data);
     if (data.files.my.length > 0) {
         let div=document.createElement('div');
         div.innerHTML=`<table>${data.files.my
