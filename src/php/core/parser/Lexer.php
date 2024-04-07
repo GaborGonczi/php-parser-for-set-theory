@@ -4,6 +4,7 @@ namespace core\parser;
 use \core\Regexp;
 use \core\lib\Builtin;
 use \core\parser\exception\LexerException;
+use \utils\Lang;
 
 /**
 * A class that represents a lexer for the set theory language.
@@ -33,12 +34,17 @@ class Lexer
     */
     private const TOKENCLASSNAMESPACE ='\core\parser\TOKEN::';
 
+    private $dev;
+    private static $lang;
+
     /**
     * The constructor of the lexer class.
     * @param string $input The input to be lexed. Default is an empty string.
     */
-    public function __construct($input = "")
+    public function __construct($input = "",$dev=false,$lang='hun')
     {
+        $this->dev=$dev;
+        self::$lang=$lang;
         $this->setInput($input);
     }
 
@@ -60,6 +66,10 @@ class Lexer
         return $tokens;
     }
 
+    public function setDevErrorMessages($dev=true){
+        $this->dev=$dev;
+    }
+
     /**
     * A method that tokenizes the input and returns an array of tokens.
     * @return array An array of tokens.
@@ -71,11 +81,11 @@ class Lexer
         $tokens = [];
 
 
-        $numregexp = new RegExp(Token::NUMBER['value']);
-        $idregexp = new RegExp(Token::IDENTIFIER['value']);
-        $tobeeqregexp = new RegExp(Token::TOBEEQUAL['value']);
-        $lessthanoreqregexp = new RegExp(Token::LESSTHANOREQUAL['value']);
-        $greaterthanoreqregexp = new RegExp(Token::GREATERTHANOREQUAL['value']);
+        $numregexp = new Regexp(Token::NUMBER['value']);
+        $idregexp = new Regexp(Token::IDENTIFIER['value']);
+        $tobeeqregexp = new Regexp(Token::TOBEEQUAL['value']);
+        $lessthanoreqregexp = new Regexp(Token::LESSTHANOREQUAL['value']);
+        $greaterthanoreqregexp = new Regexp(Token::GREATERTHANOREQUAL['value']);
         $arrow = new Regexp(Token::ARROW['value']);
 
 
@@ -218,11 +228,21 @@ class Lexer
                         break;   
                     default:
                         $lastGood = $tokens[count($tokens) - 1];
-                        throw new LexerException('Last good token: ' . json_encode($lastGood). ' ColumnPos: '. $i+1);
+                        throw new LexerException($this->getErrorMessage($lastGood,$i));
                 }
             }
         }
 
         return $tokens;
+    }
+
+    private function getErrorMessage($lastGood,$i) {
+        if($this->dev){
+            return Lang::getString('lexerErrorStart',self::$lang) . json_encode($lastGood). Lang::getString('lexerErrorColumn',self::$lang). $i+1;
+        }
+        else{
+            return Lang::getString('lexerErrorStartUser',self::$lang) . $lastGood['value']. Lang::getString('lexerErrorColumnUser',self::$lang). $i+1;
+        }
+        
     }
 }

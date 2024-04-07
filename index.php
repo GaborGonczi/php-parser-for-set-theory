@@ -16,7 +16,7 @@ if(isset($_COOKIE['PHPSESSID'])&&isset($_SESSION[$_COOKIE['PHPSESSID']]['authedU
 
     $user=new User(...array_values(json_decode($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'],true))); 
     $app=new Application($user,$db);
-    $appPages=array('client','help','program','questionnaire','files','logout');
+    $appPages=array('client','help','program','questionnaire','files','automatons','profile','logout');
     for ($i=0; $i <count($appPages); $i++) {
         if(isset($_POST[$appPages[$i]])){
             $page=$appPages[$i];

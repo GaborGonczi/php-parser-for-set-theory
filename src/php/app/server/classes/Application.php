@@ -72,6 +72,12 @@ class Application
     public function files()  {
         require_once dirname(dirname(dirname(__FILE__))).'/client/page/'.__FUNCTION__.'.php';
     }
+    public function automatons()  {
+        require_once dirname(dirname(dirname(__FILE__))).'/client/page/'.__FUNCTION__.'.php';
+    }
+    public function profile()  {
+        require_once dirname(dirname(dirname(__FILE__))).'/client/page/'.__FUNCTION__.'.php';
+    }
     public function logout()  {
         $location=Rootfolder::getPath().'/src/php/app/server/page/backendentry.php?page=logout';
         header("Location:$location");

@@ -16,13 +16,21 @@ class PointSetDiagramFunctionsTest extends TestCase
     protected function setUp(): void
     {
         (new Env(dirname(dirname(dirname(dirname(__FILE__)))).'/.env',true))->load();
+        $_SERVER['SERVER_NAME']="localhost";
+        $_SERVER['SERVER_PORT']=80;
+        $_SERVER['REQUEST_URI']="";
+        $_SERVER['DOCUMENT_ROOT']=getenv('BASEPATH');
         $this->image = imagecreate(100, 100);
     }
 
-
-    protected function tearDown(): void
+    protected function tearDown():void
     {
+        $_SERVER['SERVER_NAME']="";
+        $_SERVER['SERVER_PORT']="";
+        $_SERVER['REQUEST_URI']="";
+        $_SERVER['DOCUMENT_ROOT']="";
         imagedestroy($this->image);
+
     }
 
 
@@ -174,9 +182,9 @@ class PointSetDiagramFunctionsTest extends TestCase
     public static function getCanvasCoordinatesProvider()
     {
         return [
-            [1, 2, ["x" => 288, "y" => 216]],
-            [-3, 4, ["x" => 192, "y" => 168]],
-            [0, 0, ["x" => 264, "y" => 264]]
+            [1, 2, ["x" => 360, "y" => 270]],
+            [-3, 4, ["x" => 240, "y" => 210]],
+            [0, 0, ["x" => 330, "y" => 330]]
         ];
     }
 
@@ -187,25 +195,7 @@ class PointSetDiagramFunctionsTest extends TestCase
      */
     public function testGetCanvasCoordinates($pointx, $pointy, $expected)
     {
-        $computedParams = [
-            "xfrom" => -10,
-            "xto" => 10,
-            "yfrom" => -10,
-            "yto" => 10,
-            "xscale" => 1,
-            "yscale" => 1,
-            "WIDTH" => 528,
-            "HEIGHT" => 528,
-            "line_gap_x" => 24,
-            "line_gap_y" => 24,
-            "half_line_gap_x" => 12,
-            "half_line_gap_y" => 12,
-            "line_count_x" => 21,
-            "line_count_y" => 21,
-            "x_axis_y_coord" => 264,
-            "y_axis_x_coord" => 264
-        ];
-        $this->assertEquals($expected, PointSetDiagramFunctions::getCanvasCoordinates($pointx, $pointy, $computedParams));
+        $this->assertEquals($expected, PointSetDiagramFunctions::getCanvasCoordinates($pointx, $pointy, new PointSetDiagramOptions()));
     }
 
     /**
@@ -232,7 +222,7 @@ class PointSetDiagramFunctionsTest extends TestCase
 
         $this->assertNotFalse(imagecreatefromstring($imageData));
         list($width, $height) = getimagesizefromstring($imageData);
-        $this->assertEquals(504, $width);
-        $this->assertEquals(504, $height);
+        $this->assertEquals(660, $width);
+        $this->assertEquals(660, $height);
     }
 }

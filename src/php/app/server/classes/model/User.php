@@ -47,6 +47,13 @@ class User extends Model {
     private $last_login;
 
     /**
+    * The user's preferred language
+    *
+    * @var string|null
+    */
+    private $language;
+
+    /**
     * The timestamp of when the user was created.
     *
     * @var string|null
@@ -97,6 +104,7 @@ class User extends Model {
     * @param string $password The user password, hashed with bcrypt algorithm.
     * @param string|null $first_login The first login date and time of the user in YYYY-MM-DD HH:MM:SS format.
     * @param string|null $last_login The last login date and time of the user in YYYY-MM-DD HH:MM:SS format.
+    * @param string|null $language The user's preferred language
     * @param string|null $created_at The timestamp of when the user was created.
     * @param int|null $created_by The id of the user who created this user.
     * @param string|null $modified_at The timestamp of when the user was modified.
@@ -104,12 +112,13 @@ class User extends Model {
     * @param string|null $deleted_at The timestamp of when the user was deleted.
     * @param int|null $deleted_by The id of the user who deleted this user.
     */
-    public function __construct($id, $username, $password, $first_login, $last_login, $created_at, $created_by, $modified_at, $modified_by, $deleted_at, $deleted_by) {
+    public function __construct($id, $username, $password, $first_login, $last_login, $language, $created_at, $created_by, $modified_at, $modified_by, $deleted_at, $deleted_by) {
         $this->id = $id;
         $this->username = $username;
         $this->password = $password;
         $this->first_login = $first_login;
         $this->last_login = $last_login;
+        $this->language=$language;
         $this->created_at = $created_at;
         $this->created_by = $created_by;
         $this->modified_at = $modified_at;
@@ -197,6 +206,24 @@ class User extends Model {
     */
     public function setLastLogin($last_login) {
         $this->last_login = $last_login;
+    }
+
+    /**
+    * Get the user's preferred language
+    *
+    * @return string The user's preferred language.
+    */
+    public function getLanguage() {
+        return $this->language;
+    }
+
+    /**
+    * Set the user's preferred language
+    *
+    * @param string The user's preferred language.
+    */
+    public function setLanguage($language) {
+        $this->language = $language;
     }
 
     /**

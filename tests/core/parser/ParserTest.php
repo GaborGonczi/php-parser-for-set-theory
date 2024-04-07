@@ -29,7 +29,7 @@ class ParserTest extends TestCase
      */
     public function testParserWithDifferentInputs($tokens, $definedVars,$expected, $resultMap, $exception)
     {
-        $parser = new Parser($tokens);
+        $parser = new Parser($tokens,false,'eng');
         $internalMap = $this->reflectionObject->getProperty('vars');
         $internalMap->setAccessible(true);
         $internalMap->setValue($parser, $definedVars);
@@ -668,7 +668,7 @@ class ParserTest extends TestCase
                    
                 ],
                 new Map(['A'=>new Set([1,2]),'C'=>new Set([2,3])]),
-                'H is not defined. Please define it and rerun the expression evaluation.',
+                'The base set (H) is not defined. Define the base set and re-evaluate the expression.',
                 null,
                 null,
                 new Set([1,2,3])
@@ -683,7 +683,7 @@ class ParserTest extends TestCase
                     ['type' => 'eol', 'value' => '$']
                 ],
                 new Map(['A'=>new Set([1,2]),'C'=>new Set([2,3])]),
-                'H is not defined. Please define it and rerun the expression evaluation.',
+                'The base set (H) is not defined. Define the base set and re-evaluate the expression.',
                 null,
                 null,
                 new Set([1,2,3])

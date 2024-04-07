@@ -17,13 +17,13 @@ try {
 }
 
 if($installerInstance){
-    $installerInstance->exec(file_get_contents('szakdolgozat.sql'));
+    $installerInstance->exec(file_get_contents('parser.sql'));
     $seedStmt=$installerInstance->prepare(file_get_contents('seed.sql'));
-    $seedStmt->execute(['system',password_hash(getenv('ADMIN_PASSWORD'),PASSWORD_BCRYPT),null,null,
+    $seedStmt->execute(['system',password_hash(getenv('ADMIN_PASSWORD'),PASSWORD_BCRYPT),null,null,'hun',
     date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()),null,null,null,null,null]);
     $installerInstance=null;
 }
 echo "Installation completed successfully.";
-unlink('szakdolgozat.sql');
+unlink('parser.sql');
 unlink('seed.sql');
 unlink(__FILE__);

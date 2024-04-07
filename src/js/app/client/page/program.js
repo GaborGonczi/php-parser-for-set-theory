@@ -8,6 +8,7 @@ const printbtn=document.querySelector('#print');
 const opButtons=document.querySelectorAll('.operator');
 const mode=document.querySelector('.switch input#mode');
 const dfa=document.querySelector('.switch input#dfa');
+const errorMessages=document.querySelector('.switch input#errorMessages');
 const loadfile=document.querySelector('#load');
 const variables=document.querySelector('#variables textarea');
 const newbtn=document.querySelector('#new');
@@ -97,9 +98,10 @@ function save(e){
     let end=start+statement.length;
     let noparse=mode.checked;
     let gdfa=dfa.checked;
+    let derrorMessages=errorMessages.checked;
     statement=encodeHtmlEntities(statement);
    
-    let data={id:id,statement:statement,start:start, end:end,noparse:noparse,row:row,beforelogs:logs,gdfa:gdfa};
+    let data={id:id,statement:statement,start:start, end:end,noparse:noparse,row:row,beforelogs:logs,gdfa:gdfa,derrorMessages:derrorMessages};
 
     postData(data,CONSTANTS.parseUrl).then(data=>{
         fillTemplate(data);
@@ -110,24 +112,34 @@ function save(e){
 
 }
 function insertspecialcharacter(e){
+    //https://www.tutorialspoint.com/how-to-set-cursor-position-in-content-editable-element-using-javascript last date 2024. 03. 21.
     let element=document.querySelector('p[contenteditable="true"]');
     
     if(element!==null){
-        let insertpos=window.getSelection().anchorOffset;
+        let selection=window.getSelection();
+        let range=selection.getRangeAt(0);
+        let insertpos=range.startOffset;
         element.innerText=element.innerText.substring(0,insertpos) +e.target.value+element.innerText.substring(insertpos);
+        range.setStart(element.childNodes[0], insertpos+1);
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
         element.focus();
     }
     else {
-        
+        let selection=window.getSelection();
+        selection.removeAllRanges();
         let element=document.querySelector('#input input#text');
         let insertpos=element.selectionStart;
         element.value=element.value.substring(0,insertpos) +e.target.value+element.value.substring(insertpos);
-        element.focus();
+        element.setSelectionRange(insertpos+1, insertpos+1)
+        element.focus()
+       
     }
 }
 function saveToFile(){
     getData(CONSTANTS.saveUrl).then(data=>{
-        //https://bobbyhadz.com/blog/javascript-set-blob-filename
+        //https://bobbyhadz.com/blog/javascript-set-blob-filename last date 2024. 03. 21.
         const blob= new Blob([JSON.stringify(data)],{type:"application/json"});
         const url=URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -144,7 +156,7 @@ function toggleStyle(){
     const textInput=document.querySelector('#text');
     textInput.classList.toggle("math")
 }
-// https://stackoverflow.com/questions/1703228/how-can-i-clear-an-html-file-input-with-javascript first answer
+// https://stackoverflow.com/questions/1703228/how-can-i-clear-an-html-file-input-with-javascript first answer last date 2024. 03. 21.
 function clearInputFile(f){
     if(f.value){
         try{
@@ -211,8 +223,8 @@ function edit(e){
 function log(e){
     let now= new Date();
     let year=now.getFullYear();
-    let month=now.getDate();
-    let day=now.getDay();
+    let month=now.getMonth();
+    let day=now.getDate();
     let hour=now.getHours();
     let min=now.getMinutes();
     let sec=now.getSeconds();

@@ -3,6 +3,7 @@ namespace core\parser;
 
 
 
+use core\HtmlEntityTable;
 use \ReflectionFunction;
 
 use \core\lib\datastructures\Map;
@@ -17,12 +18,15 @@ use \core\lib\exception\LibException;
 
 use \app\server\classes\model\User;
 use \core\parser\dfa\DFADiagramBuilder;
+use \utils\Lang;
 
 class Parser
 {
 
     private $tokens;
     private $pos;
+    private $dev;
+    private static $lang;
     private static ?Map $vars = null;
     private static ?Set $baseSet = null;
     private ?DFADiagramBuilder $dfaDiagramBuilder = null;
@@ -81,7 +85,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -115,7 +119,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -148,7 +152,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -182,7 +186,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
         }
         return $result;
     }
@@ -214,7 +218,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -241,7 +245,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -284,8 +288,9 @@ class Parser
                     $setformula = Functions::flatSetFormula($setformula);
                     $setformula = Functions::extractArrayFromArray($setformula);
                     $setformula = Functions::reAppendVarnameToArrayKeys($setformula);
-                    if (!Functions::isVariablesGood(array_keys($setformula)))
-                        throw new SemanticException("At least one of the identifiers is misspelled in the formula.");
+                    if (!Functions::isVariablesGood(array_keys($setformula))){
+                        throw new SemanticException(Lang::getString('misspelledIdentifier',self::$lang));
+                    }  
                     $bounds = Functions::collectBounds($setformula);
                     $bounds = Functions::getMinMax($bounds);
                     $boundfuncswithop = Functions::collectBoundFuncs($setformula);
@@ -298,8 +303,9 @@ class Parser
                     $idarr = [$id['id'], ...$rest];
                     $vars = $this->getVarsByIds($idarr);
                     $wrog = $this->getUndefinedVars($vars);
-                    if (!empty($wrog))
-                        throw new UndefinedVariableException('The following variables are not defined: ' . json_encode($wrog));
+                    if (!empty($wrog)){
+                        throw new UndefinedVariableException(Lang::getString('undefinedVariableError',self::$lang) . json_encode($wrog));
+                    }
                     $result = PointSetDiagramFunctions::createSetFromPointArray($vars);
                 }
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
@@ -311,7 +317,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
 
@@ -343,7 +349,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
 
@@ -379,7 +385,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $lookahead['value'], 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
 
@@ -409,7 +415,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,$this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -444,7 +450,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -497,7 +503,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -524,8 +530,9 @@ class Parser
                 $comparsionop = $this->comparsionoperator();
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'logicalrhs');
                 $logicalrhs = $this->logicalrhs();
-                $result['boundfunc'] = Functions::createComparsionCondition($comparsionop, Functions::processLogicalRhs($logicalrhs));
-                $result['boundvalue'] = $logicalrhs['num'];
+                $processedlogicalrhs=Functions::processLogicalRhs($logicalrhs);
+                $result['boundfunc'] = Functions::createComparsionCondition($comparsionop, $processedlogicalrhs);
+                $result['boundvalue'] = $processedlogicalrhs['num'];
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::ARROW['name']):
@@ -536,7 +543,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -561,7 +568,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
         }
         return $result;
     }
@@ -600,7 +607,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
         }
         return $result;
     }
@@ -629,7 +636,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
 
@@ -675,7 +682,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -713,7 +720,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
 
@@ -753,7 +760,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -784,7 +791,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -819,7 +826,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -849,7 +856,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -878,7 +885,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -908,7 +915,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,  $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -940,7 +947,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -970,7 +977,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1015,7 +1022,7 @@ class Parser
                         case (Token::COMPLEMENT['value']):
                             Parser::setBaseSet($this->getVars()->get("H"));
                             if (Parser::$baseSet === null) {
-                                throw new UndefinedVariableException("H is not defined. Please define it and rerun the expression evaluation.");
+                                throw new UndefinedVariableException(Lang::getString('baseSetNotDefinedError',self::$lang));
                             }
                             $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => $setoperationside], ['rhs' => $rest]));
                             $result = Functions::evaluateSetExpression($array);
@@ -1027,7 +1034,7 @@ class Parser
                                     $funcname = $rest['funcname'] . 'Element';
                                     $result = Functions::$funcname($rest['arguments'][0], $set);
                                 } else {
-                                    throw new ParserException("Variable called $setoperationside does not exist.");
+                                    throw new UndefinedVariableException(Lang::getString('undefinedVariableErrorStart',self::$lang).$setoperationside.Lang::getString('undefinedVariableErrorEnd',self::$lang));
                                 }
                             } else {
                                 $funcname = $rest['funcname'] . 'Element';
@@ -1062,7 +1069,7 @@ class Parser
                         default:
                             $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $lookahead['value'], 'err');
                             $pos = $this->calculatePosition();
-                            throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                            throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
                     }
 
@@ -1101,7 +1108,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1139,7 +1146,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__,$this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1221,7 +1228,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1270,7 +1277,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1318,7 +1325,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1350,7 +1357,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1407,7 +1414,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
         }
 
         return $result;
@@ -1438,7 +1445,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
         }
         return $result;
 
@@ -1467,7 +1474,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1498,7 +1505,7 @@ class Parser
                 if ($arg === null) {
                     $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, 'if arg==null', 'err');
                     $pos = $this->calculatePosition();
-                    throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                    throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
                 }
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'arguments_');
                 $rest = $this->arguments_();
@@ -1516,7 +1523,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1551,7 +1558,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
         }
         return $result;
     }
@@ -1569,7 +1576,7 @@ class Parser
             case (Token::COMMA['name']):
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M($lookahead[value])", 'argument');
                 $this->match(',');
-                $result = $this->argument();
+                $result = $this->arguments();
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
             case (Token::RIGHTPARENTHESIS['name']):
@@ -1579,7 +1586,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1610,7 +1617,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1638,7 +1645,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1664,7 +1671,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1717,7 +1724,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
         }
         return $result;
     }
@@ -1752,7 +1759,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1791,7 +1798,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
 
@@ -1818,7 +1825,8 @@ class Parser
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M())", $this->getParent());
                 $this->match(')');
                 if ($name === 'Venn') {
-                    $result = Functions::$name(...$arguments);
+                    $arguments=Functions::flatSetExpression($arguments);
+                    $result = Functions::$name(18,...$arguments);
 
                 } else if ($name === 'PointSetDiagram') {
                     if (PointSetDiagramFunctions::isPointSetArray($arguments)) {
@@ -1834,7 +1842,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1863,7 +1871,7 @@ class Parser
             default:
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'err');
                 $pos = $this->calculatePosition();
-                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__)));
+                throw new ParserException($this->getErrorMessage($lookahead, $pos, __METHOD__, $this->getPossibleTokens(__FUNCTION__,$this->getKeyByMode($this->dev))));
 
         }
         return $result;
@@ -1873,8 +1881,10 @@ class Parser
      * Constructs a new Parser object with a given array of tokens.
      * @param array $tokens An array of tokens to be parsed.
      */
-    public function __construct($tokens = [])
+    public function __construct($tokens = [],$dev=false,$lang='hun')
     {
+        $this->dev=$dev;
+        self::$lang=$lang;
         $this->setTokens($tokens);
         $this->setVars();
     }
@@ -1904,9 +1914,13 @@ class Parser
         return Parser::$vars;
     }
 
-    public function setVars($vars = new Map(['A'=>new Set([1])]))
+    public function setVars($vars = new Map([]))
     {
         Parser::$vars = $vars;
+    }
+
+    public function setDevErrorMessages($dev=true){
+        $this->dev=$dev;
     }
 
     private function getVarsByIds($ids)
@@ -1931,6 +1945,11 @@ class Parser
     public static function setBaseSet($set)
     {
         Parser::$baseSet = $set;
+    }
+
+    public static function getLang()
+    {
+        return Parser::$lang;
     }
 
     /**
@@ -1965,10 +1984,10 @@ class Parser
      */
     private function getStringRepresentation($result)
     {
-        if (is_null($result)) {
-            return 'null';
+        if (Functions::isNull($result)) {
+            return Lang::getString('null',self::$lang);
         } else if (is_bool($result)) {
-            return $result ? 'true' : 'false';
+            return $result ? Lang::getString('true',self::$lang) : Lang::getString('false',self::$lang);
         } else if (is_array($result)) {
             return json_encode($result);
         } else {
@@ -1986,9 +2005,30 @@ class Parser
      */
     private function getErrorMessage($lookahead, $pos, $func, $expected)
     {
-        return "Unexpected token $lookahead[type] ($lookahead[value]) at position " . ($pos + 1) . " in func $func; excepted token is one of the following: " . json_encode($expected);
-    }
+        if($this->dev){
+            return Lang::getString('parserErrorStart',self::$lang)." $lookahead[type] ($lookahead[value]) ".Lang::getString('parserErrorPosition',self::$lang). ($pos + 1) .Lang::getString('parserErrorFunction',self::$lang)." $func; ".Lang::getString('parserErrorExpectedTokens',self::$lang).json_encode($expected);
+        }
+        else{
+            $numindex=array_search(Token::NUMBER['value'],$expected);
+            $identindex=array_search(Token::IDENTIFIER['value'],$expected);
 
+            foreach (HtmlEntityTable::TABLE as $key => $value) {
+                if(($specialcharindex=array_search($key,$expected))!==false){
+                    $expected[$specialcharindex]=$value;
+                }
+            }
+            
+            if($numindex!==false){
+                $expected[$numindex]=Lang::getString('numberExpectedUser',self::$lang);
+            }
+            if($identindex!==false){
+                $expected[$identindex]=Lang::getString('identifierExpectedUser',self::$lang);
+            }
+            return Lang::getString('parserErrorStartUser',self::$lang).implode(';',$expected).Lang::getString('parserErrorBeforePositionUser',self::$lang). ($pos + 1) .Lang::getString('parserErrorAfterPositionUser',self::$lang).$this->tokens[$this->pos-1]['value'];
+        }
+
+    }
+    
     /**
      * Calculates the position of the current token in the input string.
      * @return int The position of the current token in the input string.
@@ -1997,7 +2037,13 @@ class Parser
     {
         $pos = 0;
         for ($i = 0; $i < $this->pos; $i++) {
-            $pos += strlen(strval($this->tokens[$i]['value']));
+            if(str_starts_with($this->tokens[$i]['value'],'&')){
+                $pos+=1;
+            }
+            else {
+                $pos += strlen(strval($this->tokens[$i]['value']));
+            }
+            
         }
         return $pos;
     }
@@ -2101,145 +2147,145 @@ class Parser
      * @param string $nonterminal The name of the nonterminal symbol to get the possible tokens for.
      * @return array The array of possible tokens that can start or continue the nonterminal symbol, or an empty array if no such symbol exists.
      */
-    private function getPossibleTokens($nonterminal)
+    private function getPossibleTokens($nonterminal,$key='name')
     {
         $possibletokens = [
             "statement" => [
-                TOKEN::MINUS['name'],
-                TOKEN::NUMBER['name'],
-                TOKEN::LEFTCURLYBRACE['name'],
-                TOKEN::LEFTSQUAREBRACKET['name'],
-                TOKEN::LEFTPARENTHESIS['name'],
-                TOKEN::IDENTIFIER['name'],
-                TOKEN::VERTICALLINE['name'],
-                TOKEN::VENN['name'],
-                TOKEN::POINTSETDIAGRAM['name']
+                TOKEN::MINUS[$key],
+                TOKEN::NUMBER[$key],
+                TOKEN::LEFTCURLYBRACE[$key],
+                TOKEN::LEFTSQUAREBRACKET[$key],
+                TOKEN::LEFTPARENTHESIS[$key],
+                TOKEN::IDENTIFIER[$key],
+                TOKEN::VERTICALLINE[$key],
+                TOKEN::VENN[$key],
+                TOKEN::POINTSETDIAGRAM[$key]
             ],
             "selementofnelementof" => [
-                TOKEN::MINUS['name'],
-                TOKEN::NUMBER['name']
+                TOKEN::MINUS[$key],
+                TOKEN::NUMBER[$key]
             ],
             "wholenumber" => [
-                TOKEN::MINUS['name'],
-                TOKEN::NUMBER['name']
+                TOKEN::MINUS[$key],
+                TOKEN::NUMBER[$key]
             ],
             "selementofnelementof_" => [
-                TOKEN::ELEMENTOF['name'],
-                TOKEN::NOTELEMENTOF['name']
+                TOKEN::ELEMENTOF[$key],
+                TOKEN::NOTELEMENTOF[$key]
             ],
             "setoperationside" => [
-                TOKEN::LEFTCURLYBRACE['name'],
-                TOKEN::IDENTIFIER['name']
+                TOKEN::LEFTCURLYBRACE[$key],
+                TOKEN::IDENTIFIER[$key]
             ],
             "curliedsetexp" => [
-                TOKEN::LEFTCURLYBRACE['name']
+                TOKEN::LEFTCURLYBRACE[$key]
             ],
             "setexp" => [
-                TOKEN::MINUS['name'],
-                TOKEN::NUMBER['name'],
-                TOKEN::LEFTSQUAREBRACKET['name'],
-                TOKEN::IDENTIFIER['name'],
-                TOKEN::RIGHTCURLYBRACE['name']
+                TOKEN::MINUS[$key],
+                TOKEN::NUMBER[$key],
+                TOKEN::LEFTSQUAREBRACKET[$key],
+                TOKEN::IDENTIFIER[$key],
+                TOKEN::RIGHTCURLYBRACE[$key]
             ],
             "setexp_" => [
-                TOKEN::COMMA['name'],
-                TOKEN::VERTICALLINE['name']
+                TOKEN::COMMA[$key],
+                TOKEN::VERTICALLINE[$key]
             ],
             "identifierliteral" => [
-                TOKEN::COMMA['name'],
-                TOKEN::RIGHTCURLYBRACE['name']
+                TOKEN::COMMA[$key],
+                TOKEN::RIGHTCURLYBRACE[$key]
             ],
             "setformula" => [
-                TOKEN::VERTICALLINE['name']
+                TOKEN::VERTICALLINE[$key]
             ],
             "logicalexp" => [
-                TOKEN::MINUS['name'],
-                TOKEN::NUMBER['name'],
-                TOKEN::IDENTIFIER['name'],
-                TOKEN::LEFTPARENTHESIS['name']
+                TOKEN::MINUS[$key],
+                TOKEN::NUMBER[$key],
+                TOKEN::IDENTIFIER[$key],
+                TOKEN::LEFTPARENTHESIS[$key]
             ],
             "logicalsubexp" => [
-                TOKEN::MINUS['name'],
-                TOKEN::NUMBER['name'],
-                TOKEN::IDENTIFIER['name'],
-                TOKEN::LEFTPARENTHESIS['name']
+                TOKEN::MINUS[$key],
+                TOKEN::NUMBER[$key],
+                TOKEN::IDENTIFIER[$key],
+                TOKEN::LEFTPARENTHESIS[$key]
             ],
             "logicalsubexp_" => [
-                TOKEN::EQUAL['name'],
-                TOKEN::LESSTHAN['name'],
-                TOKEN::GREATERTHAN['name'],
-                TOKEN::LESSTHANOREQUAL['name'],
-                TOKEN::GREATERTHANOREQUAL['name'],
-                TOKEN::ARROW['name']
+                TOKEN::EQUAL[$key],
+                TOKEN::LESSTHAN[$key],
+                TOKEN::GREATERTHAN[$key],
+                TOKEN::LESSTHANOREQUAL[$key],
+                TOKEN::GREATERTHANOREQUAL[$key],
+                TOKEN::ARROW[$key]
             ],
             "functiondefinition" => [
-                TOKEN::ARROW['name']
+                TOKEN::ARROW[$key]
             ],
             "functiondefinition_" => [
-                TOKEN::MINUS['name'],
-                TOKEN::NUMBER['name'],
-                TOKEN::IDENTIFIER['name']
+                TOKEN::MINUS[$key],
+                TOKEN::NUMBER[$key],
+                TOKEN::IDENTIFIER[$key]
             ],
             "divisibilityoperator" => [
-                TOKEN::DIVIDES['name'],
-                TOKEN::DOESNOTDIVIDE['name']
+                TOKEN::DIVIDES[$key],
+                TOKEN::DOESNOTDIVIDE[$key]
             ],
             "comparsionoperator" => [
-                TOKEN::EQUAL['name'],
-                TOKEN::LESSTHAN['name'],
-                TOKEN::GREATERTHAN['name'],
-                TOKEN::LESSTHANOREQUAL['name'],
-                TOKEN::GREATERTHANOREQUAL['name']
+                TOKEN::EQUAL[$key],
+                TOKEN::LESSTHAN[$key],
+                TOKEN::GREATERTHAN[$key],
+                TOKEN::LESSTHANOREQUAL[$key],
+                TOKEN::GREATERTHANOREQUAL[$key]
             ],
             "logicalrhs" => [
-                TOKEN::MINUS['name'],
-                TOKEN::NUMBER['name'],
-                TOKEN::IDENTIFIER['name']
+                TOKEN::MINUS[$key],
+                TOKEN::NUMBER[$key],
+                TOKEN::IDENTIFIER[$key]
             ],
             "logicalrhs_" => [
-                TOKEN::PLUS['name'],
-                TOKEN::MINUS['name'],
-                TOKEN::MULTIPLY['name'],
-                TOKEN::DIVIDE['name'],
-                TOKEN::LAND['name'],
-                TOKEN::LOR['name'],
-                TOKEN::RIGHTCURLYBRACE['name'],
-                TOKEN::RIGHTPARENTHESIS['name']
+                TOKEN::PLUS[$key],
+                TOKEN::MINUS[$key],
+                TOKEN::MULTIPLY[$key],
+                TOKEN::DIVIDE[$key],
+                TOKEN::LAND[$key],
+                TOKEN::LOR[$key],
+                TOKEN::RIGHTCURLYBRACE[$key],
+                TOKEN::RIGHTPARENTHESIS[$key]
             ],
             "logicalrhs__" => [
-                TOKEN::MINUS['name'],
-                TOKEN::NUMBER['name'],
-                TOKEN::IDENTIFIER['name']
+                TOKEN::MINUS[$key],
+                TOKEN::NUMBER[$key],
+                TOKEN::IDENTIFIER[$key]
             ],
             "logicalexp_" => [
-                TOKEN::LAND['name'],
-                TOKEN::LOR['name'],
-                TOKEN::RIGHTCURLYBRACE['name'],
-                TOKEN::RIGHTPARENTHESIS['name']
+                TOKEN::LAND[$key],
+                TOKEN::LOR[$key],
+                TOKEN::RIGHTCURLYBRACE[$key],
+                TOKEN::RIGHTPARENTHESIS[$key]
             ],
             "logicaloperator" => [
-                TOKEN::LAND['name'],
-                TOKEN::LOR['name']
+                TOKEN::LAND[$key],
+                TOKEN::LOR[$key]
             ],
             "setliteral" => [
-                TOKEN::MINUS['name'],
-                TOKEN::NUMBER['name']
+                TOKEN::MINUS[$key],
+                TOKEN::NUMBER[$key]
             ],
             "setliteral_" => [
-                TOKEN::COMMA['name'],
-                TOKEN::RIGHTCURLYBRACE['name']
+                TOKEN::COMMA[$key],
+                TOKEN::RIGHTCURLYBRACE[$key]
             ],
             "pointsetliteral" => [
-                TOKEN::LEFTSQUAREBRACKET['name'],
-                TOKEN::RIGHTCURLYBRACE['name']
+                TOKEN::LEFTSQUAREBRACKET[$key],
+                TOKEN::RIGHTCURLYBRACE[$key]
             ],
             "pointsetliteral_" => [
-                TOKEN::COMMA['name'],
-                TOKEN::RIGHTCURLYBRACE['name']
+                TOKEN::COMMA[$key],
+                TOKEN::RIGHTCURLYBRACE[$key]
             ],
             "sexpr" => [
-                TOKEN::LEFTCURLYBRACE['name'],
-                TOKEN::IDENTIFIER['name'],
+                TOKEN::LEFTCURLYBRACE[$key],
+                TOKEN::IDENTIFIER[$key],
                 TOKEN::TOBEEQUAL['value'],
                 TOKEN::COMPLEMENT['value'],
                 TOKEN::DOT['value'],
@@ -2249,129 +2295,133 @@ class Parser
                 TOKEN::UNION['value'],
                 TOKEN::INTERSECTION['value'],
                 TOKEN::SETMINUS['value'],
-                TOKEN::LEFTPARENTHESIS['name'],
-                TOKEN::LEFTSQUAREBRACKET['name']
+                TOKEN::LEFTPARENTHESIS[$key],
+                TOKEN::LEFTSQUAREBRACKET[$key]
             ],
             "sexpr_" => [
-                TOKEN::TOBEEQUAL['name'],
-                TOKEN::EQUAL['name'],
-                TOKEN::SUBSETOF['name'],
-                TOKEN::REALSUBSETOF['name'],
-                TOKEN::COMPLEMENT['name'],
-                TOKEN::UNION['name'],
-                TOKEN::INTERSECTION['name'],
-                TOKEN::SETMINUS['name'],
-                TOKEN::VERTICALLINE['name'],
-                TOKEN::EOL['name'],
-                TOKEN::DOT['name']
+                TOKEN::TOBEEQUAL[$key],
+                TOKEN::EQUAL[$key],
+                TOKEN::SUBSETOF[$key],
+                TOKEN::REALSUBSETOF[$key],
+                TOKEN::COMPLEMENT[$key],
+                TOKEN::UNION[$key],
+                TOKEN::INTERSECTION[$key],
+                TOKEN::SETMINUS[$key],
+                TOKEN::VERTICALLINE[$key],
+                TOKEN::EOL[$key],
+                TOKEN::DOT[$key]
             ],
             "stesruisc" => [
-                TOKEN::TOBEEQUAL['name'],
-                TOKEN::EQUAL['name'],
-                TOKEN::SUBSETOF['name'],
-                TOKEN::REALSUBSETOF['name'],
-                TOKEN::COMPLEMENT['name'],
-                TOKEN::UNION['name'],
-                TOKEN::INTERSECTION['name'],
-                TOKEN::SETMINUS['name'],
-                TOKEN::VERTICALLINE['name'],
-                TOKEN::EOL['name'],
-                TOKEN::LEFTPARENTHESIS['name']
+                TOKEN::TOBEEQUAL[$key],
+                TOKEN::EQUAL[$key],
+                TOKEN::SUBSETOF[$key],
+                TOKEN::REALSUBSETOF[$key],
+                TOKEN::COMPLEMENT[$key],
+                TOKEN::UNION[$key],
+                TOKEN::INTERSECTION[$key],
+                TOKEN::SETMINUS[$key],
+                TOKEN::VERTICALLINE[$key],
+                TOKEN::EOL[$key],
+                TOKEN::LEFTPARENTHESIS[$key]
             ],
             "trhs" => [
-                TOKEN::LEFTCURLYBRACE['name'],
-                TOKEN::IDENTIFIER['name'],
-                TOKEN::LEFTPARENTHESIS['name'],
-                TOKEN::LEFTSQUAREBRACKET['name']
+                TOKEN::LEFTCURLYBRACE[$key],
+                TOKEN::IDENTIFIER[$key],
+                TOKEN::LEFTPARENTHESIS[$key],
+                TOKEN::LEFTSQUAREBRACKET[$key]
             ],
             "stesruisc_" => [
-                TOKEN::LEFTCURLYBRACE['name'],
-                TOKEN::IDENTIFIER['name'],
-                TOKEN::LEFTPARENTHESIS['name'],
-                TOKEN::RIGHTPARENTHESIS['name'],
-                TOKEN::VERTICALLINE['name'],
-                TOKEN::EOL['name']
+                TOKEN::LEFTCURLYBRACE[$key],
+                TOKEN::IDENTIFIER[$key],
+                TOKEN::LEFTPARENTHESIS[$key],
+                TOKEN::RIGHTPARENTHESIS[$key],
+                TOKEN::VERTICALLINE[$key],
+                TOKEN::EOL[$key]
             ],
             "stesruisc__" => [
-                TOKEN::UNION['name'],
-                TOKEN::INTERSECTION['name'],
-                TOKEN::SETMINUS['name'],
-                TOKEN::COMPLEMENT['name'],
-                TOKEN::RIGHTPARENTHESIS['name'],
-                TOKEN::VERTICALLINE['name'],
-                TOKEN::EOL['name']
+                TOKEN::UNION[$key],
+                TOKEN::INTERSECTION[$key],
+                TOKEN::SETMINUS[$key],
+                TOKEN::COMPLEMENT[$key],
+                TOKEN::RIGHTPARENTHESIS[$key],
+                TOKEN::VERTICALLINE[$key],
+                TOKEN::EOL[$key]
             ],
             "uisc" => [
-                TOKEN::UNION['name'],
-                TOKEN::INTERSECTION['name'],
-                TOKEN::SETMINUS['name'],
-                TOKEN::COMPLEMENT['name'],
-                TOKEN::RIGHTPARENTHESIS['name'],
-                TOKEN::VERTICALLINE['name'],
-                TOKEN::EOL['name']
+                TOKEN::UNION[$key],
+                TOKEN::INTERSECTION[$key],
+                TOKEN::SETMINUS[$key],
+                TOKEN::COMPLEMENT[$key],
+                TOKEN::RIGHTPARENTHESIS[$key],
+                TOKEN::VERTICALLINE[$key],
+                TOKEN::EOL[$key]
             ],
             "sofunctioncall" => [
-                TOKEN::DOT['name']
+                TOKEN::DOT[$key]
             ],
             "sofunctionname" => [
-                TOKEN::ADD['name'],
-                TOKEN::DELETE['name']
+                TOKEN::ADD[$key],
+                TOKEN::DELETE[$key]
             ],
             "arguments" => [
-                TOKEN::MINUS['name'],
-                TOKEN::NUMBER['name'],
-                TOKEN::IDENTIFIER['name'],
-                TOKEN::LEFTCURLYBRACE['name']
+                TOKEN::MINUS[$key],
+                TOKEN::NUMBER[$key],
+                TOKEN::IDENTIFIER[$key],
+                TOKEN::LEFTCURLYBRACE[$key]
             ],
             "argument" => [
-                TOKEN::MINUS['name'],
-                TOKEN::NUMBER['name'],
-                TOKEN::LEFTCURLYBRACE['name'],
-                TOKEN::IDENTIFIER['name']
+                TOKEN::MINUS[$key],
+                TOKEN::NUMBER[$key],
+                TOKEN::LEFTCURLYBRACE[$key],
+                TOKEN::IDENTIFIER[$key]
             ],
             "arguments_" => [
-                TOKEN::COMMA['name'],
-                TOKEN::RIGHTPARENTHESIS['name']
+                TOKEN::COMMA[$key],
+                TOKEN::RIGHTPARENTHESIS[$key]
             ],
             "point" => [
-                TOKEN::LEFTSQUAREBRACKET['name']
+                TOKEN::LEFTSQUAREBRACKET[$key]
             ],
             "ssimpleexpression" => [
-                TOKEN::VERTICALLINE['name']
+                TOKEN::VERTICALLINE[$key]
             ],
             "scardinality" => [
-                TOKEN::VERTICALLINE['name']
+                TOKEN::VERTICALLINE[$key]
             ],
             "scardinality_" => [
-                TOKEN::LEFTCURLYBRACE['name'],
-                TOKEN::IDENTIFIER['name'],
-                TOKEN::LEFTPARENTHESIS['name']
+                TOKEN::LEFTCURLYBRACE[$key],
+                TOKEN::IDENTIFIER[$key],
+                TOKEN::LEFTPARENTHESIS[$key]
             ],
             "ssimpleexpression_" => [
-                TOKEN::PLUS['name'],
-                TOKEN::MINUS['name'],
-                TOKEN::MULTIPLY['name'],
-                TOKEN::DIVIDE['name'],
-                TOKEN::EOL['name']
+                TOKEN::PLUS[$key],
+                TOKEN::MINUS[$key],
+                TOKEN::MULTIPLY[$key],
+                TOKEN::DIVIDE[$key],
+                TOKEN::EOL[$key]
             ],
             "simpleoperator" => [
-                TOKEN::PLUS['name'],
-                TOKEN::MINUS['name'],
-                TOKEN::MULTIPLY['name'],
-                TOKEN::DIVIDE['name']
+                TOKEN::PLUS[$key],
+                TOKEN::MINUS[$key],
+                TOKEN::MULTIPLY[$key],
+                TOKEN::DIVIDE[$key]
             ],
             "sfunctioncall" => [
-                TOKEN::VENN['name'],
-                TOKEN::POINTSETDIAGRAM['name']
+                TOKEN::VENN[$key],
+                TOKEN::POINTSETDIAGRAM[$key]
             ],
             "sfunctionname" => [
-                TOKEN::POINTSETDIAGRAM['name'],
-                TOKEN::VENN['name']
+                TOKEN::POINTSETDIAGRAM[$key],
+                TOKEN::VENN[$key]
             ],
         ];
 
 
         return $possibletokens[$nonterminal];
+    }
+
+    private function getKeyByMode($dev){
+        return $dev===true?'name':'value';
     }
     private function getParent(){
         $trace = debug_backtrace();
@@ -2381,7 +2431,7 @@ class Parser
     }
     private function getLookaheadValue(){
         $lookahead=$this->lookahead();
-        return $lookahead['value'];
+        return str_starts_with($lookahead['value'],'&')?html_entity_decode($lookahead['value']):$lookahead['value'];
     }
 
 }

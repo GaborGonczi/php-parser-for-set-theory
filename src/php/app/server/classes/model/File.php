@@ -24,6 +24,13 @@ class File extends Model{
     * @var int
     */
     private $user_id;
+
+    /**
+    * The flag to indicate if the file is an example file or not.
+    * 
+    * @var bool
+    */
+    private $example;
     
     /**
     * The timestamp of when the file was created.
@@ -52,13 +59,15 @@ class File extends Model{
     * 
     * @param int|null $id The file id.
     * @param int $user_id The user id that owns the file.
+    * @param bool $example The flag to indicate if the file is an example file or not.
     * @param string $created_at The timestamp of when the file was created.
     * @param string $modified_at The timestamp of when the file was modified.
     * @param string $deleted_at The timestamp of when the file was deleted.
     */
-    public function __construct($id, $user_id, $created_at, $modified_at, $deleted_at) {
+    public function __construct($id, $user_id, $example, $created_at, $modified_at, $deleted_at) {
         $this->id = $id;
         $this->user_id = $user_id;
+        $this->example=$example;
         $this->created_at = $created_at;
         $this->modified_at = $modified_at;
         $this->deleted_at = $deleted_at;
@@ -89,6 +98,24 @@ class File extends Model{
     */
     public function setUserId($user_id) {
         $this->user_id =$user_id; 
+    }
+
+    /**
+    * Get the example property of the file
+    *
+    * @return bool The example example of the file
+    */
+    public function getExample() { 
+        return $this->example; 
+    }
+    
+    /**
+    * Set the example property of the file
+    *
+    * @param bool The example property of the file
+    */
+    public function setExample($example) { 
+        $this->example = $example; 
     }
 
     /**

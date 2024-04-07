@@ -37,7 +37,7 @@ class LexerTest extends TestCase
      */
     public function testLexerWithDifferentInputs($input, $expected)
     {
-        $lexer = new Lexer($input);
+        $lexer = new Lexer($input,true,'eng');
         $this->assertSame($expected, $lexer->getTokens());
 
         
@@ -622,7 +622,7 @@ class LexerTest extends TestCase
 
                 ['type' => 'eol', 'value' => '$']
             ]],
-            ['A?B','Last good token: {"type":"identifier","value":"A"} ColumnPos: 2']
+            ['A?B','Last good token is: {"type":"identifier","value":"A"} Position:2']
         ];
         $htmlEntityMap=[
             "∈"=>"&isin;",

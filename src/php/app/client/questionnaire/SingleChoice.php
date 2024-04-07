@@ -13,7 +13,7 @@ class SingleChoice extends Question
         $html.="<div>$this->questionText</div>\n";
 
         foreach ($this->questionAnswers as $key => $value) {
-            $html.="<div><label><input type=\"radio\" name=\"$this->name[]\" value=\"$key\" $required />$value</label></div>\n";
+            $html.="<div><label><input type=\"radio\" name=\"$this->name\" value=\"$key\" $required />$value</label></div>\n";
         }
 
         $html.="</div>\n";

@@ -9,6 +9,7 @@ class DFADiagramBuilder
    private $dotString;
    private $inputPath;
    private $outputPath;
+   private $outputUrl;
    private ?User $authedUser=null;
 
 
@@ -18,6 +19,7 @@ class DFADiagramBuilder
         $this->authedUser=$authedUser;
         $this->inputPath=getenv('BASEPATH')."\\graphs\\".$this->authedUser->getUsername()."\\input\\";
         $this->outputPath=getenv('BASEPATH')."\\graphs\\".$this->authedUser->getUsername()."\\output\\";
+        $this->outputUrl=getenv('BASEURL')."/graphs/".$this->authedUser->getUsername()."/output/";
         $this->createDirs();
    }
    public function createTriplet($fromState,$input,$toState){
@@ -54,5 +56,9 @@ class DFADiagramBuilder
       if(!is_dir($this->outputPath)){
          mkdir($this->outputPath,0666,true);
       }
+   }
+
+   public function getOutputUrl($filename,$format='png'){
+      return $this->outputUrl.$filename.".".$format;
    }
 }

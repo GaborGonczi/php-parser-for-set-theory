@@ -4,9 +4,10 @@ namespace app\server\classes;
 
 use \app\server\classes\model\User;
 use \utils\Rootfolder;
+use \utils\Lang;
 
-use \app\server\classes\runable\RegisterScript;
-use \app\server\classes\runable\LoginScript;
+use \app\server\classes\runnable\RegisterScript;
+use \app\server\classes\runnable\LoginScript;
 
 use \DateTime;
 
@@ -73,26 +74,28 @@ class Auth
     public function loginHandle() {
         $username=htmlspecialchars($_POST['username']);
         $password=htmlspecialchars($_POST['password']);
+        $language=htmlspecialchars($_POST['lang']);
     
         if(!$this->isUserExistWithThisName($username)){
-          $_SESSION['messages']['loginerror']='A felhasználónév vagy a jelszó hibás';
+          $_SESSION['messages']['loginerror']=Lang::getString('loginError',$this->loginPage->getLang());
           $this->redirectTo('?login');
         }
         $users=$this->getUsersByUsername($username);
         if(count($users)!==1){
-            $_SESSION['messages']['loginerror']='A felhasználónév vagy a jelszó hibás';
+            $_SESSION['messages']['loginerror']=Lang::getString('loginError',$this->loginPage->getLang());
             $this->redirectTo('?login');
         }
         foreach ($users as $user) {
             $user=new User(...array_values($user));
         }
         if(!$user||!password_verify($password,$user->getPassword())){
-            $_SESSION['messages']['loginerror']='A felhasználónév vagy a jelszó hibás';
+            $_SESSION['messages']['loginerror']=Lang::getString('loginError',$this->loginPage->getLang());
             $this->redirectTo('?login');
         }
         
         if($user->getFirstLogin()===null) $user->setFirstLogin(date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()));
         $user->setLastLogin(date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()));
+        $user->setLanguage($language);
         $user->setModifiedAt(date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()));
         if($user->getId()!==getenv('ADMIN_ID')) $user->setModifiedBy(getenv('ADMIN_ID'));
         $this->db->update('users',$user->getAsAssociativeArray(),['id'=>$user->getId()]);
@@ -114,22 +117,23 @@ class Auth
         $username=htmlspecialchars($_POST['username']);
         $password=htmlspecialchars($_POST['password']);
         $passwordagain=htmlspecialchars($_POST['passwordagain']);
+        $language=htmlspecialchars($_POST['lang']);
         if($_POST['username']==""||$_POST['password']==""||$_POST['passwordagain']==""){
-            $_SESSION['messages']['registererror']='Minden mező kitöltése szükséges';
+            $_SESSION['messages']['registererror']=Lang::getString('allFieldsRequired',$this->registerPage->getLang());
             $this->redirectTo('?register');
         }
         if($this->isUserExistWithThisName($username)){
-            $_SESSION['messages']['registererror']='A felhasználónév foglalt';
+            $_SESSION['messages']['registererror']=Lang::getString('usernameIsAlreadyExist',$this->registerPage->getLang());
             $this->redirectTo('?register');
         }
         else if($password!==$passwordagain){
-            $_SESSION['messages']['registererror']='A két jelszó nem egyezik';
+            $_SESSION['messages']['registererror']=Lang::getString('passwordsNotTheSame',$this->registerPage->getLang());
             $this->redirectTo('?register');
         }
         if(!$this->isUserCreated(new User(null,$_POST['username'],password_hash($_POST['password'],PASSWORD_BCRYPT),
-        null,null,date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()),getenv('ADMIN_ID'),null,null,null,null))) 
+        null,null,$language,date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()),getenv('ADMIN_ID'),null,null,null,null))) 
         {
-            $_SESSION['messages']['registererror']='Sikertelen regisztráció ismeretlen okból';
+            $_SESSION['messages']['registererror']=Lang::getString('unknownRegisterError',$this->registerPage->getLang());'Sikertelen regisztráció ismeretlen okból';
             $this->redirectTo('?register');
         }
         $this->redirectTo('?login');

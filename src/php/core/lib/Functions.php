@@ -11,8 +11,14 @@ use core\parser\exception\UndefinedVariableException;
 use core\lib\datastructures\Set;
 use core\lib\datastructures\Map;
 
+use core\lib\venndiagrams\Venn1;
+use core\lib\venndiagrams\Venn2;
+use core\lib\venndiagrams\Venn3;
+
 use core\lib\exception\LibException;
 use \core\Regexp;
+use utils\Lang;
+use \utils\Rootfolder;
 
 /**
 * A class that defines some utility functions for working with sets and numbers.
@@ -37,7 +43,8 @@ class Functions
     * @public
     */
     public static function illegalArguments($functionName){
-        return new WrongArgumentException("Invalid arguments for $functionName");
+        $errorMessagesLang=Parser::getLang()?:'eng';
+        return new WrongArgumentException(Lang::getString('invalidArgumentsError',$errorMessagesLang). $functionName);
     }
 
     /**
@@ -524,36 +531,57 @@ class Functions
             switch ($rhsparts['simpleop']) {
                 case (Token::PLUS['value']):
                     $rhsfuncs[$rhsparts['id']][]=function($var) use($rhsparts) {return $var + $rhsparts['num']; };
+                    $rhsfuncs['num']=$rhsparts['num'];
                     break;
                 case (Token::MINUS['value']):
                     $rhsfuncs[$rhsparts['id']][]=function($var) use($rhsparts) {return $var - $rhsparts['num']; };
+                    $rhsfuncs['num']=$rhsparts['num'];
                     break;
                 case (Token::MULTIPLY['value']):
                     $rhsfuncs[$rhsparts['id']][]=function($var) use($rhsparts) {return $var * $rhsparts['num']; };
+                    $rhsfuncs['num']=$rhsparts['num'];
                     break;
                 case (Token::DIVIDE['value']):
-                    $rhsfuncs[$rhsparts['id']][]=function($var) use($rhsparts) {return $rhsparts['num']!==0? $var / $rhsparts['num'] :throw new DividedByZeroException('Functions::processLogicalRhs');};
+                    if($rhsparts['num']===0){
+                        $errorMessagesLang=Parser::getLang()?:'eng';
+                        throw new DividedByZeroException(Lang::getString('dividedByZeroInBoundaryFunctionError',$errorMessagesLang));
+                    }
+                    $rhsfuncs[$rhsparts['id']][]=function($var) use($rhsparts) {return $var / $rhsparts['num']; };
+                    $rhsfuncs['num']=$rhsparts['num'];
                     break;
             }
         }
         else if(isset($rhsparts['num'])&&isset($rhsparts['simpleop'])&&Functions::isArray($rhsparts['num'])){
             switch ($rhsparts['simpleop']) {
                 case (Token::PLUS['value']):
-                    $rhsfuncs['constant']=function() use($rhsparts) {$nums=$rhsparts['num']; return $nums[0] + $nums[1]; };
+                    $constant['num']=$rhsparts['num'][0]+$rhsparts['num'][1];
+                    $rhsfuncs['constant']=function() use($constant) { return $constant['num']; };
+                    $rhsfuncs['num']=$constant['num'];
                     break;
                 case (Token::MINUS['value']):
-                    $rhsfuncs['constant']=function() use($rhsparts) {$nums=$rhsparts['num']; return $nums[0] - $nums[1]; };
+                    $constant['num']=$rhsparts['num'][0]-$rhsparts['num'][1];
+                    $rhsfuncs['constant']=function() use($constant) { return $constant['num']; };
+                    $rhsfuncs['num']=$constant['num'];
                     break;
                 case (Token::MULTIPLY['value']):
-                    $rhsfuncs['constant']=function() use($rhsparts) {$nums=$rhsparts['num'];return $nums[0] * $nums[1]; };
+                    $constant['num']=$rhsparts['num'][0]*$rhsparts['num'][1];
+                    $rhsfuncs['constant']=function() use($constant) { return $constant['num']; };
+                    $rhsfuncs['num']=$constant['num'];
                     break;
                 case (Token::DIVIDE['value']):
-                    $rhsfuncs['constant']=function() use($rhsparts) {$nums=$rhsparts['num'];return $nums[1]!==0?$nums[0] / $nums[1] :throw new DividedByZeroException('Functions::processLogicalRhs');};
+                    if($rhsparts['num'][1]===0){
+                        $errorMessagesLang=Parser::getLang()?:'eng';
+                        throw new DividedByZeroException(Lang::getString('dividedByZeroInBoundaryFunctionError',$errorMessagesLang));
+                    }
+                    $constant['num']=$rhsparts['num'][0]/$rhsparts['num'][1];
+                    $rhsfuncs['constant']=function() use($constant) { return $constant['num']; };
+                    $rhsfuncs['num']=$constant['num'];
                     break;
             }
         }
         else if (isset($rhsparts['num'])) {
             $rhsfuncs['constant']=function () use ($rhsparts) {return $rhsparts['num']; };
+            $rhsfuncs['num']=$rhsparts['num'];
         }
         return $rhsfuncs;
     }
@@ -612,7 +640,10 @@ class Functions
                 $userfunc=function($var) use($num) {return $var * $num; };
                 break;
             case (Token::DIVIDE['value']):
-                $userfunc=function($var) use($num) {return $num!=0? $var / $num :throw new DividedByZeroException('Trying to divide by zero in a user defined function.');};
+                if($num===0){
+                    throw new DividedByZeroException(Lang::getString('dividedByZeroInUserDefindedFunctionError',Parser::getLang()));
+                }
+                $userfunc=function($var) use($num) {return $var / $num; };
                 break;
         }
         return $userfunc;
@@ -683,6 +714,11 @@ class Functions
                     return str_ends_with($value,'boundvalue');
                 });
                 $key=reset($keys);
+                if(Functions::isArray($value[$key])){
+                    $funckey=str_replace('boundvalue','boundfunc',$key);
+                    $func=$value[$funckey];
+                    $value[$key]=function ($var) use ($func) { return $func($var); };
+                }
                 $bounds[]=$value[$key];
             }
         }
@@ -881,7 +917,7 @@ class Functions
             if(count($operations)>1){
                 while ($index=array_search(Token::COMPLEMENT['value'],$operations)) {
                     if(Parser::getBaseSet()===null){
-                        throw new UndefinedVariableException("H is not defined. Please define it and rerun the expression evaluation.");
+                        throw new UndefinedVariableException(Lang::getString('baseSetNotDefinedError',Parser::getLang()));
                     }
                     $result=Functions::complement($sets[$index-1],Parser::getBaseSet());
                     $sets[$index-1]=$result;
@@ -975,7 +1011,7 @@ class Functions
                         break;
                     case (Token::COMPLEMENT['value']):
                         if(Parser::getBaseSet()===null){
-                            throw new UndefinedVariableException("H is not defined. Please define it and rerun the expression evaluation.");
+                            throw new UndefinedVariableException(Lang::getString('baseSetNotDefinedError',Parser::getLang()));
                         }
                         $result=Functions::complement($sets[array_key_first($sets)],Parser::getBaseSet());
                         break;   
@@ -1218,56 +1254,6 @@ class Functions
         return $retarray;
     }
 
-    /**
-    * Creates a Venn diagram for two or three sets.
-    *
-    * @param array ...$sets The sets to create the Venn diagram for. There must be either two or three sets as arguments.
-    * @return string A base64 encoded PNG image of the Venn diagram.
-    * @throws LibException If the arguments are not valid.
-    * @public
-    */
-    public static function Venn(...$sets){
-        if(count($sets)>3||count($sets)<=0){
-            throw Functions::illegalArguments(__METHOD__);
-        }
-        foreach ($sets as $set) {
-            if(!Functions::isSet($set)) throw Functions::illegalArguments(__METHOD__);
-        }
-
-        $image=imagecreate(500,500);
-        Functions::initializeColorPalette($image);
-        imagefill($image,0,0,Functions::$colorpalette["white"]);
-    
-        if(count($sets)==1){
-            list($seta)=$sets;
-            Functions::vennOneSet($image,$seta);
-        }
-        else if(count($sets)==2){
-            list($seta,$setb)=$sets;
-            Functions::vennTwoSets($image,$seta,$setb);
-            
-        }
-        else if(count($sets)==3){
-            list($seta,$setb,$setc)=$sets;
-            Functions::vennThreeSets($image,$seta,$setb,$setc);
-        }
-        
-        ob_start();
-        imagepng($image);
-        $buffer=ob_get_contents();
-        ob_end_clean();
-        $data='data:image/png;base64,' . base64_encode($buffer);
-        $html='<!DOCTYPE html>
-<html lang="en">
-<head>
-</head>
-<body>
-    <img src="'.$data.'"/>
-</body>
-</html>';
-        file_put_contents(getenv('BASEPATH').'/images/image.html',$html);
-        return getenv('BASEURL').'/images/image.html';
-    }
 
     /**
     * Separates the operands and operations from an array.
@@ -1361,559 +1347,79 @@ class Functions
     }
 
     /**
+    * Creates a Venn diagram for two or three sets.
+    *
+    * @param array ...$sets The sets to create the Venn diagram for. There must be either two or three sets as arguments.
+    * @return string A base64 encoded PNG image of the Venn diagram.
+    * @throws LibException If the arguments are not valid.
+    * @public
+    */
+    public static function Venn($sizeInPt=18,...$sets){
+        if(!Functions::isNumber($sizeInPt)) throw Functions::illegalArguments(__METHOD__);
+        if(count($sets)>3||count($sets)<=0){
+            throw Functions::illegalArguments(__METHOD__);
+        }
+        foreach ($sets as $set) {
+            if(!Functions::isSet($set)) throw Functions::illegalArguments(__METHOD__);
+        }
+    
+        if(count($sets)==1){
+            list($seta)=$sets;
+            $image=Functions::vennOneSet($seta,$sizeInPt);
+        }
+        else if(count($sets)==2){
+            list($seta,$setb)=$sets;
+            $image=Functions::vennTwoSets($seta,$setb,$sizeInPt);
+            
+        }
+        else if(count($sets)==3){
+            list($seta,$setb,$setc)=$sets;
+            $image=Functions::vennThreeSets($seta,$setb,$setc,$sizeInPt);
+        }
+        
+        ob_start();
+        imagepng($image);
+        $buffer=ob_get_contents();
+        ob_end_clean();
+        $data='data:image/png;base64,' . base64_encode($buffer);
+        $html='<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+    <img src="'.$data.'"/>
+</body>
+</html>';
+        file_put_contents(Rootfolder::getPhysicalPath().'/images/image.html',$html);
+        return getenv('BASEURL').'/images/image.html';
+    }
+
+    /**
     * Draws a Venn diagram of a set on an image resource.
     *
     * @param resource &$image The image resource to draw on.
     * @param Set $seta The first set to draw
-    * @return void
+    * @return \GdImage
     * @private
     *
     * @codeCoverageIgnore
     */
-    private static function vennOneSet(&$image,$seta){
-        $points=Functions::getVennPoints2();
-        $setau=$points["visibleLines"]["setA"]["Au"];
-        $setav=$points["visibleLines"]["setA"]["Av"];
-        $setar=$points["visibleLines"]["setA"]["Ar"];
-        $setad=$points["visibleLines"]["setA"]["Ad"];
-        $polygonA=$points["inSetAIfInThisPolygon"];
-        imagearc($image,$setau,$setav,$setad,$setad,0,360,Functions::$colorpalette["black"]);
-        foreach ($seta as $number) {
-            $coodinates=Functions::generateRandomPointInQuadrangle($polygonA["A2"]["x"],$polygonA["A2"]["y"],$polygonA["A3"]["x"],$polygonA["A3"]["y"],
-            $polygonA["A4"]["x"],$polygonA["A4"]["y"],$polygonA["A5"]["x"],$polygonA["A5"]["y"]);
-            imagestring($image,3,$coodinates["x"],$coodinates["y"],$number,Functions::$colorpalette["black"]);
-        }
+    private static function vennOneSet($seta,$sizeInPt){
+        $diagram=new Venn1($seta,'arial_narrow_7.ttf',$sizeInPt);
+        $diagram->draw();
+        return $diagram->getImage();
     }
-
-    /**
-    * Draws a Venn diagram of two sets on an image resource.
-    *
-    * @param resource &$image The image resource to draw on.
-    * @param Set $seta The first set to draw
-    * @param Set $setb The second set to draw
-    * @return void
-    * @private
-    *
-    * @codeCoverageIgnore
-    */
-    private static function vennTwoSets(&$image,$seta,$setb){
-        $points=Functions::getVennPoints2();
-        $setau=$points["visibleLines"]["setA"]["Au"];
-        $setav=$points["visibleLines"]["setA"]["Av"];
-        $setar=$points["visibleLines"]["setA"]["Ar"];
-        $setad=$points["visibleLines"]["setA"]["Ad"];
-
-        $setbu=$points["visibleLines"]["setB"]["Bu"];
-        $setbv=$points["visibleLines"]["setB"]["Bv"];
-        $setbr=$points["visibleLines"]["setB"]["Br"];
-        $setbd=$points["visibleLines"]["setB"]["Bd"];
-
-        $polygonA=$points["inSetAIfInThisPolygon"];
-        $polygonB=$points["inSetBIfInThisPolygon"];
-        $polygonAB=$points["inABIntersectionIfInThisPolygon"];
-
-        imagearc($image,$setau,$setav,$setad,$setad,0,360,Functions::$colorpalette["black"]);
-        imagearc($image,$setbu,$setbv,$setbd,$setbd,0,360,Functions::$colorpalette["black"]);
-
-        $intersectionAB=Functions::intersection($seta,$setb);
-        $setaonly=Functions::difference($seta,$intersectionAB);
-        $setbonly=Functions::difference($setb,$intersectionAB);
-        foreach ($setaonly as $number) {
-            $coodinates=Functions::generateRandomPointInQuadrangle($polygonA["A2"]["x"],$polygonA["A2"]["y"],$polygonA["A3"]["x"],$polygonA["A3"]["y"],
-            $polygonA["A4"]["x"],$polygonA["A4"]["y"],$polygonA["A5"]["x"],$polygonA["A5"]["y"]);
-            imagestring($image,3,$coodinates["x"],$coodinates["y"],$number,Functions::$colorpalette["black"]);
-        }
-        foreach ($setbonly as $number) {
-            $coodinates=Functions::generateRandomPointInQuadrangle($polygonB["B2"]["x"],$polygonB["B2"]["y"],$polygonB["B3"]["x"],$polygonB["B3"]["y"],
-            $polygonB["B4"]["x"],$polygonB["B4"]["y"],$polygonB["B5"]["x"],$polygonB["B5"]["y"]);
-            imagestring($image,3,$coodinates["x"],$coodinates["y"],$number,Functions::$colorpalette["black"]);
-        }
-        foreach ($intersectionAB as $number) {
-            $coodinates=Functions::generateRandomPointInQuadrangle($polygonAB["C1"]["x"],$polygonAB["C1"]["y"],$polygonAB["B1"]["x"],$polygonAB["B1"]["y"],
-            $polygonAB["C2"]["x"],$polygonAB["C2"]["y"],$polygonAB["A1"]["x"],$polygonAB["A1"]["y"]);
-            imagestring($image,3,$coodinates["x"],$coodinates["y"],$number,Functions::$colorpalette["black"]);
-        }
+    private static function vennTwoSets($seta,$setb,$sizeInPt){
+        $diagram=new Venn2($seta,$setb,'arial_narrow_7.ttf',$sizeInPt);
+        $diagram->draw();
+        return $diagram->getImage();
     }
-
-   /**
-    * Gets the points for drawing a Venn diagram with two sets.
-    *
-    * This function returns an associative array with four keys: 'inSetAIfInThisPolygon', 'inSetBIfInThisPolygon',
-    * 'inABIntersectionIfInThisPolygon', and 'visibleLines'. The values of these keys are arrays that contain the coordinates
-    * of the points that define the polygons and circles for the Venn diagram. The function uses the round function to round
-    * the coordinates to the nearest integer. The function also uses the @codeCoverageIgnore annotation to exclude it from
-    * code coverage analysis.
-    *
-    * @return array An associative array with four keys: 'inSetAIfInThisPolygon', 'inSetBIfInThisPolygon',
-    * 'inABIntersectionIfInThisPolygon', and 'visibleLines'.
-    * @private
-    * 
-    *@codeCoverageIgnore
-    */
-    private static function getVennPoints2(){
-        $points=[
-            "inSetAIfInThisPolygon"=>[
-                //normal y coordinates must be multiply by -1
-                /*"A1"=>[
-                    "x"=>187.5, // x:187.5,y:250
-                    'y'=>250
-                ],*/
-                "A2"=>[
-                    "x"=>($A2x=round(187.5)), // x:187.5,y:-375
-                    "y"=>($A2y=round(375))
-                ],
-                "A3"=>[
-                    "x"=>($A3x=round(97.5)), // x:97.5,y:-336.75
-                    "y"=>($A3y=round(336.75))
-                ],
-                "A4"=>[
-                    "x"=>($A4x=round(97.5)),  //x:97.5,y:-163.25
-                    "y"=>($A4y=round(163.25))
-                ],
-                "A5"=>[
-                    "x"=>($A5x=round(187.5)), // x:187.5,y:-125
-                    "y"=>($A5y=round(125))
-                ]
-                
-            ],
-            "inSetBIfInThisPolygon"=>[
-                /*"B1"=>[
-                    "x"=>312.5, // x:312.5,y:-250
-                    "y"=>250
-                ],*/
-                "B2"=>[
-                    "x"=>($B2x=round(202.5)), // x:202.5,y:-163.25
-                    "y"=>($B2y=round(163.25)),
-                ],
-                "B3"=>[
-                    "x"=>($B3x=round(402.5)), // x:402.5,y:-336.75
-                    "y"=>($B3y=round(336.75)),
-                ],
-            
-                "B4"=>[
-                    "x"=>($B4x=round(314.5)), // x:314.5,y:-375
-                    "y"=>($B4y=round(375))
-                ],
-                "B5"=>[
-                    "x"=>($B5x=round(312.5)), // x:312.5,y:-125
-                    "y"=>($B5y=round(125)),
-                ]
-                
-            ],
-            "inABIntersectionIfInThisPolygon"=>[
-                "C1"=>[
-                    "x"=>($C1x=round(250)), //x:250,y:-141.75 
-                    "y"=>($C1y=round(141.75))
-                ],
-                "B1"=>[
-                    "x"=>($B1x=round(312.5)), // x:312.5,y:-250
-                    "y"=>($B1y=round(250))
-                ],
-                "C2"=>[
-                    "x"=>($C2x=round(250)), // x:250,y:-358.25
-                    "y"=>($C2y=round(358.25))
-                ],
-                "A1"=>[
-                    "x"=>($A1x=round(187.5)), // x:187.5,y:250
-                    'y'=>($A1y=round(250))
-                ]
-            ],
-            "visibleLines"=>[
-               "setA"=>[
-                "Au"=>($Au=round(187.5)), //Kör egyenlet (x-u)^2+(y-v)^2=>(x - 187.5)² + (y + 250)² = 15625
-                "Av"=>($Av=round(250)),
-                "Ar"=>($Ar=round(125)),
-                "Ad"=>($Ad=round($Ar*2))
-               ],
-               "setB"=>[
-                "Bu"=>($Bu=round(312.5)), //Kör egyenlet (x-u)^2+(y-v)^2=>(x - 312.5)² + (y + 250)² = 15625
-                "Bv"=>($Bv=round(250)),
-                "Br"=>($Br=round(125)),
-                "Bd"=>($Bd=round($Br*2))
-               ]
-            ]
-        ];
-        return $points;
+    private static function vennThreeSets($seta,$setb,$setc,$sizeInPt){
+        $diagram=new Venn3($seta,$setb,$setc,'arial_narrow_7.ttf',$sizeInPt);
+        $diagram->draw();
+        return $diagram->getImage();
     }
-
-    /**
-    * Generates a random point inside a quadrangle.
-    *
-    * This function takes the coordinates of the four vertices of a quadrangle as arguments and returns an associative array
-    * with two keys: 'x' and 'y'. The values of these keys are the coordinates of a random point that lies inside the quadrangle.
-    * The function uses the Functions class to generate random floats and check if a point is inside a quadrangle.
-    * The function also uses the round function to round the coordinates to the nearest integer.
-    * The function uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.
-    *
-    * @param float $x1 The x-coordinate of the first vertex of the quadrangle.
-    * @param float $y1 The y-coordinate of the first vertex of the quadrangle.
-    * @param float $x2 The x-coordinate of the second vertex of the quadrangle.
-    * @param float $y2 The y-coordinate of the second vertex of the quadrangle.
-    * @param float $x3 The x-coordinate of the third vertex of the quadrangle.
-    * @param float $y3 The y-coordinate of the third vertex of the quadrangle.
-    * @param float $x4 The x-coordinate of the fourth vertex of the quadrangle.
-    * @param float $y4 The y-coordinate of the fourth vertex of the quadrangle.
-    * @return array An associative array with two keys: 'x' and 'y'.
-    * @private
-    * 
-    * @codeCoverageIgnore
-    */
-    private static function generateRandomPointInQuadrangle($x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4){
-        do {           
-            $x=Functions::random_float($x3,$x4);
-            $y=Functions::random_float(Functions::random_float($y4,$y2),Functions::random_float($y3,$y1));
-        } while (!Functions::isInsideQuadrangle($x, $y, $x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4));
-
-         return ["x"=>round($x),"y"=>round($y)];
-    }
-
-    /**
-    * Checks if a point is inside a quadrangle.
-    *
-    * This function takes the coordinates of a point and the four vertices of a quadrangle as arguments and returns a boolean value
-    * indicating whether the point lies inside the quadrangle or not. The function uses the winding number algorithm to determine
-    * the point-in-polygon test, which involves calculating the cross product of the vectors and the position of the point relative
-    * to the edges of the quadrangle. The function also uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.
-    *
-    * @param float $x The x-coordinate of the point.
-    * @param float $y The y-coordinate of the point.
-    * @param float $x1 The x-coordinate of the first vertex of the quadrangle.
-    * @param float $y1 The y-coordinate of the first vertex of the quadrangle.
-    * @param float $x2 The x-coordinate of the second vertex of the quadrangle.
-    * @param float $y2 The y-coordinate of the second vertex of the quadrangle.
-    * @param float $x3 The x-coordinate of the third vertex of the quadrangle.
-    * @param float $y3 The y-coordinate of the third vertex of the quadrangle.
-    * @param float $x4 The x-coordinate of the fourth vertex of the quadrangle.
-    * @param float $y4 The y-coordinate of the fourth vertex of the quadrangle.
-    * @return bool True if the point is inside the quadrangle, false otherwise.
-    * @private
-    * 
-    * @codeCoverageIgnore
-    */
-    private static function isInsideQuadrangle($x, $y, $x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4) {
-        $coords = array($x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4);
-        $point = array($x, $y);
-        $winding = 0;
-            // 4. Loop through the four edges of the quadrangle
-        for ($i = 0; $i < 4; $i++) {
-            $cross = (($coords[($i+1)%4*2] - $coords[$i*2]) * ($point[1] - $coords[$i*2+1])) - (($point[0] - $coords[$i*2]) * ($coords[($i+1)%4*2+1] - $coords[$i*2+1]));
-            $above = ($point[1] > $coords[$i*2+1]) && ($point[1] <= $coords[($i+1)%4*2+1]);
-            $below = ($point[1] < $coords[$i*2+1]) && ($point[1] >= $coords[($i+1)%4*2+1]);
-
-            if ($above && $cross > 0) {
-                $crossing = 1;
-            }
-            elseif ($below && $cross < 0) {
-                $crossing = -1;
-            }
-            else {
-               $crossing = 0;
-            }
-            $winding += $crossing;
-        }
-        return ($winding !=0);
-    }
-    
-    /**
-    * Draws a Venn diagram of three sets on an image resource.
-    *
-    * @param resource &$image The image resource to draw on.
-    * @param Set $seta The first set to draw
-    * @param Set $setb The second set to draw
-    * @param Set $setc The third set to draw
-    * @return void
-    * @private
-    *
-    * @codeCoverageIgnore
-    */
-    private static function vennThreeSets(&$image,$seta,$setb,$setc){
-        //fix set A elements appearence
-        $points=Functions::getVennPoints3();
-        $setau=$points["visibleLines"]["setA"]["Au"];
-        $setav=$points["visibleLines"]["setA"]["Av"];
-        $setar=$points["visibleLines"]["setA"]["Ar"];
-        $setad=$points["visibleLines"]["setA"]["Ad"];
-
-        $setbu=$points["visibleLines"]["setB"]["Bu"];
-        $setbv=$points["visibleLines"]["setB"]["Bv"];
-        $setbr=$points["visibleLines"]["setB"]["Br"];
-        $setbd=$points["visibleLines"]["setB"]["Bd"];
-
-        $setcu=$points["visibleLines"]["setC"]["Cu"];
-        $setcv=$points["visibleLines"]["setC"]["Cv"];
-        $setcr=$points["visibleLines"]["setC"]["Cr"];
-        $setcd=$points["visibleLines"]["setC"]["Cd"];
-
-        $polygonA=$points["inSetAIfInThisPolygon"];
-        $polygonB=$points["inSetBIfInThisPolygon"];
-        $polygonC=$points["inSetCIfInThisPolygon"];
-        $polygonAB=$points["inABIntersectionIfInThisPolygon"];
-        $polygonAC=$points["inACIntersectionIfInThisPolygon"];
-        $polygonBC=$points["inBCIntersectionIfInThisPolygon"];
-        $polygonABC=$points["inABCIntersectionIfInThisPolygon"];
-
-        imagearc($image,$setau,$setav,$setad,$setad,0,360,Functions::$colorpalette["black"]);
-        imagearc($image,$setbu,$setbv,$setbd,$setbd,0,360,Functions::$colorpalette["black"]);
-        imagearc($image,$setcu,$setcv,$setcd,$setcd,0,360,Functions::$colorpalette["black"]);
-
-        
-        $intersectionABC=Functions::intersection($seta,$setb,$setc);
-        $intersectionAB=Functions::difference(Functions::intersection($seta,$setb),$intersectionABC);
-        $intersectionAC=Functions::difference(Functions::intersection($seta,$setc),$intersectionABC);
-        $intersectionBC=Functions::difference(Functions::intersection($setb,$setc),$intersectionABC);
-
-        $setaonly=Functions::difference($seta,Functions::union($intersectionAB,$intersectionAC,$intersectionABC));
-        $setbonly=Functions::difference($setb,Functions::union($intersectionAB,$intersectionBC,$intersectionABC));
-        $setconly=Functions::difference($setc,Functions::union($intersectionAC,$intersectionBC,$intersectionABC));
-
-       
-
-        foreach ($setaonly as $number) {
-            $coodinates=Functions::generateRandomPointInQuadrangle($polygonA["A1"]["x"],$polygonA["A1"]["y"],$polygonA["A2"]["x"],$polygonA["A2"]["y"],
-            $polygonA["A3"]["x"],$polygonA["A3"]["y"],$polygonA["AB2"]["x"],$polygonA["AB2"]["y"]);
-            imagestring($image,3,$coodinates["x"],$coodinates["y"],$number,Functions::$colorpalette["black"]);
-        }
-        foreach ($setbonly as $number) {
-            $coodinates=Functions::generateRandomPointInQuadrangle($polygonB["B1"]["x"],$polygonB["B1"]["y"],$polygonB["B2"]["x"],$polygonB["B2"]["y"],$polygonB["AB3"]["x"],$polygonB["AB3"]["y"],
-            $polygonB["B3"]["x"],$polygonB["B3"]["y"]);
-            imagestring($image,3,$coodinates["x"],$coodinates["y"],$number,Functions::$colorpalette["black"]);
-        }
-        foreach ($setconly as $number) {
-            $coodinates=Functions::generateRandomPointInQuadrangle($polygonC["C1"]["x"],$polygonC["C1"]["y"],$polygonC["C2"]["x"],$polygonC["C2"]["y"],
-            $polygonC["C3"]["x"],$polygonC["C3"]["y"],$polygonC["C4"]["x"],$polygonC["C4"]["y"]);
-            imagestring($image,3,$coodinates["x"],$coodinates["y"],$number,Functions::$colorpalette["black"]);
-        }
-        foreach ($intersectionAB as $number) {
-            $coodinates=Functions::generateRandomPointInTriangle($polygonAB["AB1"]["x"],$polygonAB["AB1"]["y"],$polygonAB["AB2"]["x"],$polygonAB["AB2"]["y"],
-            $polygonAB["AB3"]["x"],$polygonAB["AB3"]["y"]);
-            imagestring($image,3,$coodinates["x"],$coodinates["y"],$number,Functions::$colorpalette["black"]);
-        }
-        foreach ($intersectionAC as $number) {
-            $coodinates=Functions::generateRandomPointInTriangle($polygonAC["AC1"]["x"],$polygonAC["AC1"]["y"],$polygonAC["AC2"]["x"],$polygonAC["AC2"]["y"],
-            $polygonAC["AC3"]["x"],$polygonAC["AC3"]["y"]);
-            imagestring($image,3,$coodinates["x"],$coodinates["y"],$number,Functions::$colorpalette["black"]);
-        }
-        foreach ($intersectionBC as $number) {
-            $coodinates=Functions::generateRandomPointInTriangle($polygonBC["BC1"]["x"],$polygonBC["BC1"]["y"],$polygonBC["BC2"]["x"],$polygonBC["BC2"]["y"],
-            $polygonBC["BC3"]["x"],$polygonBC["BC3"]["y"]);
-            imagestring($image,3,$coodinates["x"],$coodinates["y"],$number,Functions::$colorpalette["black"]);
-        }
-        foreach ($intersectionABC as $number) {
-            $coodinates=Functions::generateRandomPointInTriangle($polygonABC["ABC1"]["x"],$polygonABC["ABC1"]["y"],$polygonABC["ABC2"]["x"],$polygonABC["ABC2"]["y"],
-            $polygonABC["ABC3"]["x"],$polygonABC["ABC3"]["y"]);
-            imagestring($image,3,$coodinates["x"],$coodinates["y"],$number,Functions::$colorpalette["black"]);
-        }
-    }
-
-    /**
-    * Gets the points for drawing a Venn diagram with three sets.
-    *
-    * This method returns an associative array with nine keys: 'inSetAIfInThisPolygon', 'inSetBIfInThisPolygon',
-    * 'inSetCIfInThisPolygon', 'inABIntersectionIfInThisPolygon', 'inACIntersectionIfInThisPolygon',
-    * 'inBCIntersectionIfInThisPolygon', 'inABCIntersectionIfInThisPolygon', and 'visibleLines'. The values of these keys are arrays that contain the coordinates
-    * of the points that define the polygons and circles for the Venn diagram. The method uses the round method to round
-    * the coordinates to the nearest integer. The method also uses the @codeCoverageIgnore annotation to exclude it from
-    * code coverage analysis.
-    *
-    * @return array An associative array with nine keys: 'inSetAIfInThisPolygon', 'inSetBIfInThisPolygon',
-    * 'inSetCIfInThisPolygon', 'inABIntersectionIfInThisPolygon', 'inACIntersectionIfInThisPolygon',
-    * 'inBCIntersectionIfInThisPolygon', 'inABCIntersectionIfInThisPolygon', and 'visibleLines'.
-    * @private
-    *
-    * @codeCoverageIgnore
-    */
-    private static function getVennPoints3(){
-        $points=[
-            "inSetAIfInThisPolygon"=>[
-                "A1"=>[
-                    "x"=>($A1x=round(97.5)), // x:97.5,y:-336.75
-                    "y"=>($A1y=round(336.75))
-                ],
-                "A2"=>[
-                    "x"=>($A2x=round(97.5)), // x:97.5,y:-163.25
-                    "y"=>($A2y=round(163.25))
-                ],
-                "A3"=>[
-                    "x"=>($A3x=round(187.5)), // x:187.5,y:-125
-                    "y"=>($A3y=round(125))
-                ],
-                "AB2"=>[
-                    "x"=>($AB2x=round(188.5)), // x:188.5,y:-233.25
-                    "y"=>($AB2y=round(233.25))
-                ],
-            ],
-            "inSetBIfInThisPolygon"=>[
-                "B1"=>[
-                    "x"=>($B1x=round(402.5)), // x:402.5,y:-336.75
-                    "y"=>($B1y=round(336.75))
-                ],
-                "B2"=>[
-                    "x"=>($B2x=round(402.5)), // x:402.5,y:-163.25
-                    "y"=>($B2y=round(163.25))
-                ],
-                "B3"=>[
-                    "x"=>($B3x=round(312.5)), // x:312.5,y:-125
-                    "y"=>($B3y=round(125))
-                ],
-                "AB3"=>[
-                    "x"=>($AB3x=round(312.5)), // x:312.5,y:-233.25
-                    "y"=>($AB3y=round(233.25))
-                ]
-            ],
-            "inSetCIfInThisPolygon"=>[
-                "C1"=>[
-                    "x"=>($C1x=round(373.5)), // x:373.5,y:-375
-                    "y"=>($C1y=round(375))
-                ],
-                "C2"=>[
-                    "x"=>($C2x=round(312.5)),// x:312.5,y:-466.5
-                    "y"=>($C2y=round(466.5))
-                ],
-                "C3"=>[
-                    "x"=>($C3x=round(187.5)), // x:187.5,y:-466.5
-                    "y"=>($C3y=round(466.5))
-                ],
-                "C4"=>[
-                    "x"=>($C4x=round(126.5)), // x:126.5,y:-375
-                    "y"=>($C4y=round(375))
-                ]
-            ],
-            "inABIntersectionIfInThisPolygon"=>[
-                "AB1"=>[
-                    "x"=>($AB1x=round(250)), // x:250,y:-141.5
-                    "y"=>($AB1y=round(141.5))
-                ],
-                "AB2"=>[
-                    "x"=>($AB2x=round(188.5)), // x:188.5,y:-233.25
-                    "y"=>($AB2y=round(233.25))
-                ],
-                "AB3"=>[
-                    "x"=>($AB3x=round(312.5)), // x:312.5,y:-233.25
-                    "y"=>($AB3y=round(233.25))
-                ]
-            ],
-            "inACIntersectionIfInThisPolygon"=>[
-                "AC1"=>[
-                    "x"=>($AC1x=round(173.5)), // x:173.5,y:-259.25
-                    "y"=>($AC1y=round(259.25)),
-                ],
-                "AC2"=>[
-                    "x"=>($AC2x=round(125)), // x:125,y:-358.25
-                    "y"=>($AC2y=round(358.25)),
-                ],
-                "AC3"=>[
-                    "x"=>($AC3x=round(235)), // x:235,y:-365.5
-                    "y"=>($AC3y=round(365.5)),
-                ]
-            ],
-            "inBCIntersectionIfInThisPolygon"=>[
-                "BC1"=>[
-                    "x"=>($BC1x=round(326.5)),  // x:326.5,y:-259.25
-                    "y"=>($BC1y=round(259.25)),
-                ],
-                "BC2"=>[
-                    "x"=>($BC2x=round(265)), // x:265,y:-365.5
-                    "y"=>($BC2y=round(365.5)),
-                ],
-                "BC3"=>[
-                    "x"=>($BC3x=round(375)), // x:375,y:-358.25
-                    "y"=>($BC3y=round(358.25)),
-                ]
-            ],
-            "inABCIntersectionIfInThisPolygon"=>[
-                "ABC1"=>[
-                    "x"=>($ABC1x=round(187.5)), // x:187.5,y:-250
-                    "y"=>($ABC1y=round(250)),
-                ],
-                "ABC2"=>[
-                    "x"=>($ABC2x=round(250)), // x:250,y:-358.25
-                    "y"=>($ABC2y=round(358.25)),
-                ],
-                "ABC3"=>[
-                    "x"=>($ABC3x=round(312.5)), // x:312.5,y:-250
-                    "y"=>($ABC3y=round(250)),
-                ]
-            ],
-            "visibleLines"=>[
-                "setA"=>[
-                    "Au"=>($Au=round(187.5)), //Circle equation (x-u)^2+(y-v)^2=>(x - 187.5)² + (y + 250)² = 15625
-                    "Av"=>($Av=round(250)),
-                    "Ar"=>($Ar=round(125)),
-                    "Ad"=>($Ad=round($Ar*2))
-                   ],
-                   "setB"=>[
-                    "Bu"=>($Bu=round(312.5)), //Circle equation (x-u)^2+(y-v)^2=>(x - 312.5)² + (y + 250)² = 15625
-                    "Bv"=>($Bv=round(250)),
-                    "Br"=>($Br=round(125)),
-                    "Bd"=>($Bd=round($Br*2))
-                   ],
-                   "setC"=>[
-                    "Cu"=>($Cu=round(250)), //Circle equation (x-u)^2+(y-v)^2=>(x - 250)² + (y + 358.25)² = 15625
-                    "Cv"=>($Cv=round(358.25)),
-                    "Cr"=>($Cr=round(125)),
-                    "Cd"=>($Cd=round($Cr*2))
-                   ]
-            ]
-        ];
-        return $points;
-    }
-
-    /**
-    * Generates a random point inside a triangle.
-    *
-    * This method takes the coordinates of the three vertices of a triangle as arguments and returns an associative array
-    * with two keys: 'x' and 'y'. The values of these keys are the coordinates of a random point that lies inside the triangle.
-    * The method uses the Functions class to generate random floats and the barycentric coordinates formula to calculate
-    * the point coordinates. The method also uses the round method to round the coordinates to the nearest integer.
-    * The method uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.
-    *
-    * @param float $x1 The x-coordinate of the first vertex of the triangle.
-    * @param float $y1 The y-coordinate of the first vertex of the triangle.
-    * @param float $x2 The x-coordinate of the second vertex of the triangle.
-    * @param float $y2 The y-coordinate of the second vertex of the triangle.
-    * @param float $x3 The x-coordinate of the third vertex of the triangle.
-    * @param float $y3 The y-coordinate of the third vertex of the triangle.
-    * @return array An associative array with two keys: 'x' and 'y'.
-    * @private
-    *
-    * @codeCoverageIgnore
-    */
-    private static function generateRandomPointInTriangle($x1, $y1, $x2, $y2, $x3, $y3){
-        $r1 = Functions::random_float(0, 1);
-        $r2 = Functions::random_float(0, 1);
-        $x = (1 - sqrt($r1)) * $x1 + (sqrt($r1) * (1 - $r2)) * $x2 + (sqrt($r1) * $r2) * $x3;
-        $y = (1 - sqrt($r1)) * $y1 + (sqrt($r1) * (1 - $r2)) * $y2 + (sqrt($r1) * $r2) * $y3;
-        return ["x"=>round($x),"y"=>round($y)];
-    }
-
-    /**
-    * @codeCoverageIgnore
-    */
-    /*public static function calculate_set_cardinality($input) {
- 
-        $a_union_b = $input ['a_union_b'];
-        $a = $input ['a'];
-        $b = $input ['b'];
-        $a_intersection_b = $input ['a_intersection_b'];
-        
-    }*/
-    
-    /**
-    * @codeCoverageIgnore
-    */
-    /*public static function calculate_set_cardinality3($input) {
-        $a_union_b_union_c = $input ['a_union_b_union_c'];
-        $a = $input ['a'];
-        $b = $input ['b'];
-        $c = $input ['c'];
-        $a_intersection_b = $input ['a_intersection_b'];
-        $a_intersection_c = $input ['a_intersection_c'];
-        $b_intersection_c = $input ['b_intersection_c'];
-        $a_intersection_b_intersection_c = $input ['a_intersection_b_intersection_c'];
-        
-    }**/
-    
-
+   
     /**
     * Initializes the color palette for an image.
     *
@@ -1939,24 +1445,7 @@ class Functions
         Functions::$colorpalette["orange"]=imagecolorallocate($image,255,165,0);
     }
 
-    /**
-    * Generates a random float between two values.
-    *
-    * This function takes two floats as arguments and returns a random float that is between them.
-    * The function uses the lcg_value function to generate a pseudo-random number and the abs function to get the absolute value of the difference between the arguments.
-    * The function also uses the @codeCoverageIgnore annotation to exclude it from code coverage analysis.
-    *
-    * @param float $min The lower bound of the random float.
-    * @param float $max The upper bound of the random float.
-    * @return float A random float between $min and $max.
-    * @private
-    *
-    * @codeCoverageIgnore
-    */
-    private static function random_float ($min,$max) {
-        return ($min+lcg_value()*(abs($max-$min)));
-    }
-   
+    
     /**
     * Gets the color palette for an image.
     *

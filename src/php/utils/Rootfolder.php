@@ -21,6 +21,12 @@ namespace utils;
          $relative_to_src=substr($_SERVER['REQUEST_URI'],0,-1);
       }
       return $method.$_SERVER['SERVER_NAME'].$relative_to_src;
-     }
+   }
+
+   //https://codereview.stackexchange.com/questions/178436/get-file-absolute-path-from-file-url-in-php segített de a kód saját
+   public static function getPhysicalPath(){
+      
+      return $_SERVER['DOCUMENT_ROOT'].parse_url(Rootfolder::getPath(),PHP_URL_PATH);
+   }
 }
 

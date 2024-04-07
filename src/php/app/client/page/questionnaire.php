@@ -10,6 +10,8 @@ use app\client\questionnaire\SingleChoice;
 use app\client\questionnaire\SingleChoiceMatrix;
 
 use \utils\Rootfolder;
+use \utils\Lang;
+use \app\server\classes\model\User;
 use \app\client\questionnaire\Questionnaire;
 
 if(session_status() == PHP_SESSION_NONE){
@@ -20,140 +22,142 @@ if(!isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
     header("Location:$location");
     exit(1);
 }
+if(isset($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'])){
+    $user=new User(...array_values(json_decode($_SESSION[$_COOKIE['PHPSESSID']]['authedUser'],true)));
+    $lang=$user->getLanguage();
+}
+else{
+    $lang='hun';
+}
 if (isset($_SESSION) && isset($_SESSION['messages']) && !isset($_SESSION['messages']['questionnairemessage_success'])) {
-    $title="Halmazok témakörének tanulását/tanítását segítő program";
-    $description=<<<DESC
-    Gönczi Gábor vagyok a Széchenyi István Egyetem végzős hallgatója.<br/> \n 
-    Az alábbi kérdőívben az általam készített programhoz kapcsolódó kérdések találhatók. \n
-    A kérdőív teljesen anonim.<br/> \n
-    Köszönöm ha a  kitöltésével segíti a diplomamunkám elkészítését.
-    DESC;
+    $title=Lang::getString('questionnaireTitle',$lang);
+    $description=Lang::getString('questionnaireDescription',$lang); 
     $questionnaire= new Questionnaire($title,$description);
-    $questionnaire->addQuestion(new ShortAnswer("average_daily_usage_in_minute","Átlagosan mennyi ideig használta a programot naponta (percben mérve)?",true));
-    $questionnaire->addQuestion(new Likert("program_conductiveness","Ön szerint mennyire hasznos a program?",true,
+    $questionnaire->addQuestion(new ShortAnswer('average_daily_usage_in_minute',Lang::getString('questionnaireAverageDailyUsageInMinute',$lang),true));
+    $questionnaire->addQuestion(new Likert('program_conductiveness',Lang::getString('questionnaireProgramConductiveness',$lang),true,
     [
-        "1"=>"1",
-        "2"=>"2",
-        "3"=>"3",
-        "4"=>"4",
-        "5"=>"5"
+        '1'=>'1',
+        '2'=>'2',
+        '3'=>'3',
+        '4'=>'4',
+        '5'=>'5'
     ],
-    "Egyáltalán nem hasznos","Nagyon hasznos"));
-    $questionnaire->addQuestion(new SingleChoiceMatrix("user_satisfaction","Mennyire elégedett a program következő jellemzőivel?",true,
+    Lang::getString('questionnaireProgramConductivenessLow',$lang),Lang::getString('questionnaireProgramConductivenessHigh',$lang)));
+    $questionnaire->addQuestion(new SingleChoiceMatrix('user_satisfaction',Lang::getString('questionnaireUserSatisfaction',$lang),true,
         [
-            "design"=>[
-                "label"=>"Dizájn",
-                "code"=>"design",
-                "values"=>[
-                    "1"=>"1",
-                    "2"=>"2",
-                    "3"=>"3",
-                    "4"=>"4",
-                    "5"=>"5"
+            'design'=>[
+                'label'=>Lang::getString('questionnaireUserSatisfactionDesign',$lang),
+                'code'=>'design',
+                'values'=>[
+                    '1'=>'1',
+                    '2'=>'2',
+                    '3'=>'3',
+                    '4'=>'4',
+                    '5'=>'5'
                 ]
             ],
-            "tutorial"=>[
-                "label"=>"A használatot bemutató videóval",
-                "code"=>"tutorial",
-                "values"=>[
-                    "1"=>"1",
-                    "2"=>"2",
-                    "3"=>"3",
-                    "4"=>"4",
-                    "5"=>"5"
+            'tutorial'=>[
+                'label'=>Lang::getString('questionnaireUserSatisfactionTutorial',$lang),
+                'code'=>'tutorial',
+                'values'=>[
+                    '1'=>'1',
+                    '2'=>'2',
+                    '3'=>'3',
+                    '4'=>'4',
+                    '5'=>'5'
                 ]
             ],
-            "example"=>[
-                "label"=>"A halmazok témakörét feldolgozó mintafájllal",
-                "code"=>"example",
-                "values"=>[
-                    "1"=>"1",
-                    "2"=>"2",
-                    "3"=>"3",
-                    "4"=>"4",
-                    "5"=>"5"
+            'example'=>[
+                'label'=>Lang::getString('questionnaireUserSatisfactionExample',$lang),
+                'code'=>'example',
+                'values'=>[
+                    '1'=>'1',
+                    '2'=>'2',
+                    '3'=>'3',
+                    '4'=>'4',
+                    '5'=>'5'
                 ]
             ],
-            "errormessages"=>[
-                "label"=>"A hibaüzenetek egyértelműségével",
-                "code"=>"errormessages",
-                "values"=>[
-                    "1"=>"1",
-                    "2"=>"2",
-                    "3"=>"3",
-                    "4"=>"4",
-                    "5"=>"5"
+            'errormessages'=>[
+                'label'=>Lang::getString('questionnaireUserSatisfactionErrormessages',$lang),
+                'code'=>'errormessages',
+                'values'=>[
+                    '1'=>'1',
+                    '2'=>'2',
+                    '3'=>'3',
+                    '4'=>'4',
+                    '5'=>'5'
                 ]
             ],
-            "curriculumsize"=>[
-                "label"=>"A gyakorolható tananyagrész nagyságával",
-                "code"=>"curriculumsize",
-                "values"=>[
-                    "1"=>"1",
-                    "2"=>"2",
-                    "3"=>"3",
-                    "4"=>"4",
-                    "5"=>"5"
+            'curriculumsize'=>[
+                'label'=>Lang::getString('questionnaireUserSatisfactionCurriculumsize',$lang),
+                'code'=>'curriculumsize',
+                'values'=>[
+                    '1'=>'1',
+                    '2'=>'2',
+                    '3'=>'3',
+                    '4'=>'4',
+                    '5'=>'5'
                 ]
             ],
 
         ]
     ));
-    $questionnaire->addQuestion(new LongAnswer("extend_program","Ha van olyan része a programnak, amin változtatna vagy olyan funkció, amivel kibővítené a programot, akkor kérem írja le ezt néhány mondatban.",true));
-    $questionnaire->addQuestion(new MultipleChoiceMatrix("program_usage_time_of_the_day","Mikor használta a programot általában?",true,
+    $questionnaire->addQuestion(new LongAnswer('extend_program',Lang::getString('questionnaireExtendProgram',$lang),true));
+    $questionnaire->addQuestion(new MultipleChoiceMatrix('program_usage_time_of_the_day',Lang::getString('questionnaireProgramUsageTimOfTheDay',$lang),true,
         [
-            "weekdays"=>[
-                "label"=>"Hétköznap",
-                "code"=>"weekdays",
-                "values"=>[
-                   "morning"=>"Reggel",
-                   "beforenoon"=>"Délelőtt",
-                   "afternoon"=>"Délután"
+            'weekdays'=>[
+                'label'=>Lang::getString('questionnaireProgramUsageTimOfTheDayWeekdays',$lang),
+                'code'=>'weekdays',
+                'values'=>[
+                   'morning'=>Lang::getString('questionnaireProgramUsageTimOfTheDayMorning',$lang),
+                   'beforenoon'=>Lang::getString('questionnaireProgramUsageTimOfTheDayBeforenoon',$lang),
+                   'afternoon'=>Lang::getString('questionnaireProgramUsageTimOfTheDayAfternoon',$lang)
                 ]
             ],
-            "weekends"=>[
-                "label"=>"Hétvégén",
-                "code"=>"weekends",
-                "values"=>[
-                   "morning"=>"Reggel",
-                   "beforenoon"=>"Délelőtt",
-                   "afternoon"=>"Délután"
+            'weekends'=>[
+                'label'=>Lang::getString('questionnaireProgramUsageTimOfTheDayWeekends',$lang),
+                'code'=>'weekends',
+                'values'=>[
+                   'morning'=>Lang::getString('questionnaireProgramUsageTimOfTheDayMorning',$lang),
+                   'beforenoon'=>Lang::getString('questionnaireProgramUsageTimOfTheDayBeforenoon',$lang),
+                   'afternoon'=>Lang::getString('questionnaireProgramUsageTimOfTheDayAfternoon',$lang)
                 ]
             ]
         ]
     ));
-    $questionnaire->addQuestion(new SingleChoice("recommendation_to_try","Ajánlaná ismerősének?",true,
+    $questionnaire->addQuestion(new SingleChoice('recommendation_to_try',Lang::getString('questionnaireRecommendationToTry',$lang),true,
     [
-        "y"=>"Igen",
-        "n"=>"Nem"
+        'y'=>Lang::getString('questionnaireYes',$lang),
+        'n'=>Lang::getString('questionnaireNo',$lang)
     ]
     ));
-    $questionnaire->addQuestion(new LongAnswer("recommendation_to_try_desc","Kérem fejtse ki az előző kérdésre adott válaszát.",true));
-    $questionnaire->addQuestion(new ShortAnswer("math_knnowledge_by_mark","Érdemjegyei alapján milyen az Ön matematikatudása?",true));
-    $questionnaire->addQuestion(new SingleChoice("math_knowledge_after_program_usage","Ön szerint javult a matematika tudása a program használatával?",true,
+    $questionnaire->addQuestion(new LongAnswer('recommendation_to_try_desc',Lang::getString('questionnaireRecommendationToTryDesc',$lang),true));
+    $questionnaire->addQuestion(new ShortAnswer('math_knowledge_by_mark',Lang::getString('questionnaireMathKnowledgeByMark',$lang),true));
+    $questionnaire->addQuestion(new SingleChoice('math_knowledge_after_program_usage',Lang::getString('questionnaireMathKnowledgeAfterProgramUsage',$lang),true,
     [
-        "y"=>"Igen",
-        "n"=>"Nem"
+        'y'=>Lang::getString('questionnaireYes',$lang),
+        'n'=>Lang::getString('questionnaireNo',$lang)
     ]
     ));
-    $questionnaire->addQuestion(new SingleChoice("gender","Neme?",true,
+    $questionnaire->addQuestion(new SingleChoice('gender',Lang::getString('questionnaireGender',$lang),true,
     [
-        "f"=>"Nő",
-        "m"=>"Férfi"
+        'f'=>Lang::getString('questionnaireGenderFemale',$lang),
+        'm'=>Lang::getString('questionnaireGenderMale',$lang)
     ]
     ));
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo Rootfolder::getPath().'/src/favicon/apple-touch-icon.png'?>">
-    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo Rootfolder::getPath().'/src/favicon/favicon-32x32.png'?>">
-    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo Rootfolder::getPath().'/src/favicon/favicon-16x16.png'?>">
-    <link rel="manifest" href="<?php echo Rootfolder::getPath().'/src/favicon/site.webmanifest'?>">
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <link rel='apple-touch-icon' sizes='180x180' href='<?php echo Rootfolder::getPath().'/src/favicon/apple-touch-icon.png'?>'>
+    <link rel='icon' type='image/png' sizes='32x32' href='<?php echo Rootfolder::getPath().'/src/favicon/favicon-32x32.png'?>'>
+    <link rel='icon' type='image/png' sizes='16x16' href='<?php echo Rootfolder::getPath().'/src/favicon/favicon-16x16.png'?>'>
+    <link rel='manifest' href='<?php echo Rootfolder::getPath().'/src/favicon/site.webmanifest'?>'>
     <style>
         .container{
             width: 500px;
@@ -166,27 +170,27 @@ if (isset($_SESSION) && isset($_SESSION['messages']) && !isset($_SESSION['messag
             width: 100%;
         }
     </style>
-    <title>Kérdőív</title>
+    <title><?php echo Lang::getString('questionnairePageTitle',$lang);?></title>
 </head>
 <body>
 
 <?php 
 if (isset($_SESSION) && isset($_SESSION['messages']) && !isset($_SESSION['messages']['questionnairemessage_success'])) {
     if(isset($_SESSION['messages']['questionnairemessage_error'])){
-        echo "<div>$_SESSION[messages][questionnairemessage_error]</div>\n";
+        echo "<div>".$_SESSION['messages']['questionnairemessage_success']."</div>\n";
     }
     echo $questionnaire->getHTML();
 }
 else if(isset($_SESSION) && isset($_SESSION['messages']) && isset($_SESSION['messages']['questionnairemessage_success'])) {
-    echo "<div>$_SESSION[messages][questionnairemessage_success]</div>\n";
+    echo "<div>".$_SESSION['messages']['questionnairemessage_success']."</div>\n";
 }
 else {
-    echo "<div>Ismeretlen hiba történt!</div>\n";
+    echo "<div>".Lang::getString('questionnaireUnknownError',$lang)."</div>\n";
 }
 ?>
 
-<form action="<?php echo Rootfolder::getPath().'/index.php'; ?>" method="post">
-    <button id="back" name="client" type="submit">Vissza a főoldalra</button>
+<form action='<?php echo Rootfolder::getPath().'/index.php'; ?>' method='post'>
+    <button id='back' name='client' type='submit'><?php echo Lang::getString('backToTheMainPage',$lang)?></button>
 </form>
 </body>
 </html>

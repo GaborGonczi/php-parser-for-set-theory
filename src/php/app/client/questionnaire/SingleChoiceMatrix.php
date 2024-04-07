@@ -27,7 +27,7 @@ class SingleChoiceMatrix extends Question
             foreach ($row['values'] as $key => $value) {
                 $html.="<td><input type=\"radio\" name=\"$this->name";
                 $html.="_";
-                $html.="$row[code][]\" value=\"$key\" $required /></td>\n";
+                $html.="$row[code]\" value=\"$key\" $required /></td>\n";
             }
             $html.="</tr>\n";
         }
