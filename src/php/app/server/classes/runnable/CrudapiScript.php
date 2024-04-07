@@ -1,5 +1,5 @@
 <?php
-namespace app\server\classes\runable;
+namespace app\server\classes\runnable;
 
 
 use \app\server\classes\Database;
@@ -10,7 +10,7 @@ use \utils\Rootfolder;
 
 use \DateTime;
 
-class CrudapiScript extends Runable {
+class CrudapiScript extends Runnable {
     
     public function __construct(User $authedUser,Database $db)  {
         parent::__construct($authedUser,$db);

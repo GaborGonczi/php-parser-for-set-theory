@@ -1,10 +1,10 @@
 <?php
-namespace app\server\classes\runable;
+namespace app\server\classes\runnable;
 use app\server\classes\Database;
 use app\server\classes\model\User;
 use \utils\Rootfolder;
 
-class RegisterScript extends Runable{
+class RegisterScript extends Runnable{
     public function __construct( User $user= null, Database $db = null){
         parent::__construct($user, $db);
     }

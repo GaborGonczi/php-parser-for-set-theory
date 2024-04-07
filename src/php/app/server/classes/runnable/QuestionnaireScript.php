@@ -1,5 +1,5 @@
 <?php
-namespace app\server\classes\runable;
+namespace app\server\classes\runnable;
 
 
 use \app\server\classes\Database;
@@ -10,7 +10,7 @@ use \DateTime;
 
 use \utils\Rootfolder;
 
-class QuestionnaireScript extends Runable
+class QuestionnaireScript extends Runnable
 {
     public function __construct(User $authedUser, Database $db)
     {

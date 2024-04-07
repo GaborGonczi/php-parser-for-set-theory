@@ -1,5 +1,5 @@
 <?php
-namespace app\server\classes\runable;
+namespace app\server\classes\runnable;
 
 
 use \app\server\classes\Database;
@@ -8,7 +8,7 @@ use \app\server\classes\model\File;
 
 use \DateTime;
 
-class NewScript extends Runable
+class NewScript extends Runnable
 {
     public function __construct(User $authedUser, Database $db)
     {

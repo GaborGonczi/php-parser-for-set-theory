@@ -1,5 +1,5 @@
 <?php
-namespace app\server\classes\runable;
+namespace app\server\classes\runnable;
 
 
 use \app\server\classes\Database;
@@ -8,7 +8,7 @@ use \app\server\classes\model\Expression;
 
 use \utils\Rootfolder;
 
-class SaveScript extends Runable
+class SaveScript extends Runnable
 {
 
     private array $content;

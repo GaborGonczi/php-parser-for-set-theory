@@ -1,12 +1,12 @@
 <?php
-namespace app\server\classes\runable;
+namespace app\server\classes\runnable;
 
 use \app\server\classes\model\User;
 use \app\server\classes\Database;
 
 use \utils\Rootfolder;
 
-abstract class Runable {
+abstract class Runnable {
     protected ?User $user;
     protected ?Database $db;
 

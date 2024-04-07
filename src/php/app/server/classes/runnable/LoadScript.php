@@ -1,5 +1,5 @@
 <?php
-namespace app\server\classes\runable;
+namespace app\server\classes\runnable;
 
 
 use \app\server\classes\Database;
@@ -9,7 +9,7 @@ use \utils\Rootfolder;
 
 use \finfo;
 
-class LoadScript extends Runable
+class LoadScript extends Runnable
 {
     public function __construct(User $authedUser, Database $db)
     {

@@ -1,5 +1,5 @@
 <?php
-namespace app\server\classes\runable;
+namespace app\server\classes\runnable;
 
 
 use \core\lib\datastructures\Set;
@@ -21,7 +21,7 @@ use \app\server\classes\Database;
 
 use \DateTime;
 
-class ParseScript extends Runable
+class ParseScript extends Runnable
 {
 
     private Lexer $lexer;
