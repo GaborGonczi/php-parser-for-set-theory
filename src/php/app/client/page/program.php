@@ -102,12 +102,12 @@ else{
             <button title="<?php echo Lang::getString('download',$lang); ?>" id="download"><?php echo Lang::getString('download',$lang);  ?></button>
             <button title="<?php echo Lang::getString('print',$lang); ?>" id="print"><?php echo Lang::getString('print',$lang);  ?></button>
             <button title="<?php echo Lang::getString('new',$lang);?>" id="new"><?php echo Lang::getString('new',$lang);  ?></button>
-            <span><?php echo Lang::getString('dfaOn',$lang);  ?></span>
+            <span><?php echo Lang::getString('dfaOff',$lang);  ?></span>
             <label class="switch">
                 <input title="<?php Lang::getString('dfa',$lang); ?>" id="dfa" type="checkbox" disabled>
                 <span class="slider round"></span>
             </label>
-            <span><?php echo Lang::getString('dfaOff',$lang);  ?></span>
+            <span><?php echo Lang::getString('dfaOn',$lang);  ?></span>
             <div>
                 <!--https://www.w3docs.com/snippets/css/how-to-customize-file-inputs.html-->
                 <label class="customized-fileupload">

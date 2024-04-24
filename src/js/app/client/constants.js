@@ -1,7 +1,9 @@
 
 /// Export an object that contains various constants for the URLs of the server and client.
 
-const BASE_URL="http://parserforsettheory.nhely.hu/";
+
+const BASE_URL=window.location.href.slice(0, window.location.href.lastIndexOf('/')+1);
+
 
 export const CONSTANTS={
     serverUrl:BASE_URL,

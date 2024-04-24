@@ -124,7 +124,7 @@ class ParseScript extends Runnable
                     foreach ($expressionsdata as $expressiondata) {
                         $expressiondata = (array) $expressiondata;
                         $stmtdata['statement'] = $this->replaceHTMLEntities($stmtdata['statement']);
-                        if($stmtdata['gdfa']==true){
+                        if($stmtdata['gdfa']==true&&gettype($tokens) !== "string"){
                             $filename=$expressiondata['file_id'].'_'.$expressiondata['id'];
                             $this->parser->getDFADiagramBuilder()->generateOutput($filename);
                             $url=$this->parser->getDFADiagramBuilder()->getOutputUrl($filename);
@@ -176,7 +176,7 @@ class ParseScript extends Runnable
                     if ($id = $this->isExpressionCreated($expression->getAsAssociativeArray())) {
                         $this->isLogsCreated($stmtdata,$id);
                     }
-                    if($stmtdata['gdfa']==true){
+                    if($stmtdata['gdfa']==true&&gettype($tokens) !== "string"){
                         $filename=$fileid.'_'.$id;
                         $this->parser->getDFADiagramBuilder()->generateOutput($filename);
                         $url=$this->parser->getDFADiagramBuilder()->getOutputUrl($filename);
