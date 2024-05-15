@@ -29,11 +29,6 @@ class Lexer
     "&cap;",	"&and;",	"&or;",	
     "&setminus;",	"&mid;",	"&nmid;","&lt;","&gt;"];
 
-    /**
-    * A constant that defines the namespace of the token class
-    */
-    private const TOKENCLASSNAMESPACE ='\core\parser\TOKEN::';
-
     private $dev;
     private static $lang;
 

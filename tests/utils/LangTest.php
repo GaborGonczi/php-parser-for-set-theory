@@ -166,6 +166,7 @@ class LangTest extends TestCase
             ['hun', 'usernameIsAlreadyExist', 'A felhasználónév foglalt.'],
             ['hun', 'variableCopyError', 'Hiba a változók másolása közben.'],
             ['hun', 'variables', 'Változók'],
+            ['hun', 'wrongTypeForOperation','A művelet két operandusa nem megfelelő típusú.'],
             ['eng', 'allFieldsRequired', 'All fields required.'],
             ['eng', 'automatonsButton', 'Deterministic finite automata'],
             ['eng', 'automatonsTitle', 'Deterministic finite automata'],
@@ -305,6 +306,7 @@ class LangTest extends TestCase
             ['eng', 'usernameIsAlreadyExist', 'Username is already registered.'],
             ['eng', 'variableCopyError', 'Error during variables copying.'],
             ['eng', 'variables', 'Variables'],
+            ['eng', 'wrongTypeForOperation','Two operands of the operation are not of the correct type.'],
 
         ];
 

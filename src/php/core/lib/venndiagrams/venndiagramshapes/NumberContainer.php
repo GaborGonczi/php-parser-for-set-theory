@@ -70,7 +70,6 @@ class NumberContainer
 
         );
         return is_array($result)?true:false; 
-        //imagestring($image,5,$this->textPosition->getX(),$this->textPosition->getY(),$this->value,$color);
     }
 
     //https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
@@ -110,12 +109,10 @@ class NumberContainer
     /**
      * Set the value of boundRect
      *
-     * @return  self
+     * @return  void
      */ 
     public function setBoundRect($boundRect)
     {
         $this->boundRect = $boundRect;
-
-        return $this;
     }
 }

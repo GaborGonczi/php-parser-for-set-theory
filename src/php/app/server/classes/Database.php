@@ -90,14 +90,22 @@ class Database {
         if ($table && is_array($data) && !empty($data) && is_array($where) && !empty($where)) {
 
             $data_assignments = implode(" = ?, ", $this->backtickColumns(array_keys($data))) . " = ?";
+            
+            $separatedConditions=$this->separateConditions($where);
 
-            $where_conditions = $this->whereCond($where);
+            $where_null_conditions=$this->whereNullCond($separatedConditions['nullCond']);
 
-            $sql = "UPDATE " . $table . " SET " . $data_assignments . " WHERE " . $where_conditions;
+            $where_conditions = $this->whereCond($separatedConditions['filterCond']);
+
+            $sql = "UPDATE " . $table . " SET " . $data_assignments;
+
+            if($where_conditions||$where_null_conditions){
+                $sql.=" WHERE ".implode(" AND ", array_diff([$where_conditions,$where_null_conditions], array("")));
+            }
 
             $stmt = $this->dbh->prepare($sql);
 
-            if ($stmt->execute(array_merge(array_values($data), array_values($where)))) {
+            if ($stmt->execute($this->removeQuotationMark($this->removeKeywords(array_merge(array_values($data),array_values($where)))))) {
 
                 return $stmt->rowCount();
             } 
@@ -109,7 +117,7 @@ class Database {
         else {
             return false;
         }
-    }
+    }    
 
     /**
     * Delete a record from a table.
@@ -171,7 +179,7 @@ class Database {
 
             $sql = "SELECT $fields FROM " . $table;
             if($whereConnection||$where_conditions||$where_null_conditions||$in_conditions||$notIn_conditions){
-                $sql.=" WHERE ".implode(" AND ", array_diff([$whereConnection,$where_conditions,$where_null_conditions,$in_conditions,$notIn_conditions], array("")));;
+                $sql.=" WHERE ".implode(" AND ", array_diff([$whereConnection,$where_conditions,$where_null_conditions,$in_conditions,$notIn_conditions], array("")));
             }
 
             $stmt = $this->dbh->prepare($sql);

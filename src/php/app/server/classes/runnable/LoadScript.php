@@ -9,6 +9,7 @@ use \utils\Rootfolder;
 use \utils\Lang;
 
 use \finfo;
+use \DateTime;
 
 class LoadScript extends Runnable
 {
@@ -49,6 +50,7 @@ class LoadScript extends Runnable
                 $_SESSION['messages']['fileerror']=Lang::getString('emptyFileErrorLoad',$this->lang);
                 $this->redirectToProgram();
             }
+            $this->updateFileModifiedDate($fileid);
             $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']=$fileid;
         
         }
@@ -61,6 +63,7 @@ class LoadScript extends Runnable
                 $_SESSION['messages']['fileerror']=Lang::getString('emptyFileErrorLoad',$this->lang);
                  $this->redirectToProgram();
             }
+            $this->updateFileModifiedDate($fileid);           
             $_SESSION[$_COOKIE['PHPSESSID']]['currentFileId']=$fileid;
             
         }
@@ -92,5 +95,8 @@ class LoadScript extends Runnable
             'file_id' => $fileid,
             'deleted_at' => null
         ]) ?: [];
+    }
+    private function updateFileModifiedDate($fileid,$date=new DateTime('now')){
+        return $this->db->update('files',['modified_at'=>date('Y-m-d H:i:s', $date->getTimestamp())],['user_id'=>$this->user->getId(), 'id'=>$fileid, 'deleted_at'=>null]);
     }
 }

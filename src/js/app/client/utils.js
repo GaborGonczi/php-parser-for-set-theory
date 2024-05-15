@@ -1,5 +1,5 @@
 export function getData(fetchFrom) {
-  return fetch(fetchFrom).then((res) => {;
+  return fetch(fetchFrom).then((res) => {
     if (!res.redirected) {
       return res.json();
     }

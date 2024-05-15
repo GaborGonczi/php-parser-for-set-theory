@@ -1001,6 +1001,9 @@ class Parser
                 $rest = $this->sexpr_();
 
                 if (isset($rest['op'])) {
+                    if($rest['op']!==Token::TOBEEQUAL['value']&&Functions::isString($setoperationside)) {
+                        throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                    }
                     switch ($rest['op']) {
                         case (Token::TOBEEQUAL['value']):
                             $setoperationside = $lookahead['value'];
@@ -1952,30 +1955,6 @@ class Parser
         return Parser::$lang;
     }
 
-    /**
-     * Returns the return type of a given function name as a string.
-     * @param string $funcname The name of the function to get the return type of.
-     * @return string The return type of the function as a string.
-     */
-    private function getFunctionReturnType($funcname): string
-    {
-        $reflectionFunction = new ReflectionFunction($funcname);
-        return (string) $reflectionFunction->getReturnType();
-    }
-
-    /**
-     * Returns the returned value of a function call as an object of the same type as the return type of the function.
-     * @param mixed $result The returned value of the function call.
-     * @param string $funcAsString The name of the function as a string.
-     * @return object The returned value as an object of the same type as the return type of the function.
-     */
-    private function getReturnedValueAsReturTypeObject($result, $funcAsString)
-    {
-        return array_reduce(array_keys($result), function ($carry, $key) use ($result) {
-            $carry->$key = $result[$key];
-            return $carry;
-        }, new $funcAsString());
-    }
 
     /**
      * Returns the string representation of a given value.

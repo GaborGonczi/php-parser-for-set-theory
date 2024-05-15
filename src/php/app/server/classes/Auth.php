@@ -98,7 +98,7 @@ class Auth
         $user->setLanguage($language);
         $user->setModifiedAt(date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()));
         if($user->getId()!==getenv('ADMIN_ID')) $user->setModifiedBy(getenv('ADMIN_ID'));
-        $this->db->update('users',$user->getAsAssociativeArray(),['id'=>$user->getId()]);
+        $this->updateUser($user);
         $_SESSION[$_COOKIE['PHPSESSID']]['authedUser']=json_encode($user);
         $this->redirectTo();
        
@@ -133,7 +133,7 @@ class Auth
         if(!$this->isUserCreated(new User(null,$_POST['username'],password_hash($_POST['password'],PASSWORD_BCRYPT),
         null,null,$language,date('Y-m-d H:i:s',(new DateTime('now'))->getTimestamp()),getenv('ADMIN_ID'),null,null,null,null))) 
         {
-            $_SESSION['messages']['registererror']=Lang::getString('unknownRegisterError',$this->registerPage->getLang());'Sikertelen regisztráció ismeretlen okból';
+            $_SESSION['messages']['registererror']=Lang::getString('unknownRegisterError',$this->registerPage->getLang());
             $this->redirectTo('?register');
         }
         $this->redirectTo('?login');
@@ -153,6 +153,9 @@ class Auth
     }
     private function isUserCreated($user){
         return $this->db->insert('users',$user->getAsAssociativeArray());
+    }
+    private function updateUser($user){
+        $this->db->update('users',$user->getAsAssociativeArray(),['id'=>$user->getId()]);
     }
 
 }
