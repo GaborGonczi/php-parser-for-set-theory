@@ -75,6 +75,7 @@ function save(e){
     if(e.code!=="Enter"&&e.code!="NumpadEnter") return;
     let element=e.target;
     let statement= element.innerText||element.value;
+    if(statement.trim()==="") return;
     let startpos=0;
     let id=null;
     statement.replace(/\n/g, "");
