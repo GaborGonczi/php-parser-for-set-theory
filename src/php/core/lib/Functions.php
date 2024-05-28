@@ -482,8 +482,8 @@ class Functions
     */
     public static function addElement($element,$set){
         if(!Functions::isSet($set) || !Functions::isWholeNumber($element)) throw Functions::illegalArguments(__METHOD__);
-        $oldSize=$set->size();
-        return $set->has($element) || $set->add($element)->size()===$oldSize+1;
+        $oldSize=$set->size();       
+        return $set->has($element) || $set->add($element)->orderByAsc()->size()===$oldSize+1;
     }
 
     /**
@@ -498,7 +498,7 @@ class Functions
     public static function deleteElement($element,$set){
         if(!Functions::isSet($set) || !Functions::isWholeNumber($element)) throw Functions::illegalArguments(__METHOD__);
         $oldSize=$set->size();
-        return !$set->has($element) || $set->delete($element)->size()===$oldSize-1;
+        return !$set->has($element) || $set->delete($element)->orderByAsc()->size()===$oldSize-1;
     }
 
     /**

@@ -1008,21 +1008,24 @@ class Parser
                             $setoperationside = $lookahead['value'];
                             $rest = Functions::flatSetExpression($rest);
                             unset($rest[0]);
-                            $rest = array_values($rest);
-                            Parser::setBaseSet($this->getVars()->get("H"));
-                            if(Functions::isContainsNonSetElement($rest)){
-                                throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                            if (count($rest)==1) {
+                                Parser::$vars->add($setoperationside, $rest[1]);
+                                $result = $rest[1];
                             }
-                            $rest['set'] = Functions::evaluateSetExpression($rest);
-                            if (isset($rest['set'])) {
-                                $result = $rest['set'];
-                                Parser::$vars->add($setoperationside, $result);
+                            else{
+                                $rest = array_values($rest);
                                 Parser::setBaseSet($this->getVars()->get("H"));
-                            } else if (isset($rest['point'])) {
-                                Parser::$vars->add($setoperationside, $rest['point']);
-                                $result = $rest['point'];
+                                if(Functions::isContainsNonSetElement($rest)){
+                                    throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                                }
+                                $rest['set'] = Functions::evaluateSetExpression($rest);
+                                if (isset($rest['set'])) {
+                                    $result = $rest['set'];
+                                    Parser::$vars->add($setoperationside, $result);
+                                    Parser::setBaseSet($this->getVars()->get("H"));
+                                }
+    
                             }
-
                             break;
                         case (Token::COMPLEMENT['value']):
                             Parser::setBaseSet($this->getVars()->get("H"));
