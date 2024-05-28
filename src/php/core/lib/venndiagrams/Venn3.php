@@ -58,8 +58,8 @@ class Venn3 extends VennBase
         
         $this->CSet=new Circle(
             new Point(
-               ((4+9)/2)*$this->unit,
-                intval($this->unit+3*$this->unit+4*$this->unit+0.5*$this->unit)
+               ((4+8)/2)*$this->unit,
+               intval((4.5+2*sqrt(3))*$this->unit)
             ),
             (3.55)*$this->unit
         );
@@ -179,10 +179,10 @@ class Venn3 extends VennBase
         }
 
         $numContainersC=[];
-        $leftMostPointXCoordinateInSetC=2.95;
-        $rightMostPointXCoordinateInSetC=7.1;
-        $topMostPointYCoordinateInSetC=4.95;
-        $bottomMostPointYCoordinateInSetC=12.05;
+        $leftMostPointXCoordinateInSetC=2.45;
+        $rightMostPointXCoordinateInSetC=9.55;
+        $topMostPointYCoordinateInSetC=6.5;
+        $bottomMostPointYCoordinateInSetC=13.6;
         foreach ($this->COnly as $value) {
 
             do {
@@ -248,11 +248,11 @@ class Venn3 extends VennBase
         }
 
         $numContainersAC=[];
-        $leftMostPointXCoordinateInSetAC=5.775;
-        $rightMostPointXCoordinateInSetAC=7.55;
-        $topMostPointYCoordinateInSetAC=7.55;
-        $bottomMostPointYCoordinateInSetAC=12.05;
-        foreach ($this->AAndB as $value) {
+        $leftMostPointXCoordinateInSetAC=2.45;
+        $rightMostPointXCoordinateInSetAC=4.45;
+        $topMostPointYCoordinateInSetAC=4.75;
+        $bottomMostPointYCoordinateInSetAC=8.05;
+        foreach ($this->AAndC as $value) {
 
             do {
                 $success=true;
@@ -280,19 +280,19 @@ class Venn3 extends VennBase
     
         }
 
- /*       $numContainersBC=[];
-        $leftMostPointXCoordinateInSetBC=5.45;
-        $rightMostPointXCoordinateInSetBC=7.55;
-        $topMostPointYCoordinateInSetBC=4;
-        $bottomMostPointYCoordinateInSetBC=9;
-        foreach ($this->AAndB as $value) {
+        $numContainersBC=[];
+        $leftMostPointXCoordinateInSetBC=6;
+        $rightMostPointXCoordinateInSetBC=9.55;
+        $topMostPointYCoordinateInSetBC=4.75;
+        $bottomMostPointYCoordinateInSetBC=8.05;
+        foreach ($this->BAndC as $value) {
 
             do {
                 $success=true;
 
                 $newpos=new Point(rand(intval($leftMostPointXCoordinateInSetBC*$this->unit),intval($rightMostPointXCoordinateInSetBC*$this->unit)),rand(intval($topMostPointYCoordinateInSetBC*$this->unit),intval($bottomMostPointYCoordinateInSetBC*$this->unit)));
                 
-                $possibleNewelem=new NumberContainer($newpos,$value,$size);
+                $possibleNewelem=new NumberContainer($newpos,$value,$this->textSizeInPt);
                 
                 if($this->isContainerInBCIntersection($possibleNewelem)){
 
@@ -314,18 +314,18 @@ class Venn3 extends VennBase
         }
 
         $numContainersABC=[];
-        $leftMostPointXCoordinateInSetABC=5.45;
+        $leftMostPointXCoordinateInSetABC=4.45;
         $rightMostPointXCoordinateInSetABC=7.55;
-        $topMostPointYCoordinateInSetABC=4;
-        $bottomMostPointYCoordinateInSetABC=9;
-        foreach ($this->AAndB as $value) {
+        $topMostPointYCoordinateInSetABC=4.5;
+        $bottomMostPointYCoordinateInSetABC=8.05;
+        foreach ($this->AAndBAndC as $value) {
 
             do {
                 $success=true;
 
                 $newpos=new Point(rand(intval($leftMostPointXCoordinateInSetABC*$this->unit),intval($rightMostPointXCoordinateInSetABC*$this->unit)),rand(intval($topMostPointYCoordinateInSetABC*$this->unit),intval($bottomMostPointYCoordinateInSetABC*$this->unit)));
                 
-                $possibleNewelem=new NumberContainer($newpos,$value,$size);
+                $possibleNewelem=new NumberContainer($newpos,$value,$this->textSizeInPt);
                 
                 if($this->isContainerInABCIntersection($possibleNewelem)){
 
@@ -344,10 +344,9 @@ class Venn3 extends VennBase
             $numContainersABC[]=$possibleNewelem;
             
     
-        }*/
+        }
 
-
-    $allpos=array_merge($numContainersA,$numContainersB,$numContainersC,$numContainersAB,$numContainersAC);
+    $allpos=array_merge($numContainersA,$numContainersB,$numContainersC,$numContainersAB,$numContainersAC,$numContainersBC,$numContainersABC);
         foreach ($allpos as $value) {
            if(!$value->write($image,$color,$this->fontfile)){
                 return false;

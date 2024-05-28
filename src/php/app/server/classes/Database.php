@@ -266,13 +266,19 @@ class Database {
 
     private function removeQuotationMark($values){
         return array_map(function ($value) {
-            if(gettype($value)==="string"){
+            if(gettype($value)==="string"&&!$this->isJSON($value)){
                 return str_replace('"',' ',$value);
             }
             return $value;
         },$values);
         
     }
+
+    private function isJSON($value){
+        json_decode($value);
+        return json_last_error() == JSON_ERROR_NONE;
+    }
+    
     private function whereConn ($conn){
         $kv=[];
         foreach ($conn as $key => $value) {

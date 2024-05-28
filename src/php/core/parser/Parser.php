@@ -999,7 +999,6 @@ class Parser
                 $setoperationside = $this->setoperationside();
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'sexpr_');
                 $rest = $this->sexpr_();
-
                 if (isset($rest['op'])) {
                     if($rest['op']!==Token::TOBEEQUAL['value']&&Functions::isString($setoperationside)) {
                         throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
@@ -1011,6 +1010,9 @@ class Parser
                             unset($rest[0]);
                             $rest = array_values($rest);
                             Parser::setBaseSet($this->getVars()->get("H"));
+                            if(Functions::isContainsNonSetElement($rest)){
+                                throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                            }
                             $rest['set'] = Functions::evaluateSetExpression($rest);
                             if (isset($rest['set'])) {
                                 $result = $rest['set'];
@@ -1028,6 +1030,9 @@ class Parser
                                 throw new UndefinedVariableException(Lang::getString('baseSetNotDefinedError',self::$lang));
                             }
                             $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => $setoperationside], ['rhs' => $rest]));
+                            if(Functions::isContainsNonSetElement($array)){
+                                throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                            }
                             $result = Functions::evaluateSetExpression($array);
                             break;
                         case (Token::DOT['value']):
@@ -1047,26 +1052,44 @@ class Parser
                             break;
                         case (Token::EQUAL['value']):
                             $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => $setoperationside], ['rhs' => $rest]));
+                            if(Functions::isContainsNonSetElement($array)){
+                                throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                            }
                             $result = Functions::evaluateSetExpression($array);
                             break;
                         case (Token::SUBSETOF['value']):
                             $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => $setoperationside], ['rhs' => $rest]));
+                            if(Functions::isContainsNonSetElement($array)){
+                                throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                            }
                             $result = Functions::evaluateSetExpression($array);
                             break;
                         case (Token::REALSUBSETOF['value']):
                             $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => $setoperationside], ['rhs' => $rest]));
+                            if(Functions::isContainsNonSetElement($array)){
+                                throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                            }
                             $result = Functions::evaluateSetExpression($array);
                             break;
                         case (Token::UNION['value']):
                             $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => $setoperationside], ['rhs' => $rest]));
+                            if(Functions::isContainsNonSetElement($array)){
+                                throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                            }
                             $result = Functions::evaluateSetExpression($array);
                             break;
                         case (Token::INTERSECTION['value']):
                             $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => $setoperationside], ['rhs' => $rest]));
+                            if(Functions::isContainsNonSetElement($array)){
+                                throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                            }
                             $result = Functions::evaluateSetExpression($array);
                             break;
                         case (Token::SETMINUS['value']):
                             $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => $setoperationside], ['rhs' => $rest]));
+                            if(Functions::isContainsNonSetElement($array)){
+                                throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                            }
                             $result = Functions::evaluateSetExpression($array);
                             break;
                         default:
@@ -1096,6 +1119,9 @@ class Parser
                 $this->match(')');
                 $rest2 = $this->stesruisc__();
                 $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => ['lparen' => '(', 'lhs' => $setoperationside, 'rhs' => $rest, 'rparen' => ')'], ['rhs' => $rest2]]));
+                if(Functions::isContainsNonSetElement($array)){
+                    throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                }
                 $result = Functions::evaluateSetExpression($array);
                 if (Functions::isArray($result) && count($result) == 2 && in_array(Token::COMPLEMENT['value'], $result)) {
                     $baseSet = Functions::createBaseSet($this->getVars());
@@ -1224,6 +1250,9 @@ class Parser
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'stesruisc__');
                 $rest2 = $this->stesruisc__();
                 $array = Functions::flatSetExpression(array_merge_recursive(['lparen' => '(',], ['lhs' => $setoperationside], ['rest' => $rest], ['rparen' => ')'], ['rest2' => $rest2]));
+                if(Functions::isContainsNonSetElement($array)){
+                    throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                }
                 $result = Functions::evaluateSetExpression($array);
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
@@ -1255,6 +1284,9 @@ class Parser
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), 'stesruisc__');
                 $rest = $this->stesruisc__();
                 $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => $setoperationside], ['rest' => $rest]));
+                if(Functions::isContainsNonSetElement($array)){
+                    throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                }
                 $result['set'] = Functions::evaluateSetExpression($array);
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
@@ -1268,6 +1300,9 @@ class Parser
                 $this->match(')');
                 $rest2 = $this->stesruisc__();
                 $array = Functions::flatSetExpression(array_merge_recursive(['lparen' => '(',], ['lhs' => $setoperationside], ['rest' => $rest], ['rparen' => ')'], ['rest2' => $rest2]));
+                if(Functions::isContainsNonSetElement($array)){
+                    throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                }
                 $result['set'] = Functions::evaluateSetExpression($array);
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, $this->getLookaheadValue(), $this->getParent());
                 break;
@@ -1703,6 +1738,9 @@ class Parser
                 $rest = $this->sexpr_();
                 Parser::setBaseSet($this->getVars()->get("H"));
                 $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => $setoperationside], ['rhs' => $rest]));
+                if(Functions::isContainsNonSetElement($array)){
+                    throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                }
                 $set = Functions::evaluateSetExpression($array);
                 $this->dfaDiagramBuilder?->createTriplet(__FUNCTION__, "M(|)", $this->getParent());
                 $this->match('|');
@@ -1721,6 +1759,9 @@ class Parser
                 $this->match('|');
                 Parser::setBaseSet($this->getVars()->get("H"));
                 $array = Functions::flatSetExpression(array_merge_recursive(['lhs' => ['lparen' => '(', 'lhs' => $setoperationside, 'rhs' => $rest, 'rparen' => ')'], ['rhs' => $rest2]]));
+                if(Functions::isContainsNonSetElement($array)){
+                    throw new SemanticException(Lang::getString('wrongTypeForOperation',self::$lang));
+                }
                 $set = Functions::evaluateSetExpression($array);
                 $result = Functions::cardinality($set);
                 break;

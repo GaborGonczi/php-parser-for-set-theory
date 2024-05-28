@@ -154,7 +154,7 @@ class Lang
             'usernameIsAlreadyExist' => 'A felhasználónév foglalt.',
             'variableCopyError'=>'Hiba a változók másolása közben.',
             'variables' => 'Változók',
-            'wrongTypeForOperation'=>'A művelet két operandusa nem megfelelő típusú.',
+            'wrongTypeForOperation'=>'A művelet operandusai nem megfelelő típusúak.',
         ],
         'eng' => [
             'allFieldsRequired' => 'All fields required.',
@@ -296,7 +296,7 @@ class Lang
             'usernameIsAlreadyExist' => 'Username is already registered.',
             'variableCopyError'=>'Error during variables copying.',
             'variables' => 'Variables',
-            'wrongTypeForOperation'=>'Two operands of the operation are not of the correct type.',
+            'wrongTypeForOperation'=>'The operands of the operation are of the wrong type.',
         ]
     ];
 

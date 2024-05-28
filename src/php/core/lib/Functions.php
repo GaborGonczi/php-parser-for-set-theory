@@ -10,6 +10,7 @@ use core\parser\Parser;
 use core\parser\exception\UndefinedVariableException;
 use core\lib\datastructures\Set;
 use core\lib\datastructures\Map;
+use core\lib\datastructures\Point;
 
 use core\lib\venndiagrams\Venn1;
 use core\lib\venndiagrams\Venn2;
@@ -1147,6 +1148,23 @@ class Functions
             $result[] = $value;   
         });
         return $result;
+    }
+
+    /**
+    * Checks whether the specified array contains elements whose type is a set
+    *
+    * @param array $array The array to be checked for non-set elements.
+    * @return bool Returns true if non-set elements are found, false otherwise.
+    * @throws LibException Thrown if the provided argument is not an array.
+    * @public
+    */
+
+    public static function isContainsNonSetElement($array) {
+        if(!Functions::isArray($array)) throw Functions::illegalArguments(__METHOD__);
+        $nonAmpersandStrings = array_filter($array, function($element) {
+            return (new Regexp(Token::IDENTIFIER['value']))->test($element)||(gettype($element)==="object"&&get_class($element)===Point::class);
+        });
+         return !empty($nonAmpersandStrings);
     }
 
     /**

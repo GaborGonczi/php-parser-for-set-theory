@@ -22,7 +22,7 @@ abstract class VennBase
     abstract protected function drawNumbers(GdImage $image,$color);
 
     public function __construct(string $fontfile,float $textSizeInPt){
-        $this->unit=210;
+        $this->unit=50;
         $this->scalingFactor=13;
         $this->textSizeInPt=$textSizeInPt;
         $this->width= $this->scalingFactor*$this->unit; // 210 unit 72-es betűméret= 96 50 unit 18-as betűméret
