@@ -184,7 +184,7 @@ class PointSetDiagramFunctions
     * Draws the points of a Set object of Point objects on an image resource.
     *
     * @param Set $points The Set object of Point objects to draw on the image.
-    * @param resource $image The image resource to draw on.
+    * @param \GdImage $image The image resource to draw on.
     * @param PointSetDiagramOptions $options An associative array of the computed parameters for the image, such as the scale, the gaps, the counts, etc. See the PointSetDiagram function for more details on the keys and values of this array.
     * @return void
 

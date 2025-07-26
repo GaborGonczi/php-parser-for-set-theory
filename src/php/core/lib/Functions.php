@@ -273,8 +273,8 @@ class Functions
     *
     * @param int $start The start of the range (inclusive).
     * @param int $end The end of the range (inclusive).
-    * @param Closure|null $filterformula The formula that filters the elements in the range. Optional, default null.
-    * @param Closure|null $formula The formula that generates the elements in the range. Optional, default null.
+    * @param \Closure|null $filterformula The formula that filters the elements in the range. Optional, default null.
+    * @param \Closure|null $formula The formula that generates the elements in the range. Optional, default null.
     * @return Set A new set with the elements generated and filtered by the formulas.
     * @throws LibException If the arguments are not valid.
     * @public
@@ -1415,7 +1415,7 @@ class Functions
     /**
     * Draws a Venn diagram of a set on an image resource.
     *
-    * @param resource &$image The image resource to draw on.
+    * @param \GdImage &$image The image resource to draw on.
     * @param Set $seta The first set to draw
     * @return \GdImage
     * @private
@@ -1446,7 +1446,7 @@ class Functions
     * black, white, red, blue, yellow, purple, green, and orange. The method uses the @codeCoverageIgnore annotation to exclude it from
     * code coverage analysis.
     *
-    * @param resource $image An image resource, returned by one of the image creation functions, such as imagecreatetruecolor().
+    * @param \GdImage $image An image resource, returned by one of the image creation functions, such as imagecreatetruecolor().
     * @public
     *
     * @codeCoverageIgnore
